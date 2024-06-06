@@ -48,7 +48,7 @@ fn bootstrap_url() -> Url2 {
             .expect("Environment variable BOOTSTRAP_PORT was not set");
         url2::url2!("http://{internal_ip}:{port}")
     } else {
-        url2::url2!("https://bootstrap.holo.host")
+        url2::url2!("https://bootstrap-staging.holo.host")
     }
 }
 
@@ -60,7 +60,7 @@ fn signal_url() -> Url2 {
             std::option_env!("SIGNAL_PORT").expect("Environment variable INTERNAL_IP was not set");
         url2::url2!("ws://{internal_ip}:{signal_port}")
     } else {
-        url2::url2!("wss://signal.holo.host")
+        url2::url2!("wss://signal-2.infra.holochain.org")
     }
 }
 
