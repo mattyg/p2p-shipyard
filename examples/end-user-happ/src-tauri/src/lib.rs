@@ -45,7 +45,7 @@ fn bootstrap_url() -> Url2 {
             .expect("Environment variable BOOTSTRAP_PORT was not set");
         url2::url2!("http://{internal_ip}:{port}")
     } else {
-        url2::url2!("https://bootstrap-staging.holo.host")
+        url2::url2!("https://bootstrap.holo.host")
     }
 }
 

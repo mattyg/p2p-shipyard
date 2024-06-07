@@ -44,13 +44,15 @@ pub struct HolochainPlugin<R: Runtime> {
 
 #[derive(Clone)]
 pub struct AppWebsocketAuth {
+    pub app_id: String,
+    pub main_window: bool,
     pub app_websocket_port: u16,
     pub token: Vec<u8>,
 }
 
 pub struct HolochainRuntime {
     pub filesystem: FileSystem,
-    pub apps_websockets_auths: Arc<Mutex<HashMap<String, AppWebsocketAuth>>>,
+    pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
     pub(crate) conductor_handle: ConductorHandle,
 }
@@ -70,8 +72,9 @@ impl<R: Runtime> HolochainPlugin<R> {
         url_path: Option<String>,
     ) -> crate::Result<WebviewWindowBuilder<R, AppHandle<R>>> {
         let app_id: String = app_id.into();
-        let app_websocket_auth =
-            tauri::async_runtime::block_on(async { self.get_app_websocket_auth(&app_id).await })?;
+        let app_websocket_auth = tauri::async_runtime::block_on(async {
+            self.get_app_websocket_auth(&app_id, false).await
+        })?;
 
         let token_vector: Vec<String> = app_websocket_auth
             .token
@@ -158,7 +161,7 @@ impl<R: Runtime> HolochainPlugin<R> {
 
         if let Some(enabled_app) = enabled_app {
             let app_websocket_auth = tauri::async_runtime::block_on(async {
-                self.get_app_websocket_auth(&enabled_app).await
+                self.get_app_websocket_auth(&enabled_app, true).await
             })?;
 
             let token_vector: Vec<String> = app_websocket_auth
@@ -212,9 +215,13 @@ impl<R: Runtime> HolochainPlugin<R> {
     async fn get_app_websocket_auth(
         &self,
         app_id: &InstalledAppId,
+        main_window: bool,
     ) -> crate::Result<AppWebsocketAuth> {
         let mut apps_websockets_auths = self.holochain_runtime.apps_websockets_auths.lock().await;
-        if let Some(app_websocket_auth) = apps_websockets_auths.get(app_id) {
+        let existing_auth = apps_websockets_auths
+            .iter()
+            .find(|auth| auth.main_window == main_window && auth.app_id.eq(app_id));
+        if let Some(app_websocket_auth) = existing_auth {
             return Ok(app_websocket_auth.clone());
         }
 
@@ -226,6 +233,12 @@ impl<R: Runtime> HolochainPlugin<R> {
         } else {
             let mut origins: HashSet<String> = HashSet::new();
             origins.insert(happ_origin(app_id).to_string());
+
+            if main_window {
+                origins.insert("http://tauri.localhost".into());
+                origins.insert("tauri://localhost".into());
+            }
+
             AllowedOrigins::Origins(origins)
         };
 
@@ -248,11 +261,13 @@ impl<R: Runtime> HolochainPlugin<R> {
         let token = response.token;
 
         let app_websocket_auth = AppWebsocketAuth {
+            app_id: app_id.clone(),
+            main_window,
             app_websocket_port: app_port,
             token,
         };
 
-        apps_websockets_auths.insert(app_id.clone(), app_websocket_auth.clone());
+        apps_websockets_auths.push(app_websocket_auth.clone());
         Ok(app_websocket_auth)
     }
 
@@ -260,7 +275,7 @@ impl<R: Runtime> HolochainPlugin<R> {
     ///
     /// * `app_id` - the app to build the `AppWebsocket` for
     pub async fn app_websocket(&self, app_id: InstalledAppId) -> crate::Result<AppWebsocket> {
-        let app_websocket_auth = self.get_app_websocket_auth(&app_id).await?;
+        let app_websocket_auth = self.get_app_websocket_auth(&app_id, false).await?;
         let app_ws = AppWebsocket::connect(
             format!("localhost:{}", app_websocket_auth.app_websocket_port),
             app_websocket_auth.token,
