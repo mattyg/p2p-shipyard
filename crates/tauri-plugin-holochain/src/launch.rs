@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::Arc, time::Duration};
+use std::{sync::Arc, time::Duration};
 
 use async_std::sync::Mutex;
 
@@ -54,7 +54,7 @@ pub async fn launch_holochain_runtime(
 
     Ok(HolochainRuntime {
         filesystem,
-        apps_websockets_auths: Arc::new(Mutex::new(HashMap::new())),
+        apps_websockets_auths: Arc::new(Mutex::new(Vec::new())),
         admin_port,
         conductor_handle,
     })

@@ -2,6 +2,7 @@ use holochain_types::prelude::AppBundle;
 use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
+use tauri_plugin_log::{TargetKind,Target};
 use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig};
 use url2::Url2;
 use tauri::AppHandle;
@@ -87,6 +88,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
+            .targets([
+            Target::new(TargetKind::Stdout),
+            Target::new(TargetKind::LogDir { file_name: None }),
+            Target::new(TargetKind::Webview),
+        ])
                 .level(log::LevelFilter::Warn)
                 .build(),
         )

@@ -13,7 +13,7 @@ jobs:
     env:
       MACOSX_DEPLOYMENT_TARGET: 10.13
 
-    runs-on: ${{ matrix.platform }}
+    runs-on: $\{{ matrix.platform }}
     steps:
       - name: Support longpaths
         if: matrix.platform != 'ubuntu-22.04'
