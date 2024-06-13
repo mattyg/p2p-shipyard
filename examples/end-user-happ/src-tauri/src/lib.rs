@@ -88,11 +88,6 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
-            .targets([
-            Target::new(TargetKind::Stdout),
-            Target::new(TargetKind::LogDir { file_name: None }),
-            Target::new(TargetKind::Webview),
-        ])
                 .level(log::LevelFilter::Warn)
                 .build(),
         )

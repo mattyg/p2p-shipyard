@@ -105,8 +105,10 @@ impl<R: Runtime> HolochainPlugin<R> {
                 )
                 .initialization_script(ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT);
 
-        let mut capability_builder =
-            CapabilityBuilder::new("sign-zome-call").permission("holochain:allow-sign-zome-call");
+        let mut capability_builder = CapabilityBuilder::new("sign-zome-call")
+            .permission("holochain:allow-sign-zome-call")
+            .permission("log:allow-log")
+            .permission("event:allow-listen"); // For the logs
 
         #[cfg(desktop)] // TODO: remove this check
         {
@@ -186,7 +188,9 @@ impl<R: Runtime> HolochainPlugin<R> {
                 .initialization_script(ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT);
 
             let mut capability_builder = CapabilityBuilder::new("sign-zome-call")
-                .permission("holochain:allow-sign-zome-call");
+                .permission("holochain:allow-sign-zome-call")
+                .permission("log:allow-log")
+                .permission("event:allow-listen"); // For the logs
 
             #[cfg(desktop)] // TODO: remove this check
             {
