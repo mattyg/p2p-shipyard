@@ -2,7 +2,6 @@ use holochain_types::prelude::AppBundle;
 use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
-use tauri_plugin_log::{TargetKind,Target};
 use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig};
 use url2::Url2;
 use tauri::AppHandle;
@@ -101,13 +100,17 @@ pub fn run() {
         ))
         .setup(|app| {
             let handle = app.handle().clone();
-            tauri::async_runtime::block_on(async move {
-                setup(handle).await
-            })?;
+            tauri::async_runtime::spawn(async move {
+                setup(handle.clone()).await.expect("Failed to setup");
 
-            app.holochain()?
-                .main_window_builder(String::from("main"), false, Some(APP_ID.into()), None)?
-                .build()?;
+                handle
+                    .holochain()
+                    .expect("Failed to get holochain")
+                    .main_window_builder(String::from("main"), false, Some(APP_ID.into()), None).await
+                    .expect("Failed to build window")
+                    .build()
+                    .expect("Failed to open main window");
+            });
 
             Ok(())
         })
