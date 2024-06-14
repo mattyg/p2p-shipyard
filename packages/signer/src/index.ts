@@ -24,7 +24,7 @@ const getNonceExpiration = () => (Date.now() + 5 * 60 * 1000) * 1000; // 5 mins 
 
 setTimeout(() => {
   attachConsole().then(() => {
-    window.onerror = (e) => console.error(e);
+    // window.onerror = (e) => console.error(e);
     console.trace = trace;
     console.log = debug;
     console.info = info;
