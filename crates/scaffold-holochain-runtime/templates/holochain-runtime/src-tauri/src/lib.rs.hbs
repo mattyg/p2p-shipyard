@@ -24,11 +24,15 @@ pub fn run() {
         ))
         .setup(|app| {
             let handle = app.handle().clone();
-            tauri::async_runtime::block_on(async move {
+            let result: anyhow::Result<()> = tauri::async_runtime::block_on(async move {
                 app.holochain()?
                     .main_window_builder(String::from("main"), true, None, None).await?
-                    .build()
-            })?;
+                    .build()?;
+
+                Ok(())
+            });
+
+            result?;
 
             Ok(())
         })
