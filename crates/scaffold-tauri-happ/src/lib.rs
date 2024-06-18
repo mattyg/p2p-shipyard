@@ -391,7 +391,7 @@ mod tests {
     "local-services": "hc run-local-services --bootstrap-interface $INTERNAL_IP --bootstrap-port $BOOTSTRAP_PORT --signal-interfaces $INTERNAL_IP --signal-port $SIGNAL_PORT",
     "network:android": "npm run build:happ && BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"npm run local-services\" \"UI_PORT=1420 npm run -w package1 start\" \"npm run tauri dev\" \"npm run tauri android dev\"",
     "build:zomes": "CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude myhapp",
-    "launch": "concurrently-repeat \"npm run tauri dev\" $AGENTS",
+    "launch": "concurrently-repeat \"npm run tauri dev --no-watch\" $AGENTS",
     "tauri": "tauri"
   },
   "devDependencies": {
