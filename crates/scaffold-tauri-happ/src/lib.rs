@@ -219,7 +219,7 @@ pub fn scaffold_tauri_happ(
                 &String::from("launch"),
                 &format!(
                     "concurrently-repeat \"{}\" $AGENTS",
-                    package_manager.run_script_command("tauri dev".into(), None)
+                    package_manager.run_script_command("tauri dev --no-watch".into(), None)
                 ),
             )?;
             add_npm_script_to_package(
