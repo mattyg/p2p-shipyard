@@ -40,4 +40,4 @@ jobs:
           name: darksoil-studio
 
       - name: Run flake tests
-        run: nix flake check -L
+        run: nix flake check -L --accept-flake-config
