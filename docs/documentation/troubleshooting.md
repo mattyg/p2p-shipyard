@@ -7,7 +7,7 @@
 If you get this error:
 
 ```
-   Compiling holochain_cascade v0.3.1-rc.0
+   Compiling holochain_cascade v0.3.1
 error: proc macro panicked
   --> src-tauri/src/lib.rs:47:14
    |

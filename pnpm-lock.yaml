@@ -63,9 +63,6 @@ importers:
       '@tauri-apps/api':
         specifier: ^2.0.0-beta.13
         version: 2.0.0-beta.13
-      '@tauri-apps/plugin-log':
-        specifier: ^2.0.0-beta.6
-        version: 2.0.0-beta.6
       rollup-plugin-analyzer:
         specifier: ^4.0.0
         version: 4.0.0
