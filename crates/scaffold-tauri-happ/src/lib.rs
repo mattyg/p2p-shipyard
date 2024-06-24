@@ -219,7 +219,7 @@ pub fn scaffold_tauri_happ(
                 &String::from("launch"),
                 &format!(
                     "concurrently-repeat \"{}\" $AGENTS",
-                    package_manager.run_script_command("tauri dev".into(), None)
+                    package_manager.run_script_command("tauri dev --no-watch".into(), None)
                 ),
             )?;
             add_npm_script_to_package(
@@ -391,7 +391,7 @@ mod tests {
     "local-services": "hc run-local-services --bootstrap-interface $INTERNAL_IP --bootstrap-port $BOOTSTRAP_PORT --signal-interfaces $INTERNAL_IP --signal-port $SIGNAL_PORT",
     "network:android": "npm run build:happ && BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"npm run local-services\" \"UI_PORT=1420 npm run -w package1 start\" \"npm run tauri dev\" \"npm run tauri android dev\"",
     "build:zomes": "CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude myhapp",
-    "launch": "concurrently-repeat \"npm run tauri dev\" $AGENTS",
+    "launch": "concurrently-repeat \"npm run tauri dev --no-watch\" $AGENTS",
     "tauri": "tauri"
   },
   "devDependencies": {
@@ -501,8 +501,8 @@ members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*", "src-tauri"
 resolver = "2"
 
 [workspace.dependencies]
-hdi = "0.4.1-rc"
-hdk = "0.3.1-rc"
+hdi = "0.4.1"
+hdk = "0.3.1"
 serde = "1.0"
 
 [workspace.dependencies.posts]
@@ -525,8 +525,8 @@ resolver = "2"
 members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*"]
 
 [workspace.dependencies]
-hdi = "0.4.1-rc"
-hdk = "0.3.1-rc"
+hdi = "0.4.1"
+hdk = "0.3.1"
 serde = "1.0"
 
 [workspace.dependencies.posts]

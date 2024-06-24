@@ -14,11 +14,11 @@ tauri = { version = "2.0.0-beta.22", features = [
 ] }
 
 # Holochain dependencies
-mr_bundle = "0.3.1-rc"
-holochain = "0.3.1-rc"
-holochain_types = "0.3.1-rc"
-holochain_keystore = "0.3.1-rc"
-holochain_conductor_api = "0.3.1-rc"
+mr_bundle = "0.3.1"
+holochain = "0.3.1"
+holochain_types = "0.3.1"
+holochain_keystore = "0.3.1"
+holochain_conductor_api = "0.3.1"
 
 # Lair dependencies
 hc_seed_bundle = "0.2"

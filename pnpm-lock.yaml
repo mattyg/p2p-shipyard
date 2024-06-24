@@ -24,8 +24,8 @@ importers:
   packages/frame:
     dependencies:
       '@holochain/client':
-        specifier: ^0.17.0-rc
-        version: 0.17.0-rc.0
+        specifier: ^0.17.0
+        version: 0.17.0
       '@msgpack/msgpack':
         specifier: ^3.0.0-beta2
         version: 3.0.0-beta2
@@ -55,17 +55,14 @@ importers:
   packages/signer:
     dependencies:
       '@holochain/client':
-        specifier: ^0.17.0-rc
-        version: 0.17.0-rc.0
+        specifier: ^0.17.0
+        version: 0.17.0
       '@msgpack/msgpack':
         specifier: ^3.0.0-beta2
         version: 3.0.0-beta2
       '@tauri-apps/api':
         specifier: ^2.0.0-beta.13
         version: 2.0.0-beta.13
-      '@tauri-apps/plugin-log':
-        specifier: ^2.0.0-beta.6
-        version: 2.0.0-beta.6
       rollup-plugin-analyzer:
         specifier: ^4.0.0
         version: 4.0.0
@@ -479,8 +476,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@holochain/client@0.17.0-rc.0':
-    resolution: {integrity: sha512-DyoAe6Gf7Atpn5f+WO8Lj08G4Vfu5p5U9PuUlOkm5gjfwTxHU6rOTAmdEWz1QcA2Yne3cmUj+qqpofTSVqB/Eg==}
+  '@holochain/client@0.17.0':
+    resolution: {integrity: sha512-jDIv2kjfa+oBiQO7wjl09ELaPbVFoNu7f+2Sk3aLdf5AfVE/O8C6iZFGtF1huLKDJM8LPjRlKrt/Obt5ThMhbQ==}
     engines: {node: '>=18.0.0 || >=20.0.0'}
 
   '@holochain/serialization@0.1.0-beta-rc.3':
@@ -1610,7 +1607,7 @@ snapshots:
   '@esbuild/win32-x64@0.20.2':
     optional: true
 
-  '@holochain/client@0.17.0-rc.0':
+  '@holochain/client@0.17.0':
     dependencies:
       '@bitgo/blake2b': 3.2.4
       '@holochain/serialization': 0.1.0-beta-rc.3

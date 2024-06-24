@@ -8,10 +8,9 @@
     "prepare": "pnpm build"
   },
   "dependencies": {
-    "@holochain/client": "^0.17.0-rc",
+    "@holochain/client": "^0.17.0",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@tauri-apps/api": "^2.0.0-beta.13",
-    "@tauri-apps/plugin-log": "^2.0.0-beta.6",
     "rollup-plugin-analyzer": "^4.0.0"
   },
   "devDependencies": {

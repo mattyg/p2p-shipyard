@@ -10,6 +10,6 @@ let
   };
   cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
     pname = "tauri-happ";
-    version = "for-holochain-0.3.1-rc";
+    version = "for-holochain-0.3.1";
   });
 in cargoArtifacts
