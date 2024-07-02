@@ -1,0 +1,20 @@
+{
+  "productName": "hc-embark",
+  "version": "0.0.1",
+  "identifier": "studio.darksoil.hc-embark",
+  "build": {
+    "devUrl": "http://localhost:1420"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "security": {
+      "csp": null
+    },
+    "windows": []
+  },
+  "bundle": {
+    "active": false,
+    "targets": [],
+    "icon": ["icons/32x32.png"]
+  }
+}
