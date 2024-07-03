@@ -2993,6 +2993,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap 4.5.7",
+ "holochain_client",
  "holochain_types",
  "lair_keystore",
  "log",

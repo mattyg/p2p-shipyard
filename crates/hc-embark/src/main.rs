@@ -1,9 +1,9 @@
 use anyhow::anyhow;
 use clap::Parser;
+use holochain_client::AppInfo;
 use holochain_types::{
     app::InstallAppPayload,
     dna::{AgentPubKey, AgentPubKeyB64},
-    prelude::AppBundle,
 };
 use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
@@ -46,8 +46,6 @@ struct Args {
     #[clap(long)]
     pub conductor_dir: Option<PathBuf>,
 }
-
-const APP_ID: &'static str = "example";
 
 fn vec_to_locked(mut pass_tmp: Vec<u8>) -> std::io::Result<BufRead> {
     match BufWrite::new_mem_locked(pass_tmp.len()) {
@@ -110,7 +108,7 @@ pub fn run() {
             };
             let handle = app.handle();
             let result: anyhow::Result<()> = tauri::async_runtime::block_on(async move {
-                setup(
+                let app_info = setup(
                     handle.clone(),
                     args.happ_bundle_path,
                     agent_key,
@@ -121,7 +119,12 @@ pub fn run() {
 
                 handle
                     .holochain()?
-                    .main_window_builder(String::from("main"), false, Some(APP_ID.into()), None)
+                    .main_window_builder(
+                        String::from("main"),
+                        false,
+                        Some(app_info.installed_app_id),
+                        None,
+                    )
                     .await?
                     .build()?;
 
@@ -141,7 +144,7 @@ async fn setup(
     agent_key: Option<AgentPubKey>,
     membrane_proofs: HashMap<String, std::sync::Arc<holochain_types::prelude::SerializedBytes>>,
     network_seed: Option<String>,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<AppInfo> {
     let admin_ws = handle.holochain()?.admin_websocket().await?;
     let agent_key = match agent_key {
         Some(agent_key) => agent_key,
@@ -170,7 +173,7 @@ async fn setup(
         .await
         .map_err(|err| anyhow!("Error enabling the app: {err:?}"))?;
 
-    Ok(())
+    Ok(response.app)
 }
 
 fn main() {
