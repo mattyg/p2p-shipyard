@@ -64,8 +64,7 @@ fn vec_to_locked(mut pass_tmp: Vec<u8>) -> std::io::Result<BufRead> {
     }
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+fn main() {
     let args = Args::parse();
 
     let conductor_dir = match args.conductor_dir {
@@ -174,8 +173,4 @@ async fn setup(
         .map_err(|err| anyhow!("Error enabling the app: {err:?}"))?;
 
     Ok(response.app)
-}
-
-fn main() {
-    run()
 }

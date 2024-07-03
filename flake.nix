@@ -102,6 +102,40 @@
               nativeBuildInputs =
                 tauriHappDeps.nativeBuildInputs { inherit pkgs lib; };
             };
+          filterTauriSources = { lib }:
+            orig_path: type:
+            let
+              path = (toString orig_path);
+              base = baseNameOf path;
+              parentDir = baseNameOf (dirOf path);
+
+              matchesSuffix = lib.any (suffix: lib.hasSuffix suffix base) [
+                # Keep rust sources
+                ".rs"
+                # Keep all toml files as they are commonly used to configure other
+                # cargo-based tools
+                ".toml"
+                # Keep icons
+                ".png"
+              ];
+
+              # Cargo.toml already captured above
+              isCargoFile = base == "Cargo.lock";
+
+              isTauriConfigFile = base == "tauri.conf.json";
+
+              # .cargo/config.toml already captured above
+              isCargoConfig = parentDir == ".cargo" && base == "config";
+            in type == "directory" || matchesSuffix || isCargoFile
+            || isCargoConfig || isTauriConfigFile;
+          cleanTauriSources = { lib }:
+            src:
+            lib.cleanSourceWith {
+              src = lib.cleanSource src;
+              filter = filterTauriSources { inherit lib; };
+
+              name = "tauri-workspace";
+            };
 
           # TODO
           # tauriApp = {pkgs,lib}: ;
