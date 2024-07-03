@@ -123,11 +123,12 @@
               isCargoFile = base == "Cargo.lock";
 
               isTauriConfigFile = base == "tauri.conf.json";
+              isSignerFile = base == "zome-call-signer.js";
 
               # .cargo/config.toml already captured above
               isCargoConfig = parentDir == ".cargo" && base == "config";
             in type == "directory" || matchesSuffix || isCargoFile
-            || isCargoConfig || isTauriConfigFile;
+            || isCargoConfig || isTauriConfigFile || isSignerFile;
           cleanTauriSources = { lib }:
             src:
             lib.cleanSourceWith {
