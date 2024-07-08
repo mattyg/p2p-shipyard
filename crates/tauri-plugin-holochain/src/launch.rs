@@ -9,11 +9,11 @@ use holochain_client::AdminWebsocket;
 use crate::{filesystem::FileSystem, HolochainPluginConfig, HolochainRuntime};
 
 fn override_gossip_arc_clamping() -> Option<String> {
-    if cfg!(mobile) {
-        Some(String::from("empty"))
-    } else {
+    //if cfg!(mobile) {
+    //    Some(String::from("empty"))
+    //} else {
         None
-    }
+    //}
 }
 
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);

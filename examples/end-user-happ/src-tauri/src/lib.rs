@@ -61,25 +61,21 @@ fn signal_url() -> Url2 {
 }
 
 fn holochain_dir() -> PathBuf {
-    if tauri::is_dev() {
-        let tmp_dir =
-            tempdir::TempDir::new("example-forum").expect("Could not create temporary directory");
-
-        // Convert `tmp_dir` into a `Path`, destroying the `TempDir`
-        // without deleting the directory.
-        let tmp_path = tmp_dir.into_path();
-        tmp_path
+    let app_data_type = if tauri::is_dev() {
+        app_dirs2::AppDataType::UserCache
     } else {
-        app_dirs2::app_root(
-            app_dirs2::AppDataType::UserData,
-            &app_dirs2::AppInfo {
-                name: "example-forum",
-                author: std::env!("CARGO_PKG_AUTHORS"),
-            },
-        )
-        .expect("Could not get app root")
-        .join("holochain")
-    }
+        app_dirs2::AppDataType::UserData
+    };
+
+    app_dirs2::app_root(
+        app_data_type,
+        &app_dirs2::AppInfo {
+            name: "example-forum",
+            author: std::env!("CARGO_PKG_AUTHORS"),
+        },
+    )
+    .expect("Could not get app root")
+    .join("holochain")
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
