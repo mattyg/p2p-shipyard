@@ -10,8 +10,8 @@ jobs:
       contents: write
     runs-on: ubuntu-22.04
     outputs:
-      releaseId: ${{ steps.create-release.outputs.id }}
-      appVersion: ${{ steps.version.outputs.APP_VERSION }}
+      releaseId: $\{{ steps.create-release.outputs.id }}
+      appVersion: $\{{ steps.version.outputs.APP_VERSION }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # Checks out a copy of your repository on the ubuntu-latest machine
@@ -50,8 +50,8 @@ jobs:
           allowUpdates: true
           artifacts: "workdir/{{kebab_case app_name}}.happ"
           body: "See assets below to download and install this version."
-          name: {{title_case app_name}} v${{ steps.version.outputs.APP_VERSION }}
-          tag: v${{ steps.version.outputs.APP_VERSION }}
+          name: {{title_case app_name}} v$\{{ steps.version.outputs.APP_VERSION }}
+          tag: v$\{{ steps.version.outputs.APP_VERSION }}
           prerelease: true
           draft: true
 
