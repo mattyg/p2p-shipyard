@@ -37,6 +37,6 @@ jobs:
         env:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
-          nix build -L .#hc-embark
-          cachix push darksoil-studio $(nix path-info --accept-flake-config .#hc-embark)
-          cachix pin darksoil-studio hc-progenitor $(nix path-info --accept-flake-config .#hc-embark)
+          nix build --accept-flake-config -L .#hc-embark
+          cachix push darksoil-studio $(nix --accept-flake-config path-info --accept-flake-config .#hc-embark)
+          cachix pin darksoil-studio hc-progenitor $(nix --accept-flake-config path-info --accept-flake-config .#hc-embark)

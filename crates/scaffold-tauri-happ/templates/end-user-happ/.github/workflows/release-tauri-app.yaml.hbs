@@ -37,7 +37,7 @@ jobs:
       - name: Install and test
         run: |
           nix-store --gc
-          nix develop --command bash -c "{{lower_case package_manager}} install && {{lower_case package_manager}} run build:happ"
+          nix develop --accept-flake-config --command bash -c "{{lower_case package_manager}} install && {{lower_case package_manager}} run build:happ"
 
       - name: Retrieve version
         run: |
