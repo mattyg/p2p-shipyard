@@ -129,7 +129,7 @@
               isCargoConfig = parentDir == ".cargo" && base == "config";
             in type == "directory" || matchesSuffix || isCargoFile
             || isCargoConfig || isTauriConfigFile || isSignerFile;
-          cleanTauriSources = { lib }:
+          cleanTauriSource = { lib }:
             src:
             lib.cleanSourceWith {
               src = lib.cleanSource src;

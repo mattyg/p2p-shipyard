@@ -13,7 +13,7 @@
 
       commonArgs = {
         src =
-          self.lib.cleanTauriSources { inherit lib; } (craneLib.path ../../.);
+          (self.lib.cleanTauriSource { inherit lib; }) (craneLib.path ../../.);
         doCheck = false;
         buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
           inherit pkgs lib;

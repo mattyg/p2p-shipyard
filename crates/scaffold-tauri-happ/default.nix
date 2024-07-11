@@ -12,7 +12,7 @@
       crate = cargoToml.package.name;
 
       commonArgs = {
-        src = craneLib.cleanCargoSource (craneLib.path ../../.);
+        src = (self.lib.cleanTauriSource { inherit lib; }) (craneLib.path ../../.);
         doCheck = false;
         buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
           inherit pkgs lib;
