@@ -25,6 +25,7 @@
           });
       };
       cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
+        cargoArtifacts = (self.lib.tauriHappCargoArtifacts { inherit pkgs lib; });
         version = "workspace";
         pname = "workspace";
       });
