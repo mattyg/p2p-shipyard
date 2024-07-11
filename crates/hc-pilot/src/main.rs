@@ -71,7 +71,7 @@ fn main() {
         Some(c) => c,
         None => {
             let tmp_dir =
-                tempdir::TempDir::new("hc-embark").expect("Could not create temporary directory");
+                tempdir::TempDir::new("hc-pilot").expect("Could not create temporary directory");
             tmp_dir.into_path()
         }
     };

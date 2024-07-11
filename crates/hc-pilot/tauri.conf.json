@@ -1,7 +1,7 @@
 {
-  "productName": "hc-embark",
+  "productName": "hc-pilot",
   "version": "0.0.1",
-  "identifier": "studio.darksoil.hc-embark",
+  "identifier": "studio.darksoil.hc-pilot",
   "build": {
     "devUrl": "http://localhost:1420"
   },

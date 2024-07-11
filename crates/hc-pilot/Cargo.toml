@@ -1,5 +1,5 @@
 [package]
-name = "hc-embark"
+name = "hc-pilot"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,7 +13,7 @@ tauri-plugin-holochain = { path = "../tauri-plugin-holochain" }
 holochain_types = "0.3.1"
 holochain_client = "0.5.0-rc"
 
-clap = {version = "4.5.4", features = ["derive"]}
+clap = { version = "4.5.4", features = ["derive"] }
 log = "0.4"
 url2 = "0.0.6"
 anyhow = "1"
@@ -23,4 +23,3 @@ lair_keystore = { version = "0.4.0" }
 [build-dependencies]
 tauri-build = { version = "2.0.0-beta.17", default-features = false, features = [
 ] }
-

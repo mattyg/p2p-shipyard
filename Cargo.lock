@@ -2981,7 +2981,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "hc-embark"
+name = "hc-pilot"
 version = "0.1.0"
 dependencies = [
  "anyhow",

@@ -175,7 +175,7 @@
       imports = [
         ./crates/scaffold-tauri-happ/default.nix
         ./crates/scaffold-holochain-runtime/default.nix
-        ./crates/hc-embark/default.nix
+        ./crates/hc-pilot/default.nix
         ./nix/modules/custom-go-compiler.nix
         ./nix/modules/tauri-cli.nix
       ];

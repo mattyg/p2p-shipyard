@@ -2,7 +2,7 @@
 
 {
   perSystem = { inputs', pkgs, system, lib, ... }: {
-    packages.hc-embark = let
+    packages.hc-pilot = let
       craneLib = inputs.crane.mkLib pkgs;
 
       cratePath = ./.;
