@@ -12,14 +12,16 @@ use tauri::{
     http::response,
     ipc::CapabilityBuilder,
     plugin::{Builder, TauriPlugin},
-    AppHandle, Manager, Runtime, WebviewUrl, WebviewWindowBuilder,
+    AppHandle, Emitter, Manager, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
 
 use holochain::{
     conductor::ConductorHandle,
     prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName},
 };
-use holochain_client::{AdminWebsocket, AppInfo, AppWebsocket, InstalledAppId, LairAgentSigner};
+use holochain_client::{
+    AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, LairAgentSigner,
+};
 use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
 
 mod commands;
@@ -299,12 +301,14 @@ impl<R: Runtime> HolochainPlugin<R> {
     /// * `app_id` - the app id to give to the installed app
     /// * `web_app_bundle` - the web-app bundle to install
     /// * `membrane_proofs` - the input membrane proofs for the app
+    /// * `agent` - the agent to install the app for
     /// * `network_seed` - the network seed for the app
     pub async fn install_web_app(
         &self,
         app_id: InstalledAppId,
         web_app_bundle: WebAppBundle,
         membrane_proofs: HashMap<RoleName, MembraneProof>,
+        agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
         self.holochain_runtime
@@ -319,6 +323,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             app_id.clone(),
             web_app_bundle,
             membrane_proofs,
+            agent,
             network_seed,
         )
         .await?;
@@ -333,12 +338,14 @@ impl<R: Runtime> HolochainPlugin<R> {
     /// * `app_id` - the app id to give to the installed app
     /// * `app_bundle` - the web-app bundle to install
     /// * `membrane_proofs` - the input membrane proofs for the app
+    /// * `agent` - the agent to install the app for
     /// * `network_seed` - the network seed for the app
     pub async fn install_app(
         &self,
         app_id: InstalledAppId,
         app_bundle: AppBundle,
         membrane_proofs: HashMap<RoleName, MembraneProof>,
+        agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
         let admin_ws = self.admin_websocket().await?;
@@ -353,6 +360,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             app_id.clone(),
             app_bundle,
             membrane_proofs,
+            agent,
             network_seed,
         )
         .await?;

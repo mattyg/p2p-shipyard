@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig};
 use url2::Url2;
-use tauri::AppHandle;
+use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
 
@@ -144,6 +144,7 @@ async fn setup(handle: AppHandle) -> anyhow::Result<()> {
                 String::from(APP_ID),
                 example_happ(),
                 HashMap::new(),
+                None,
                 None,
             )
             .await?;
