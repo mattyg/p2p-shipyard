@@ -1,12 +1,22 @@
 use std::{sync::Arc, time::Duration};
 
 use async_std::sync::Mutex;
+use tx5_signal_srv::SrvHnd;
+use url2::url2;
 
 use hc_seed_bundle::dependencies::sodoken::BufRead;
 use holochain::conductor::Conductor;
 use holochain_client::AdminWebsocket;
 
-use crate::{filesystem::FileSystem, HolochainPluginConfig, HolochainRuntime};
+use crate::{
+    filesystem::FileSystem,
+    launch::signal::{can_connect_to_signal_server, run_local_signal_service},
+    HolochainPluginConfig, HolochainRuntime,
+};
+
+mod mdns;
+mod signal;
+use mdns::spawn_mdns_bootstrap;
 
 fn override_gossip_arc_clamping() -> Option<String> {
     if cfg!(mobile) {
@@ -32,12 +42,25 @@ pub async fn launch_holochain_runtime(
     let filesystem = FileSystem::new(config.holochain_dir).await?;
     let admin_port = portpicker::pick_unused_port().expect("No ports free");
 
+    let mut signal_urls = vec![config.signal_url.clone()];
+    let mut signal_handle: Option<SrvHnd> = None;
+
+    if let Err(_) = can_connect_to_signal_server(config.signal_url.clone()).await {
+        let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
+        let port = portpicker::pick_unused_port().expect("No ports free");
+        signal_handle = Some(run_local_signal_service(my_local_ip.to_string(), port).await?);
+
+        let local_signal_url = url2!("ws://{my_local_ip}:{port}");
+
+        signal_urls = vec![local_signal_url.clone(), config.signal_url];
+    }
+
     let config = crate::config::conductor_config(
         &filesystem,
         admin_port,
         filesystem.keystore_dir().into(),
         config.bootstrap_url,
-        config.signal_url,
+        signal_urls,
         override_gossip_arc_clamping(),
     );
 
@@ -50,6 +73,8 @@ pub async fn launch_holochain_runtime(
     wait_until_admin_ws_is_available(admin_port).await?;
     log::info!("Connected to the admin websocket");
 
+    spawn_mdns_bootstrap(admin_port).await?;
+
     // *lock = Some(info.clone());
 
     Ok(HolochainRuntime {
@@ -57,6 +82,7 @@ pub async fn launch_holochain_runtime(
         apps_websockets_auths: Arc::new(Mutex::new(Vec::new())),
         admin_port,
         conductor_handle,
+        _signal_handle: signal_handle,
     })
 }
 

@@ -34,6 +34,7 @@ mod launch;
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
 use filesystem::{AppBundleStore, BundleStore, FileSystem};
+use tx5_signal_srv::SrvHnd;
 use url2::Url2;
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
@@ -57,6 +58,7 @@ pub struct HolochainRuntime {
     pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
     pub(crate) conductor_handle: ConductorHandle,
+    pub(crate) _signal_handle: Option<SrvHnd>,
 }
 
 fn happ_origin(app_id: &String) -> Url2 {

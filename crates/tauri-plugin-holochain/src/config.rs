@@ -6,8 +6,7 @@ use holochain::{
         interface::InterfaceDriver,
     },
     prelude::dependencies::kitsune_p2p_types::config::{
-        tuning_params_struct::KitsuneP2pTuningParams, KitsuneP2pConfig, NetworkType,
-        TransportConfig,
+        tuning_params_struct::KitsuneP2pTuningParams, KitsuneP2pConfig, TransportConfig,
     },
 };
 use holochain_keystore::paths::KeystorePath;
@@ -21,7 +20,7 @@ pub fn conductor_config(
     admin_port: u16,
     lair_root: KeystorePath,
     bootstrap_url: Url2,
-    signal_url: Url2,
+    signal_urls: Vec<Url2>,
     override_gossip_arc_clamping: Option<String>,
 ) -> ConductorConfig {
     let mut config = ConductorConfig::default();
@@ -43,10 +42,11 @@ pub fn conductor_config(
     network_config.bootstrap_service = Some(bootstrap_url);
 
     // tx5
-    network_config.transport_pool.push(TransportConfig::WebRTC {
-        signal_url: signal_url.to_string(),
-    });
-
+    for signal_url in signal_urls {
+        network_config.transport_pool.push(TransportConfig::WebRTC {
+            signal_url: signal_url.to_string(),
+        });
+    }
     config.network = network_config;
 
     // TODO: uncomment when we can set a custom origin for holochain-client-rust
