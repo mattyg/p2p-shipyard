@@ -9,7 +9,7 @@ use holochain::prelude::{
     RoleName, UpdateCoordinatorsPayload, ZomeDependency, ZomeError, ZomeLocation, ZomeManifest,
 };
 use holochain_client::{
-    AdminWebsocket, AppInfo, ConductorApiError, InstallAppPayload, InstalledAppId,
+    AdminWebsocket, AgentPubKey, AppInfo, ConductorApiError, InstallAppPayload, InstalledAppId,
 };
 use holochain_conductor_api::{AppInfoStatus, CellInfo};
 use holochain_types::web_app::WebAppBundle;
@@ -22,6 +22,7 @@ pub async fn install_web_app(
     app_id: String,
     bundle: WebAppBundle,
     membrane_proofs: HashMap<RoleName, MembraneProof>,
+    agent: Option<AgentPubKey>,
     network_seed: Option<NetworkSeed>,
 ) -> crate::Result<AppInfo> {
     let app_info = install_app(
@@ -29,6 +30,7 @@ pub async fn install_web_app(
         app_id.clone(),
         bundle.happ_bundle().await?,
         membrane_proofs,
+        agent,
         network_seed,
     )
     .await?;
@@ -43,14 +45,18 @@ pub async fn install_app(
     app_id: String,
     bundle: AppBundle,
     membrane_proofs: HashMap<RoleName, MembraneProof>,
+    agent: Option<AgentPubKey>,
     network_seed: Option<NetworkSeed>,
 ) -> crate::Result<AppInfo> {
     log::info!("Installing app {}", app_id);
 
-    let agent_key = admin_ws
-        .generate_agent_pub_key()
-        .await
-        .map_err(|err| crate::Error::ConductorApiError(err))?;
+    let agent_key = match agent {
+        Some(agent) => agent,
+        None => admin_ws
+            .generate_agent_pub_key()
+            .await
+            .map_err(|err| crate::Error::ConductorApiError(err))?,
+    };
 
     let app_info = admin_ws
         .install_app(InstallAppPayload {

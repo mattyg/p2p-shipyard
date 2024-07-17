@@ -2,7 +2,7 @@
 
 {
   perSystem = { inputs', pkgs, system, lib, ... }: {
-    packages.scaffold-tauri-happ = let
+    packages.hc-pilot = let
       craneLib = inputs.crane.mkLib pkgs;
 
       cratePath = ./.;
@@ -12,7 +12,8 @@
       crate = cargoToml.package.name;
 
       commonArgs = {
-        src = craneLib.path ../../.;
+        src =
+          (self.lib.cleanTauriSource { inherit lib; }) (craneLib.path ../../.);
         doCheck = false;
         buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
           inherit pkgs lib;
@@ -22,6 +23,7 @@
           ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
             inherit pkgs lib;
           });
+
         # TODO: remove this if possible
         postPatch = ''
           mkdir -p "$TMPDIR/nix-vendor"

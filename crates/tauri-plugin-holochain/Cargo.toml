@@ -20,14 +20,21 @@ holochain_types = "0.3.1"
 holochain_keystore = "0.3.1"
 holochain_conductor_api = "0.3.1"
 
+kitsune_p2p_mdns = "0.3.1"
+kitsune_p2p_types = "0.3.1"
+
+tx5-signal-srv = "0.0.9-alpha"
+tx5-signal = "0.0.9-alpha"
+
 # Lair dependencies
 hc_seed_bundle = "0.2"
 lair_keystore = "0.4.0"
 lair_keystore_api = "0.4.0"
 
 # Holochain client
-holochain_client = { version = "0.5.0-rc.2" }
+holochain_client = { git = "https://github.com/guillemcordoba/holochain-client-rust", branch = "main" }
 
+local-ip-address = "0.6"
 serde_json = "1"
 sha256 = "1"
 log = "0.4"
@@ -50,6 +57,7 @@ futures = "0.3"
 either = "*"
 tokio = "1"
 one_err = "0"
+base64 = "0.22"
 
 [build-dependencies]
 tauri-plugin = { version = "2.0.0-beta", features = ["build"] }
