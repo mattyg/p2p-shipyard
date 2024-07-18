@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig};
 use url2::Url2;
-use tauri::AppHandle;
+use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
 
@@ -80,6 +80,12 @@ fn holochain_dir() -> PathBuf {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let mut context = tauri::generate_context!();
+    if tauri::is_dev() {
+        let identifier = context.config().identifier.clone();
+        context.config_mut().identifier = format!("{}{}", identifier, uuid::Uuid::new_v4());
+    }
+    
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -113,7 +119,7 @@ pub fn run() {
 
             Ok(())
         })
-        .run(tauri::generate_context!())
+        .run(context)
         .expect("error while running tauri application");
 }
 
@@ -140,6 +146,7 @@ async fn setup(handle: AppHandle) -> anyhow::Result<()> {
                 String::from(APP_ID),
                 example_happ(),
                 HashMap::new(),
+                None,
                 None,
             )
             .await?;
