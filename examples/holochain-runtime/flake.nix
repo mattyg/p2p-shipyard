@@ -2,7 +2,7 @@
   description = "Template for Holochain app development";
 
   inputs = {
-    versions.url = "github:holochain/holochain?dir=versions/0_3_rc";
+    versions.url = "github:holochain/holochain?dir=versions/0_3";
 
     holochain.url = "github:holochain/holochain";
     holochain.inputs.versions.follows = "versions";
@@ -10,7 +10,7 @@
     nixpkgs.follows = "holochain/nixpkgs";
     flake-parts.follows = "holochain/flake-parts";
 
-    p2p-shipyard.url = "/home/guillem/projects/darksoil/p2p-shipyard";
+    p2p-shipyard.url = "path:../..";
   };
 
   outputs = inputs:
