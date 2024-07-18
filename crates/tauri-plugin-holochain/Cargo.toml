@@ -32,7 +32,7 @@ lair_keystore = "0.4.0"
 lair_keystore_api = "0.4.0"
 
 # Holochain client
-holochain_client = { git = "https://github.com/guillemcordoba/holochain-client-rust", branch = "main" }
+holochain_client = "0.5"
 
 local-ip-address = "0.6"
 serde_json = "1"
