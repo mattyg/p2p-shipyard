@@ -3,11 +3,11 @@ set -e
 
 DIR=$(pwd)
 
-nix shell --override-input versions "github:holochain/holochain?dir=versions/0_3_rc" github:holochain/holochain#hc-scaffold --command bash -c "
+nix shell --override-input versions "github:holochain/holochain?dir=versions/0_3" github:holochain/holochain#hc-scaffold --command bash -c "
 cd /tmp
 rm -rf forum-scaffold-tauri-happ
 
-hc-scaffold --template lit web-app forum-scaffold-tauri-happ --setup-nix true -F
+hc-scaffold --template lit web-app forum-scaffold-tauri-happ --setup-nix true -F --package-manager npm
 cd /tmp/forum-scaffold-tauri-happ
 nix flake update
 nix develop --command bash -c \"npm i && hc scaffold dna forum && hc scaffold zome posts --integrity dnas/forum/zomes/integrity/ --coordinator dnas/forum/zomes/coordinator/\"
