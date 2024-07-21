@@ -2,6 +2,7 @@
 
 {
   perSystem = { inputs', pkgs, system, lib, ... }: {
+
     packages.scaffold-tauri-happ = let
       craneLib = inputs.crane.mkLib pkgs;
 
@@ -12,7 +13,7 @@
       crate = cargoToml.package.name;
 
       commonArgs = {
-        src = craneLib.path ../../.;
+        src = craneLib.cleanCargoSource (craneLib.path ../../.);
         doCheck = false;
         buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
           inherit pkgs lib;
@@ -22,14 +23,7 @@
           ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
             inherit pkgs lib;
           });
-        # TODO: remove this if possible
-        postPatch = ''
-          mkdir -p "$TMPDIR/nix-vendor"
-          cp -Lr "$cargoVendorDir" -T "$TMPDIR/nix-vendor"
-          sed -i "s|$cargoVendorDir|$TMPDIR/nix-vendor/|g" "$TMPDIR/nix-vendor/config.toml"
-          chmod -R +w "$TMPDIR/nix-vendor"
-          cargoVendorDir="$TMPDIR/nix-vendor"
-        '';
+        cargoExtraArgs = "--locked --package scaffold-tauri-happ";
       };
     in craneLib.buildPackage (commonArgs // {
       pname = crate;
