@@ -8,7 +8,7 @@ rm -rf /tmp/test-scaffold-holochain-runtime
 nix run --accept-flake-config .#scaffold-holochain-runtime -- --name test-scaffold-holochain-runtime --path /tmp --bundle-identifier org.myorg.testscaffoldholochainruntime
 cd /tmp/test-scaffold-holochain-runtime
 
-nix flake update
+nix flake update --override-input p2p-shipyard $DIR
 nix develop --override-input p2p-shipyard $DIR --command bash -c "
 set -e
 npm i
