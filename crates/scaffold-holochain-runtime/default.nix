@@ -13,7 +13,8 @@
       crate = cargoToml.package.name;
 
       commonArgs = {
-        src = craneLib.path ../../.;
+        src = (self.lib.cleanScaffoldingSource { inherit lib; })
+          (craneLib.path ../../.);
         doCheck = false;
         buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
           inherit pkgs lib;
@@ -23,14 +24,7 @@
           ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
             inherit pkgs lib;
           });
-        # TODO: remove this if possible
-        postPatch = ''
-          mkdir -p "$TMPDIR/nix-vendor"
-          cp -Lr "$cargoVendorDir" -T "$TMPDIR/nix-vendor"
-          sed -i "s|$cargoVendorDir|$TMPDIR/nix-vendor/|g" "$TMPDIR/nix-vendor/config.toml"
-          chmod -R +w "$TMPDIR/nix-vendor"
-          cargoVendorDir="$TMPDIR/nix-vendor"
-        '';
+        cargoExtraArgs = "--locked --package scaffold-holochain-runtime";
       };
     in craneLib.buildPackage (commonArgs // {
       pname = crate;

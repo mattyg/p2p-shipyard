@@ -39,25 +39,17 @@ jobs:
         with:
           name: darksoil-studio
 
-      - name: Build scaffold-holochain-runtime
-        env:
-          CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
-        run: |
-          nix build --accept-flake-config -L .#scaffold-holochain-runtime
-          cachix push darksoil-studio $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
-
       - name: Test scaffold-holochain-runtime
         run: |
           cargo test -p scaffold-holochain-runtime
           sh ./crates/scaffold-holochain-runtime/run_test.sh
-
 
       - name: Cache scaffold-holochain-runtime
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
         env:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
-          nix build --accept-flake-config -L .#scaffold-holochain-runtime
+          cachix watch-exec darksoil-studio -- nix build --accept-flake-config -L .#scaffold-holochain-runtime
           cachix push darksoil-studio $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
 
       - name: Pin scaffold-holochain-runtime
@@ -65,7 +57,7 @@ jobs:
         env:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
-          nix build --accept-flake-config -L .#scaffold-holochain-runtime
+          cachix watch-exec darksoil-studio -- nix build --accept-flake-config -L .#scaffold-holochain-runtime
           cachix push darksoil-studio $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
           cachix pin darksoil-studio scaffold-holochain-runtime $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
 
