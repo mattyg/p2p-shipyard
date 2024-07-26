@@ -8520,7 +8520,9 @@ dependencies = [
 name = "tauri-plugin-holochain"
 version = "0.0.0"
 dependencies = [
+ "anyhow",
  "async-std",
+ "async-trait",
  "base64 0.22.1",
  "bzip2",
  "either",

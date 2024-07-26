@@ -58,6 +58,8 @@ either = "*"
 tokio = "1"
 one_err = "0"
 base64 = "0.22"
+anyhow = "1"
+async-trait = "0.1"
 
 [build-dependencies]
 tauri-plugin = { version = "2.0.0-beta", features = ["build"] }
