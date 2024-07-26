@@ -7,6 +7,7 @@ use std::{
 use async_std::sync::Mutex;
 use hc_seed_bundle::dependencies::sodoken::BufRead;
 use http_server::{pong_iframe, read_asset};
+use lair_signer::LairAgentSignerWithProvenance;
 use launch::launch_holochain_runtime;
 use tauri::{
     http::response,
@@ -19,23 +20,22 @@ use holochain::{
     conductor::ConductorHandle,
     prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName},
 };
-use holochain_client::{
-    AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, LairAgentSigner,
-};
+use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId};
 use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
+use tx5_signal_srv::SrvHnd;
+use url2::Url2;
 
 mod commands;
 mod config;
 mod error;
 mod filesystem;
 mod http_server;
+mod lair_signer;
 mod launch;
 
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
 use filesystem::{AppBundleStore, BundleStore, FileSystem};
-use tx5_signal_srv::SrvHnd;
-use url2::Url2;
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
 
@@ -283,7 +283,7 @@ impl<R: Runtime> HolochainPlugin<R> {
         let app_ws = AppWebsocket::connect(
             format!("localhost:{}", app_websocket_auth.app_websocket_port),
             app_websocket_auth.token,
-            Arc::new(LairAgentSigner::new(Arc::new(
+            Arc::new(LairAgentSignerWithProvenance::new(Arc::new(
                 self.holochain_runtime
                     .conductor_handle
                     .keystore()
