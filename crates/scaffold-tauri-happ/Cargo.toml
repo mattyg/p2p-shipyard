@@ -17,15 +17,15 @@ path = "src/bin/main.rs"
 anyhow = "1.0.81"
 ignore = "0.4"
 serde_json = {version ="1", features = ["std", "preserve_order"]}
-serde_yaml = "=0.9.33"
+serde_yaml = {version="0.9.34+deprecated"}
 serde = "1"
 clap = {version = "4.5.4", features = ["derive"]}
-nix_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="main"}
-rust_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="main"}
-file_tree_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="main"}
-npm_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="main"}
-holochain_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="main"}
-templates_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="main"}
+nix_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="build/serde_yaml-version"}
+rust_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="build/serde_yaml-version"}
+file_tree_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="build/serde_yaml-version"}
+npm_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="build/serde_yaml-version"}
+holochain_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="build/serde_yaml-version"}
+templates_scaffolding_utils = { git ="https://github.com/holochain-open-dev/infrastructure", branch ="build/serde_yaml-version"}
 include_dir = "0.7.3"
 thiserror = "1"
 handlebars = "5.1.0"
