@@ -4,6 +4,7 @@ let
   commonArgs = {
     inherit src buildInputs nativeBuildInputs;
     CARGO_PROFILE = "release";
+    cargoLock = ./reference-tauri-happ/Cargo.lock;
 
     doCheck = false;
     cargoExtraArgs = "--tests -p reference-tauri-happ";
