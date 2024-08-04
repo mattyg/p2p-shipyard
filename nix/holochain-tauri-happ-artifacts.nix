@@ -1,10 +1,9 @@
-{ craneLib, buildInputs, nativeBuildInputs, debug ? false }:
+{ craneLib, buildInputs, nativeBuildInputs }:
 let
   src = craneLib.cleanCargoSource (craneLib.path ./..);
   commonArgs = {
     inherit src buildInputs nativeBuildInputs;
     CARGO_PROFILE = "release";
-    cargoLock = ./reference-tauri-happ/Cargo.lock;
 
     doCheck = false;
     cargoExtraArgs = "--tests -p reference-tauri-happ";

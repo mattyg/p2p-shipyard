@@ -2266,7 +2266,7 @@ dependencies = [
 [[package]]
 name = "file_tree_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#75bb179e00ea0426b623962910c1dc6f4bc46d73"
+source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#6f307a611d0d9bd1e4dd1ad9b99a6a16184b13c8"
 dependencies = [
  "build-fs-tree",
  "ignore",
@@ -3571,7 +3571,7 @@ dependencies = [
 [[package]]
 name = "holochain_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#75bb179e00ea0426b623962910c1dc6f4bc46d73"
+source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#6f307a611d0d9bd1e4dd1ad9b99a6a16184b13c8"
 dependencies = [
  "dialoguer",
  "file_tree_utils",
@@ -5592,7 +5592,7 @@ dependencies = [
 [[package]]
 name = "nix_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#75bb179e00ea0426b623962910c1dc6f4bc46d73"
+source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#6f307a611d0d9bd1e4dd1ad9b99a6a16184b13c8"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -5647,7 +5647,7 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 [[package]]
 name = "npm_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#75bb179e00ea0426b623962910c1dc6f4bc46d73"
+source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#6f307a611d0d9bd1e4dd1ad9b99a6a16184b13c8"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -7141,6 +7141,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "reference-tauri-happ"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "app_dirs2",
+ "holochain_client",
+ "holochain_types",
+ "lair_keystore",
+ "log",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-holochain",
+ "tauri-plugin-log",
+ "tempdir",
+ "url2",
+]
+
+[[package]]
 name = "regalloc2"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7502,7 +7520,7 @@ dependencies = [
 [[package]]
 name = "rust_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#75bb179e00ea0426b623962910c1dc6f4bc46d73"
+source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#6f307a611d0d9bd1e4dd1ad9b99a6a16184b13c8"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -9069,7 +9087,7 @@ dependencies = [
 [[package]]
 name = "templates_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#75bb179e00ea0426b623962910c1dc6f4bc46d73"
+source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#6f307a611d0d9bd1e4dd1ad9b99a6a16184b13c8"
 dependencies = [
  "anyhow",
  "build-fs-tree",
