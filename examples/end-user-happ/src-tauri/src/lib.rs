@@ -97,12 +97,6 @@ fn holochain_dir() -> PathBuf {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let mut context = tauri::generate_context!();
-    if tauri::is_dev() {
-        let identifier = context.config().identifier.clone();
-        context.config_mut().identifier = format!("{}{}", identifier, uuid::Uuid::new_v4());
-    }
-    
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -136,7 +130,7 @@ pub fn run() {
 
             Ok(())
         })
-        .run(context)
+        .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
