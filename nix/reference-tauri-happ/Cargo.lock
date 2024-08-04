@@ -2126,24 +2126,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "example"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "app_dirs2",
- "holochain_client",
- "holochain_types",
- "lair_keystore",
- "log",
- "tauri",
- "tauri-build",
- "tauri-plugin-holochain",
- "tauri-plugin-log",
- "tempdir",
- "url2",
-]
-
-[[package]]
 name = "fallible-iterator"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6897,6 +6879,24 @@ dependencies = [
  "getrandom 0.2.15",
  "libredox",
  "thiserror",
+]
+
+[[package]]
+name = "reference-tauri-happ"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "app_dirs2",
+ "holochain_client",
+ "holochain_types",
+ "lair_keystore",
+ "log",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-holochain",
+ "tauri-plugin-log",
+ "tempdir",
+ "url2",
 ]
 
 [[package]]
