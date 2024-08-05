@@ -1,15 +1,18 @@
-import { internalIpV4Sync } from "internal-ip";
+const host = process.env.TAURI_DEV_HOST;
+
 {{#merge previous_file_content}}
   {{#match_scope "export default defineConfig({"}}
   server: {
-    host: "0.0.0.0",
     port: 1420,
     strictPort: true,
-    hmr: {
-      protocol: "ws",
-      host: internalIpV4Sync(),
-      port: 1421,
-    }
+    host: host || false,
+    hmr: host
+      ? {
+          protocol: "ws",
+          host: host,
+          port: 1430,
+        }
+      : undefined,
   },
   {{previous_scope_content}}
   {{/match_scope}}
