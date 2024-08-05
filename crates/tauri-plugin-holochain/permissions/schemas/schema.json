@@ -377,6 +377,13 @@
           "enum": [
             "deny-sign-zome-call"
           ]
+        },
+        {
+          "description": "default -> Default permissions for the plugin",
+          "type": "string",
+          "enum": [
+            "default"
+          ]
         }
       ]
     }

@@ -107,10 +107,8 @@ impl<R: Runtime> HolochainPlugin<R> {
                 )
                 .initialization_script(ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT);
 
-        let mut capability_builder = CapabilityBuilder::new("sign-zome-call")
-            .permission("holochain:allow-sign-zome-call")
-            .permission("log:allow-log")
-            .permission("event:allow-listen"); // For the logs
+        let mut capability_builder =
+            CapabilityBuilder::new("sign-zome-call").permission("holochain:allow-sign-zome-call");
 
         #[cfg(desktop)] // TODO: remove this check
         {
@@ -188,9 +186,7 @@ impl<R: Runtime> HolochainPlugin<R> {
                 .initialization_script(ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT);
 
             let mut capability_builder = CapabilityBuilder::new("sign-zome-call")
-                .permission("holochain:allow-sign-zome-call")
-                .permission("log:allow-log")
-                .permission("event:allow-listen"); // For the logs
+                .permission("holochain:allow-sign-zome-call");
 
             #[cfg(desktop)] // TODO: remove this check
             {
@@ -330,7 +326,7 @@ impl<R: Runtime> HolochainPlugin<R> {
         )
         .await?;
 
-        self.app_handle.emit("app-installed", app_id)?;
+        self.app_handle.emit("holochain://app-installed", app_id)?;
 
         Ok(app_info)
     }
@@ -367,7 +363,7 @@ impl<R: Runtime> HolochainPlugin<R> {
         )
         .await?;
 
-        self.app_handle.emit("app-installed", app_id)?;
+        self.app_handle.emit("holochain://app-installed", app_id)?;
         Ok(app_info)
     }
 
@@ -397,7 +393,7 @@ impl<R: Runtime> HolochainPlugin<R> {
         )
         .await?;
 
-        self.app_handle.emit("app-updated", app_id)?;
+        self.app_handle.emit("holochain://app-updated", app_id)?;
 
         Ok(())
     }
@@ -417,7 +413,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             .map_err(|_err| UpdateAppError::WebsocketError)?;
         let app_info = update_app(&mut admin_ws, app_id.clone(), app_bundle).await?;
 
-        self.app_handle.emit("app-updated", app_id)?;
+        self.app_handle.emit("holochain://app-updated", app_id)?;
         Ok(app_info)
     }
 
@@ -624,7 +620,7 @@ pub fn init<R: Runtime>(passphrase: BufRead, config: HolochainPluginConfig) -> T
 }
 
 /// Initializes the plugin without waiting for holochain to launch to continue the setup of the app
-/// If you use this version of init, you should listen to the `holochain-setup-completed` event in your `setup()` hook
+/// If you use this version of init, you should listen to the `holochain://setup-completed` event in your `setup()` hook
 pub fn async_init<R: Runtime>(
     passphrase: BufRead,
     config: HolochainPluginConfig,
@@ -637,8 +633,8 @@ pub fn async_init<R: Runtime>(
                     launch_and_setup_holochain(handle.clone(), passphrase, config).await
                 {
                     log::error!("Failed to launch holochain: {err:?}");
-                    if let Err(err) = handle.emit("holochain-setup-failed", ()) {
-                        log::error!("Failed to emit \"holochain-setup-failed\" event: {err:?}");
+                    if let Err(err) = handle.emit("holochain://setup-failed", ()) {
+                        log::error!("Failed to emit \"holochain://setup-failed\" event: {err:?}");
                     }
                 }
             });
@@ -667,7 +663,7 @@ async fn launch_and_setup_holochain<R: Runtime>(
     // manage state so it is accessible by the commands
     app_handle.manage(p);
 
-    app_handle.emit("holochain-setup-completed", ())?;
+    app_handle.emit("holochain://setup-completed", ())?;
 
     Ok(())
 }

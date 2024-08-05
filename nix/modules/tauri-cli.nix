@@ -1,10 +1,10 @@
 { ... }:
 
 {
-  perSystem = { inputs', lib, pkgs, self', ... }: rec {
+  perSystem = { inputs', lib, pkgs, self', ... }: {
     packages.tauri-cli = pkgs.rustPlatform.buildRustPackage rec {
       pname = "tauri-cli";
-      version = "2.0.0-beta.20";
+      version = "2.0.0-rc.0";
 
       src = pkgs.fetchCrate {
         inherit pname version;

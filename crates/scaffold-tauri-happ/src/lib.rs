@@ -150,7 +150,7 @@ pub fn scaffold_tauri_happ(
             let package_json_content = add_npm_dev_dependency_to_package(
                 &(root_package_json_path.clone(), package_json_content),
                 &String::from("@tauri-apps/cli"),
-                &String::from("^2.0.0-beta.20"),
+                &String::from("^2.0.0-rc"),
             )?;
             let package_json_content = add_npm_dev_dependency_to_package(
                 &(root_package_json_path.clone(), package_json_content),
@@ -235,15 +235,10 @@ pub fn scaffold_tauri_happ(
         &mut file_tree,
         PathBuf::from("ui/package.json").as_path(),
         |ui_package_json| {
-            let ui_package_json = add_npm_script_to_package(
+            add_npm_script_to_package(
                 &(root_package_json_path.clone(), ui_package_json),
                 &String::from("start"),
                 &String::from("vite --clearScreen false"),
-            )?;
-            add_npm_dev_dependency_to_package(
-                &(root_package_json_path.clone(), ui_package_json),
-                &String::from("internal-ip"),
-                &String::from("^7.0.0"),
             )
     })?;
 
@@ -395,7 +390,7 @@ mod tests {
     "tauri": "tauri"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.0.0-beta.20",
+    "@tauri-apps/cli": "^2.0.0-rc",
     "concurrently": "^8.2.2",
     "concurrently-repeat": "^0.0.1",
     "internal-ip-cli": "^2.0.0",
@@ -413,7 +408,7 @@ mod tests {
     p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
     nixpkgs.follows = "holochain/nixpkgs";
 
-    versions.url = "github:holochain/holochain?dir=versions/weekly";
+    versions.url = "github:holochain/holochain?dir=versions/0_3";
 
     holochain = {
       url = "github:holochain/holochain";
@@ -468,21 +463,22 @@ mod tests {
 
         assert_eq!(
             file_content(&repo, PathBuf::from("ui/vite.config.ts").as_path()).unwrap(),
-            r#"import { internalIpV4Sync } from "internal-ip";
-import { defineConfig } from "vite";
+            r#"import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: "0.0.0.0",
     port: 1420,
     strictPort: true,
-    hmr: {
-      protocol: "ws",
-      host: internalIpV4Sync(),
-      port: 1421,
-    }
+    host: process.env.TAURI_DEV_HOST || false,
+    hmr: process.env.TAURI_DEV_HOST
+      ? {
+          protocol: "ws",
+          host: process.env.TAURI_DEV_HOST,
+          port: 1430,
+        }
+      : undefined,
   },
   plugins: [svelte()],
 });
@@ -501,8 +497,8 @@ members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*", "src-tauri"
 resolver = "2"
 
 [workspace.dependencies]
-hdi = "0.4.1"
-hdk = "0.3.1"
+hdi = "0.4.2"
+hdk = "0.3.2"
 serde = "1.0"
 
 [workspace.dependencies.posts]
@@ -525,8 +521,8 @@ resolver = "2"
 members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*"]
 
 [workspace.dependencies]
-hdi = "0.4.1"
-hdk = "0.3.1"
+hdi = "0.4.2"
+hdk = "0.3.2"
 serde = "1.0"
 
 [workspace.dependencies.posts]
@@ -595,7 +591,7 @@ roles:
   inputs = {
     nixpkgs.follows = "holochain/nixpkgs";
 
-    versions.url = "github:holochain/holochain?dir=versions/weekly";
+    versions.url = "github:holochain/holochain?dir=versions/0_3";
 
     holochain = {
       url = "github:holochain/holochain";

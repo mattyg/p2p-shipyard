@@ -75,7 +75,7 @@ fn holochain_dir() -> PathBuf {
         #[cfg(not(target_os = "android"))]
         {
             let tmp_dir =
-                tempdir::TempDir::new("example-forum").expect("Could not create temporary directory");
+                tempdir::TempDir::new("forum").expect("Could not create temporary directory");
 
             // Convert `tmp_dir` into a `Path`, destroying the `TempDir`
             // without deleting the directory.
@@ -97,12 +97,6 @@ fn holochain_dir() -> PathBuf {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let mut context = tauri::generate_context!();
-    if tauri::is_dev() {
-        let identifier = context.config().identifier.clone();
-        context.config_mut().identifier = format!("{}{}", identifier, uuid::Uuid::new_v4());
-    }
-    
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -119,7 +113,7 @@ pub fn run() {
         ))
         .setup(|app| {
             let handle = app.handle().clone();
-            app.handle().listen("holochain-setup-completed", move |_event| {
+            app.handle().listen("holochain://setup-completed", move |_event| {
                 let handle = handle.clone();
                 tauri::async_runtime::spawn(async move {
                     setup(handle.clone()).await.expect("Failed to setup");
@@ -136,7 +130,7 @@ pub fn run() {
 
             Ok(())
         })
-        .run(context)
+        .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 

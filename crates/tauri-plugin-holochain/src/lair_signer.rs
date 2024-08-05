@@ -2,7 +2,6 @@ use async_trait::async_trait;
 use holochain_client::AgentSigner;
 use holochain_types::prelude::{AgentPubKey, CapSecret, CellId, Signature};
 use lair_keystore_api::LairClient;
-use std::collections::HashMap;
 use std::sync::Arc;
 
 pub struct LairAgentSignerWithProvenance {
