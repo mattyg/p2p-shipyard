@@ -75,7 +75,7 @@ fn holochain_dir() -> PathBuf {
         #[cfg(not(target_os = "android"))]
         {
             let tmp_dir =
-                tempdir::TempDir::new("example-forum").expect("Could not create temporary directory");
+                tempdir::TempDir::new("forum").expect("Could not create temporary directory");
 
             // Convert `tmp_dir` into a `Path`, destroying the `TempDir`
             // without deleting the directory.
@@ -113,7 +113,7 @@ pub fn run() {
         ))
         .setup(|app| {
             let handle = app.handle().clone();
-            app.handle().listen("holochain-setup-completed", move |_event| {
+            app.handle().listen("holochain://setup-completed", move |_event| {
                 let handle = handle.clone();
                 tauri::async_runtime::spawn(async move {
                     setup(handle.clone()).await.expect("Failed to setup");
