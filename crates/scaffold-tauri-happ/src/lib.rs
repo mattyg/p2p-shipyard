@@ -463,9 +463,7 @@ mod tests {
 
         assert_eq!(
             file_content(&repo, PathBuf::from("ui/vite.config.ts").as_path()).unwrap(),
-            r#"const host = process.env.TAURI_DEV_HOST;
-
-import { defineConfig } from "vite";
+            r#"import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 // https://vitejs.dev/config/
@@ -473,11 +471,11 @@ export default defineConfig({
   server: {
     port: 1420,
     strictPort: true,
-    host: host || false,
-    hmr: host
+    host: process.env.TAURI_DEV_HOST || false,
+    hmr: process.env.TAURI_DEV_HOST
       ? {
           protocol: "ws",
-          host: host,
+          host: process.env.TAURI_DEV_HOST,
           port: 1430,
         }
       : undefined,
