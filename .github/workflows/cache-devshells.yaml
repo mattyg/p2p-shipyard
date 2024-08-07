@@ -50,9 +50,9 @@ jobs:
           cachix push darksoil-studio holochainTauriAndroidDev
 
           cachix watch-exec darksoil-studio -- nix build --no-update-lock-file -L --accept-flake-config .#holochainTauriRust 
-          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#holochainTauriRust | nix run nixpkgs#jq -- -r '.[].path')
-          cachix pin darksoil-studio holochainTauriRust $(nix path-info --json --accept-flake-config --no-warn-dirty .#holochainTauriRust | nix run nixpkgs#jq -- -r '.[].path')
+          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#holochainTauriRust | nix run nixpkgs#jq -- -r 'keys[0]')
+          cachix pin darksoil-studio holochainTauriRust $(nix path-info --json --accept-flake-config --no-warn-dirty .#holochainTauriRust | nix run nixpkgs#jq -- -r 'keys[0]')
 
           cachix watch-exec darksoil-studio -- nix build --no-update-lock-file -L --accept-flake-config .#androidTauriRust
-          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#androidTauriRust | nix run nixpkgs#jq -- -r '.[].path')
-          cachix pin darksoil-studio androidTauriRust $(nix path-info --json --accept-flake-config --no-warn-dirty .#androidTauriRust | nix run nixpkgs#jq -- -r '.[].path')
+          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#androidTauriRust | nix run nixpkgs#jq -- -r 'keys[0]')
+          cachix pin darksoil-studio androidTauriRust $(nix path-info --json --accept-flake-config --no-warn-dirty .#androidTauriRust | nix run nixpkgs#jq -- -r 'keys[0]')
