@@ -65,8 +65,8 @@ async-trait = "0.1"
 tauri-plugin = { version = "2.0.0-rc", features = ["build"] }
 
 [features]
-default = ["gossip_arc_no_clamping"]
+default = ["gossip_arc_normal"]
 
-gossip_arc_clamping_empty = []
-gossip_arc_clamping_full = []
-gossip_arc_no_clamping = []
+gossip_arc_empty = []
+gossip_arc_full = []
+gossip_arc_normal = []
