@@ -18,14 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Extend space
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: ./.github/actions/extend-space
+
       - name: Install nix
         uses: cachix/install-nix-action@v25
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-
-      - name: Extend space
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: ./.github/actions/extend-space
 
       - uses: cachix/cachix-action@v14
         with:
