@@ -18,12 +18,19 @@ mod mdns;
 mod signal;
 use mdns::spawn_mdns_bootstrap;
 
+#[cfg(feature="gossip_arc_empty")]
 fn override_gossip_arc_clamping() -> Option<String> {
-    if cfg!(mobile) {
-        Some(String::from("empty"))
-    } else {
-        None
-    }
+    Some(String::from("empty"))
+}
+
+#[cfg(feature="gossip_arc_full")]
+fn override_gossip_arc_clamping() -> Option<String> {
+    Some(String::from("full"))
+}
+
+#[cfg(feature="gossip_arc_normal")]
+fn override_gossip_arc_clamping() -> Option<String> {
+    None
 }
 
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);
