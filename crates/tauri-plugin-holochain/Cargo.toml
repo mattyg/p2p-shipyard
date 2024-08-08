@@ -63,3 +63,10 @@ async-trait = "0.1"
 
 [build-dependencies]
 tauri-plugin = { version = "2.0.0-rc", features = ["build"] }
+
+[features]
+default = ["gossip_arc_normal"]
+
+gossip_arc_empty = []
+gossip_arc_full = []
+gossip_arc_normal = []

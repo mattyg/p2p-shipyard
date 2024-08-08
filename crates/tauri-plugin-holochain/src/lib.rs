@@ -32,6 +32,7 @@ mod filesystem;
 mod http_server;
 mod lair_signer;
 mod launch;
+mod features;
 
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
