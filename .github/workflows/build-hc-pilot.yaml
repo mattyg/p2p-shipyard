@@ -38,5 +38,5 @@ jobs:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
           nix build --accept-flake-config -L .#hc-pilot
-          cachix push darksoil-studio $(nix --accept-flake-config path-info --accept-flake-config .#hc-pilot)
-          cachix pin darksoil-studio hc-progenitor $(nix --accept-flake-config path-info --accept-flake-config .#hc-pilot)
+          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#hc-pilot | nix run nixpkgs#jq -- -r 'keys[0]')
+          cachix pin darksoil-studio hc-pilot $(nix path-info --json --accept-flake-config --no-warn-dirty .#hc-pilot | nix run nixpkgs#jq -- -r 'keys[0]')

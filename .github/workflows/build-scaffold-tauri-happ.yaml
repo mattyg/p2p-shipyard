@@ -57,7 +57,7 @@ jobs:
         env:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
-          cachix watch-exec darksoil-studio -- nix build --accept-flake-config -L .#scaffold-tauri-happ
-          cachix push darksoil-studio $(nix path-info --accept-flake-config .#scaffold-tauri-happ)
-          cachix pin darksoil-studio scaffold-tauri-happ $(nix path-info --accept-flake-config .#scaffold-tauri-happ)
+          cachix watch-exec darksoil-studio -- nix build --no-update-lock-file --accept-flake-config -L .#scaffold-tauri-happ
+          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#scaffold-tauri-happ | nix run nixpkgs#jq -- -r 'keys[0]')
+          cachix pin darksoil-studio scaffold-tauri-happ $(nix path-info --json --accept-flake-config --no-warn-dirty .#scaffold-tauri-happ | nix run nixpkgs#jq -- -r 'keys[0]')
 
