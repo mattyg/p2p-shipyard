@@ -63,7 +63,11 @@ pub struct HolochainRuntime {
 }
 
 fn happ_origin(app_id: &String) -> Url2 {
-    url2::url2!("happ://{app_id}")
+    if cfg!(target_os = "windows") {
+      url2::url2!("http://happ.{app_id}")
+    } else {
+        url2::url2!("happ://{app_id}")
+    }
 }
 
 impl<R: Runtime> HolochainPlugin<R> {
