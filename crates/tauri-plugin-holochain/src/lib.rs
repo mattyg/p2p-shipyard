@@ -64,7 +64,7 @@ pub struct HolochainRuntime {
 
 fn happ_origin(app_id: &String) -> Url2 {
     if cfg!(target_os = "windows") {
-      url2::url2!("http://happ.{app_id}")
+        url2::url2!("http://happ.{app_id}")
     } else {
         url2::url2!("happ://{app_id}")
     }
@@ -233,13 +233,18 @@ impl<R: Runtime> HolochainPlugin<R> {
         let admin_ws = self.admin_websocket().await?;
 
         // Allow any when the app is build in debug mode to allow normal tauri development pointing to http://localhost:1420
-        let allowed_origins = if tauri::is_dev() {
-            AllowedOrigins::Any
-        } else {
+        let allowed_origins =  {
             let mut origins: HashSet<String> = HashSet::new();
-            origins.insert(happ_origin(app_id).to_string());
+            let mut origin = happ_origin(app_id).to_string();
+            // Conversion from Url2 to string adds a '/' character in the end of the origin,
+            // thus making it an invalid origin when the websocket connection is attempted from the origin without the '/'
+            // So here we just remove it
+            if let Some(o) = origin.strip_suffix("/") {
+                origin = o.to_string();
+            }
+            origins.insert(origin);
 
-            if main_window {
+            if !main_window {
                 origins.insert("http://tauri.localhost".into());
                 origins.insert("tauri://localhost".into());
             }
