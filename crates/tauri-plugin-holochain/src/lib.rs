@@ -28,11 +28,11 @@ use url2::Url2;
 mod commands;
 mod config;
 mod error;
+mod features;
 mod filesystem;
 mod http_server;
 mod lair_signer;
 mod launch;
-mod features;
 
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
@@ -233,7 +233,9 @@ impl<R: Runtime> HolochainPlugin<R> {
         let admin_ws = self.admin_websocket().await?;
 
         // Allow any when the app is build in debug mode to allow normal tauri development pointing to http://localhost:1420
-        let allowed_origins =  {
+        let allowed_origins = if tauri::is_dev() {
+            AllowedOrigins::Any
+        } else {
             let mut origins: HashSet<String> = HashSet::new();
             origins.insert(happ_origin(app_id));
 
@@ -501,9 +503,15 @@ impl<R: Runtime, T: Manager<R>> crate::HolochainExt<R> for T {
     }
 }
 
-pub struct HolochainPluginConfig {
+pub struct WANNetworkConfig {
     pub bootstrap_url: Url2,
     pub signal_url: Url2,
+}
+
+pub struct HolochainPluginConfig {
+    /// If `None`, no WAN networking will take place, only mDNS based networking
+    /// Peers in the same LAN will still be able to communicate with each other
+    pub wan_network_config: Option<WANNetworkConfig>,
     pub holochain_dir: PathBuf,
 }
 

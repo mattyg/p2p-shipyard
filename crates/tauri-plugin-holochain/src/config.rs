@@ -19,7 +19,7 @@ pub fn conductor_config(
     fs: &FileSystem,
     admin_port: u16,
     lair_root: KeystorePath,
-    bootstrap_url: Url2,
+    bootstrap_url: Option<Url2>,
     signal_urls: Vec<Url2>,
     override_gossip_arc_clamping: Option<String>,
 ) -> ConductorConfig {
@@ -39,7 +39,9 @@ pub fn conductor_config(
 
     network_config.tuning_params = Arc::new(tuning_params);
 
-    network_config.bootstrap_service = Some(bootstrap_url);
+    if let Some(bootstrap_url) = bootstrap_url {
+        network_config.bootstrap_service = Some(bootstrap_url);
+    }
 
     // tx5
     for signal_url in signal_urls {
