@@ -179,6 +179,22 @@ pub async fn read_asset(
 
     match std::fs::read(asset_file.clone()) {
         Ok(asset) => Ok(Some((asset, mime_type))),
-        Err(_e) => Ok(None),
+        Err(_e) => {
+            // Fallback to "index.html" to support push-based client-side routing without hashing
+            let asset_file = assets_path.join(String::from("index.html"));
+            let mime_guess = mime_guess::from_path(asset_file.clone());
+
+            let mime_type = match mime_guess.first() {
+                Some(mime) => Some(mime.essence_str().to_string()),
+                None => {
+                    log::warn!("Could not determine MIME Type of file '{:?}'", asset_file);
+                    None
+                }
+            };
+            match std::fs::read(asset_file.clone()) {
+                Ok(asset) => Ok(Some((asset, mime_type))),
+                Err(_e) => Ok(None)
+            }
+        },
     }
 }

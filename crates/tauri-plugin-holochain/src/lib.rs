@@ -28,11 +28,11 @@ use url2::Url2;
 mod commands;
 mod config;
 mod error;
+mod features;
 mod filesystem;
 mod http_server;
 mod lair_signer;
 mod launch;
-mod features;
 
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
@@ -62,8 +62,12 @@ pub struct HolochainRuntime {
     pub(crate) _signal_handle: Option<SrvHnd>,
 }
 
-fn happ_origin(app_id: &String) -> Url2 {
-    url2::url2!("happ://{app_id}")
+fn happ_origin(app_id: &String) -> String {
+    if cfg!(target_os = "windows") {
+        format!("http://happ.{app_id}")
+    } else {
+        format!("happ://{app_id}")
+    }
 }
 
 impl<R: Runtime> HolochainPlugin<R> {
@@ -233,7 +237,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             AllowedOrigins::Any
         } else {
             let mut origins: HashSet<String> = HashSet::new();
-            origins.insert(happ_origin(app_id).to_string());
+            origins.insert(happ_origin(app_id));
 
             if main_window {
                 origins.insert("http://tauri.localhost".into());
@@ -499,9 +503,15 @@ impl<R: Runtime, T: Manager<R>> crate::HolochainExt<R> for T {
     }
 }
 
-pub struct HolochainPluginConfig {
+pub struct WANNetworkConfig {
     pub bootstrap_url: Url2,
     pub signal_url: Url2,
+}
+
+pub struct HolochainPluginConfig {
+    /// If `None`, no WAN networking will take place, only mDNS based networking
+    /// Peers in the same LAN will still be able to communicate with each other
+    pub wan_network_config: Option<WANNetworkConfig>,
     pub holochain_dir: PathBuf,
 }
 
