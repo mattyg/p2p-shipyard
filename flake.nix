@@ -247,7 +247,7 @@
 
             export NDK_HOME=$ANDROID_SDK_ROOT/ndk-bundle
             
-            chmod -R 755 $ANDROID_SDK_ROOT
+            chmod 755 $ANDROID_SDK_ROOT
           '';
         };
 
