@@ -123,17 +123,6 @@ jobs:
         id: get-current-tag
         uses: zingimmick/github-action-get-current-tag@v1
 
-      - name: Publish Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: " Forum ${{steps.get-current-tag.outputs.tag}}"
-          files: |
-            src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
-            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/*.aab
-
       - id: create-release
         uses: ncipollo/release-action@v1
         with:
