@@ -114,14 +114,15 @@ jobs:
           npm i
           
       - name: Build happ & webhapp
-        run: nix develop --command bash -c "npm run package"
+        run: nix develop --command bash -c "npm run build:happ"
 
       - name: Build Android app
         run: nix develop .#androidDev --command bash -c "npm run tauri android build"
-      
-      - name: Get current tag
-        id: get-current-tag
-        uses: zingimmick/github-action-get-current-tag@v1
+
+      - name: Retrieve version
+        run: |
+          echo "APP_VERSION=$(cat src-tauri/tauri.conf.json | grep -oP '(?<="version": ")[^"]*')" >> $GITHUB_OUTPUT
+        id: version
 
       - id: create-release
         uses: ncipollo/release-action@v1
