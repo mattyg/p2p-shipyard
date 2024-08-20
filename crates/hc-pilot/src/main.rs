@@ -9,8 +9,7 @@ use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tauri::{AppHandle, Context, Wry};
-use tauri_plugin_holochain::HolochainExt;
-use holochain_manager::{HolochainManagerConfig, WANNetworkConfig};
+use tauri_plugin_holochain::{HolochainExt, HolochainManagerConfig, WANNetworkConfig};
 use url2::url2;
 
 #[derive(Parser, Debug)]

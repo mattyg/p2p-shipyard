@@ -4,7 +4,7 @@ use std::{
 };
 
 use hc_seed_bundle::dependencies::sodoken::BufRead;
-use holochain_manager::{http_server::{pong_iframe, read_asset}, launch::launch_holochain_runtime, AppWebsocketAuth, HolochainManagerConfig};
+use holochain_manager::{http_server::{pong_iframe, read_asset}, launch::launch_holochain_runtime, AppWebsocketAuth};
 use tauri::{
     http::response,
     ipc::CapabilityBuilder,
@@ -22,6 +22,7 @@ mod error;
 mod features;
 
 pub use error::{Error, Result};
+pub use holochain_manager::{HolochainManagerConfig, WANNetworkConfig};
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
 
