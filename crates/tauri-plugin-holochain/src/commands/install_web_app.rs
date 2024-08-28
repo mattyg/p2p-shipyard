@@ -1,18 +1,18 @@
-use std::{
-    collections::{BTreeMap, HashMap},
-    path::PathBuf,
-};
+use std::{collections::BTreeMap, path::PathBuf};
 
 use holochain::prelude::{
     AppBundle, AppBundleError, AppBundleSource, AppManifest, CoordinatorBundle,
-    CoordinatorManifest, DnaBundle, DnaError, DnaFile, DnaHash, MembraneProof, NetworkSeed,
-    RoleName, UpdateCoordinatorsPayload, ZomeDependency, ZomeError, ZomeLocation, ZomeManifest,
+    CoordinatorManifest, DnaBundle, DnaError, DnaFile, DnaHash, NetworkSeed, RoleName,
+    UpdateCoordinatorsPayload, ZomeDependency, ZomeError, ZomeLocation, ZomeManifest,
 };
 use holochain_client::{
     AdminWebsocket, AgentPubKey, AppInfo, ConductorApiError, InstallAppPayload, InstalledAppId,
 };
 use holochain_conductor_api::{AppInfoStatus, CellInfo};
-use holochain_types::web_app::WebAppBundle;
+use holochain_types::{
+    app::{ExistingCellsMap, MemproofMap},
+    web_app::WebAppBundle,
+};
 use mr_bundle::{error::MrBundleError, Bundle, ResourceBytes};
 
 use crate::filesystem::FileSystemError;
@@ -21,7 +21,8 @@ pub async fn install_web_app(
     admin_ws: &AdminWebsocket,
     app_id: String,
     bundle: WebAppBundle,
-    membrane_proofs: HashMap<RoleName, MembraneProof>,
+    existing_cells: ExistingCellsMap,
+    membrane_proofs: Option<MemproofMap>,
     agent: Option<AgentPubKey>,
     network_seed: Option<NetworkSeed>,
 ) -> crate::Result<AppInfo> {
@@ -29,6 +30,7 @@ pub async fn install_web_app(
         admin_ws,
         app_id.clone(),
         bundle.happ_bundle().await?,
+        existing_cells,
         membrane_proofs,
         agent,
         network_seed,
@@ -44,27 +46,22 @@ pub async fn install_app(
     admin_ws: &AdminWebsocket,
     app_id: String,
     bundle: AppBundle,
-    membrane_proofs: HashMap<RoleName, MembraneProof>,
-    agent: Option<AgentPubKey>,
+    existing_cells: ExistingCellsMap,
+    membrane_proofs: Option<MemproofMap>,
+    agent_key: Option<AgentPubKey>,
     network_seed: Option<NetworkSeed>,
 ) -> crate::Result<AppInfo> {
     log::info!("Installing app {}", app_id);
-
-    let agent_key = match agent {
-        Some(agent) => agent,
-        None => admin_ws
-            .generate_agent_pub_key()
-            .await
-            .map_err(|err| crate::Error::ConductorApiError(err))?,
-    };
 
     let app_info = admin_ws
         .install_app(InstallAppPayload {
             agent_key,
             membrane_proofs,
             network_seed,
+            existing_cells,
             source: AppBundleSource::Bundle(bundle),
             installed_app_id: Some(app_id.clone()),
+            ignore_genesis_failure: false,
         })
         .await
         .map_err(|err| crate::Error::ConductorApiError(err))?;

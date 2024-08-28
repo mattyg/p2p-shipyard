@@ -1,22 +1,18 @@
-use tx5_signal_srv::{exec_tx5_signal_srv, Config, Result, SrvHnd};
+use sbd_server::{Config, SbdServer};
 use url2::Url2;
 
-pub async fn can_connect_to_signal_server(signal_url: Url2) -> Result<()> {
-    tx5_signal::Cli::builder()
-        .with_url(signal_url.into())
-        .build()
-        .await?;
+pub async fn can_connect_to_signal_server(signal_url: Url2) -> std::io::Result<()> {
+    tx5_signal::SignalConnection::connect(signal_url.as_str(), Default::default()).await?;
 
     Ok(())
 }
 
-pub async fn run_local_signal_service(local_ip: String, port: u16) -> Result<SrvHnd> {
+pub async fn run_local_signal_service(local_ip: String, port: u16) -> std::io::Result<SbdServer> {
     let mut config = Config::default();
-    config.interfaces = local_ip;
-    config.port = port;
-    config.demo = false;
+
+    config.bind = vec![format!("{local_ip}:{port}")];
     log::info!("Running local signal service {:?}", config);
 
-    let (sig_hnd, _addr_list, _err_list) = exec_tx5_signal_srv(config).await?;
+    let sig_hnd = SbdServer::new(config.into()).await?;
     Ok(sig_hnd)
 }

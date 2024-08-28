@@ -1,16 +1,14 @@
 use std::sync::Arc;
 
-use holochain::{
-    conductor::{
-        config::{AdminInterfaceConfig, ConductorConfig, KeystoreConfig},
-        interface::InterfaceDriver,
-    },
-    prelude::dependencies::kitsune_p2p_types::config::{
-        tuning_params_struct::KitsuneP2pTuningParams, KitsuneP2pConfig, TransportConfig,
-    },
+use holochain::conductor::{
+    config::{AdminInterfaceConfig, ConductorConfig, KeystoreConfig},
+    interface::InterfaceDriver,
 };
 use holochain_keystore::paths::KeystorePath;
 use holochain_types::websocket::AllowedOrigins;
+use kitsune_p2p_types::config::{
+    tuning_params_struct::KitsuneP2pTuningParams, KitsuneP2pConfig, TransportConfig,
+};
 use url2::Url2;
 
 use crate::filesystem::FileSystem;
@@ -46,6 +44,8 @@ pub fn conductor_config(
     // tx5
     for signal_url in signal_urls {
         network_config.transport_pool.push(TransportConfig::WebRTC {
+            // TODO: expose this in WANNetworkConfig?
+            webrtc_config: None,
             signal_url: signal_url.to_string(),
         });
     }

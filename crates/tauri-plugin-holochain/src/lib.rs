@@ -1,8 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    path::PathBuf,
-    sync::Arc,
-};
+use std::{collections::HashSet, path::PathBuf, sync::Arc};
 
 use async_std::sync::Mutex;
 use hc_seed_bundle::dependencies::sodoken::BufRead;
@@ -18,11 +14,14 @@ use tauri::{
 
 use holochain::{
     conductor::ConductorHandle,
-    prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName},
+    prelude::{AppBundle, NetworkSeed},
 };
 use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId};
-use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
-use tx5_signal_srv::SrvHnd;
+use holochain_types::{
+    app::{ExistingCellsMap, MemproofMap},
+    web_app::WebAppBundle,
+    websocket::AllowedOrigins,
+};
 use url2::Url2;
 
 mod commands;
@@ -59,7 +58,7 @@ pub struct HolochainRuntime {
     pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
     pub(crate) conductor_handle: ConductorHandle,
-    pub(crate) _signal_handle: Option<SrvHnd>,
+    pub(crate) _local_signal_handle: Option<sbd_server::SbdServer>,
 }
 
 fn happ_origin(app_id: &String) -> String {
@@ -310,7 +309,8 @@ impl<R: Runtime> HolochainPlugin<R> {
         &self,
         app_id: InstalledAppId,
         web_app_bundle: WebAppBundle,
-        membrane_proofs: HashMap<RoleName, MembraneProof>,
+        existing_cells: ExistingCellsMap,
+        membrane_proofs: Option<MemproofMap>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -325,6 +325,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             &admin_ws,
             app_id.clone(),
             web_app_bundle,
+            existing_cells,
             membrane_proofs,
             agent,
             network_seed,
@@ -347,7 +348,8 @@ impl<R: Runtime> HolochainPlugin<R> {
         &self,
         app_id: InstalledAppId,
         app_bundle: AppBundle,
-        membrane_proofs: HashMap<RoleName, MembraneProof>,
+        existing_cells: ExistingCellsMap,
+        membrane_proofs: Option<MemproofMap>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -362,6 +364,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             &admin_ws,
             app_id.clone(),
             app_bundle,
+            existing_cells,
             membrane_proofs,
             agent,
             network_seed,

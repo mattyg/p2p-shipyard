@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.follows = "holochain/nixpkgs";
 
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
+    versions.url = "github:holochain/holochain?dir=versions/weekly";
 
     holochain = {
       url = "github:holochain/holochain";
@@ -15,7 +15,7 @@
       url = "github:tadfisher/android-nixpkgs/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hc-infra.url = "github:holochain-open-dev/infrastructure";
+    hc-infra.url = "github:holochain-open-dev/infrastructure/next";
     crane.follows = "hc-infra/crane";
   };
 

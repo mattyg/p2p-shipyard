@@ -1,7 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
 use async_std::sync::Mutex;
-use tx5_signal_srv::SrvHnd;
 use url2::url2;
 
 use hc_seed_bundle::dependencies::sodoken::BufRead;
@@ -61,7 +60,7 @@ pub async fn launch_holochain_runtime(
     } else {
         true
     };
-    let mut signal_handle: Option<SrvHnd> = None;
+    let mut signal_handle: Option<sbd_server::SbdServer> = None;
 
     if run_local_signal_server {
         let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
@@ -100,7 +99,7 @@ pub async fn launch_holochain_runtime(
         apps_websockets_auths: Arc::new(Mutex::new(Vec::new())),
         admin_port,
         conductor_handle,
-        _signal_handle: signal_handle,
+        _local_signal_handle: signal_handle,
     })
 }
 

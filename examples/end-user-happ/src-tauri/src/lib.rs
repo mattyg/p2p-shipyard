@@ -3,7 +3,6 @@ use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConfig};
-use url2::Url2;
 use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
@@ -131,13 +130,15 @@ async fn setup(handle: AppHandle) -> anyhow::Result<()> {
         .await
         .map_err(|err| tauri_plugin_holochain::Error::ConductorApiError(err))?;
 
-    if installed_apps.len() == 0 {
+    // DeepKey comes preinstalled as the first app
+    if installed_apps.iter().find(|app| app.installed_app_id.as_str().eq(APP_ID)).is_none() {
         handle
             .holochain()?
             .install_app(
                 String::from(APP_ID),
                 example_happ(),
                 HashMap::new(),
+                Some(HashMap::new()),
                 None,
                 None,
             )

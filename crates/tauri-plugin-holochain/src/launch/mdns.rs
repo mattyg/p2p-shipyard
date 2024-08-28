@@ -6,10 +6,13 @@ use std::{
 
 use async_std::stream::StreamExt;
 use base64::Engine;
-use holochain::prelude::{agent_store::AgentInfoSigned, KitsuneAgent, KitsuneSpace};
 use holochain_client::AdminWebsocket;
 use kitsune_p2p_mdns::{mdns_create_broadcast_thread, mdns_kill_thread, mdns_listen};
-use kitsune_p2p_types::codec::{rmp_decode, rmp_encode};
+use kitsune_p2p_types::{
+    agent_info::AgentInfoSigned,
+    bin_types::{KitsuneAgent, KitsuneSpace},
+    codec::{rmp_decode, rmp_encode},
+};
 
 pub async fn spawn_mdns_bootstrap(admin_port: u16) -> crate::Result<()> {
     let admin_ws = AdminWebsocket::connect(format!("localhost:{}", admin_port))
