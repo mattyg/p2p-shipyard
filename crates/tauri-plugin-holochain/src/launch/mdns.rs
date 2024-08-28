@@ -122,7 +122,7 @@ pub async fn spawn_listen_to_space_task(space: KitsuneSpace, admin_port: u16) ->
                             })
                             .is_none()
                         {
-                            log::error!("Adding agent info {remote_agent_info_signed:?}");
+                            log::info!("Adding agent info {remote_agent_info_signed:?}");
                             if let Err(e) = admin_ws
                                 .add_agent_info(vec![remote_agent_info_signed])
                                 .await

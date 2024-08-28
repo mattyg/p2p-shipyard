@@ -115,11 +115,10 @@ pub fn run() {
 }
 
 // Very simple setup for now:
-// - On app start, list installed apps:
-//   - If there are no apps installed, this is the first time the app is opened: install our hApp
-//   - If there **are** apps:
-//     - Check if it's necessary to update the coordinators for our hApp
-//       - And do so if it is
+// - On app start, check whether the app is already installed:
+//   - If it's not installed, install it
+//   - If it's installed, check if it's necessary to update the coordinators for our hApp,
+//     and do so if it is
 //
 // You can modify this function to suit your needs if they become more complex
 async fn setup(handle: AppHandle) -> anyhow::Result<()> {
