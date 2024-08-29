@@ -6,7 +6,7 @@ use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConf
 use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
-const SIGNAL_URL: &'static str = "wss://sbd-0.main.infra.holo.host";
+const SIGNAL_URL: &'static str = "wss://sbd.holo.host";
 const BOOTSTRAP_URL: &'static str = "https://bootstrap-0.infra.holochain.org";
 
 pub fn example_happ() -> AppBundle {

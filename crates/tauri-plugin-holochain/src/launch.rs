@@ -54,7 +54,7 @@ pub async fn launch_holochain_runtime(
 
     let wan_network_config = if let Some(network_config) = config.wan_network_config {
         if let Err(err) = can_connect_to_signal_server(network_config.signal_url.clone()).await {
-            log::error!("Error connecting with the WAN signal server: {err:?}");
+            log::error!("Error connecting to the WAN signal server: {err:?}");
             None
         } else {
             Some(network_config)

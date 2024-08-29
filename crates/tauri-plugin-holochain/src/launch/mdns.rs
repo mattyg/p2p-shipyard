@@ -33,7 +33,6 @@ pub async fn spawn_mdns_bootstrap(admin_port: u16) -> crate::Result<()> {
                 continue;
             };
 
-            // let cell_info: Vec<CellInfo> =
             let spaces: HashSet<KitsuneSpace> = agent_infos
                 .iter()
                 .map(|agent_info| agent_info.space.as_ref().clone())
@@ -62,8 +61,7 @@ pub async fn spawn_mdns_bootstrap(admin_port: u16) -> crate::Result<()> {
                     base64::prelude::BASE64_URL_SAFE_NO_PAD.encode(&agent_info.space[..]);
                 let agent_b64 =
                     base64::prelude::BASE64_URL_SAFE_NO_PAD.encode(&agent_info.agent[..]);
-                //println!("(MDNS) - Broadcasting of Agent {:?} ({}) in space {:?} ({} ; {})",
-                // agent, agent.get_bytes().len(), space, space.get_bytes().len(), space_b64.len());
+
                 // Broadcast rmp encoded agent_info_signed
                 let mut buffer = Vec::new();
                 if let Err(err) = rmp_encode(&mut buffer, &agent_info) {

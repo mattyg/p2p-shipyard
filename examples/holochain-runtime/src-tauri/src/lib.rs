@@ -38,8 +38,8 @@ fn wan_network_config() -> Option<WANNetworkConfig> {
         None
     } else {
         Some(WANNetworkConfig {
-            signal_url: url2::url2!("wss://signal.holo.host"),
-            bootstrap_url: url2::url2!("https://bootstrap.holo.host"),
+            signal_url: url2::url2!("wss://sbd.holo.host"),
+            bootstrap_url: url2::url2!("https://bootstrap-0.infra.holochain.org"),
             ice_servers_urls: vec![
                 url2::url2!("stun:stun-0.main.infra.holo.host:443"),
                 url2::url2!("stun:stun-1.main.infra.holo.host:443"),
