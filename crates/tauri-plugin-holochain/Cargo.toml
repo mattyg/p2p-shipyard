@@ -8,7 +8,7 @@ rust-version = "1.75"
 links = "tauri-plugin-holochain"
 
 [dependencies]
-tauri = { version = "2.0.0-rc", features = [
+tauri = { version = "2.0.0-rc.8", features = [
   "devtools",
   "native-tls-vendored",
 ] }

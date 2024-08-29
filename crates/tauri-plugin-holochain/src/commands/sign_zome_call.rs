@@ -1,11 +1,6 @@
-use holochain::{
-    conductor::api::ZomeCall,
-    prelude::{CapSecret, CellId, ExternIO, FunctionName, Timestamp, ZomeCallUnsigned, ZomeName},
-};
-use holochain_client::AgentPubKey;
+use holochain::{conductor::api::ZomeCall, prelude::ZomeCallUnsigned};
 use holochain_types::prelude::Signature;
 use lair_keystore_api::LairClient;
-use serde::Deserialize;
 use tauri::{command, AppHandle, Runtime};
 
 use crate::HolochainExt;
@@ -13,7 +8,7 @@ use crate::HolochainExt;
 #[command]
 pub(crate) async fn sign_zome_call<R: Runtime>(
     app_handle: AppHandle<R>,
-    zome_call_unsigned: ZomeCallUnsignedTauri,
+    zome_call_unsigned: ZomeCallUnsigned,
 ) -> crate::Result<ZomeCall> {
     let zome_call_unsigned_converted: ZomeCallUnsigned = zome_call_unsigned.into();
 
@@ -64,50 +59,4 @@ pub async fn sign_zome_call_with_client(
     };
 
     return Ok(signed_zome_call);
-}
-
-/// The version of an unsigned zome call that's compatible with the serialization
-/// behavior of tauri's IPC channel (serde serialization)
-/// nonce is a byte array [u8, 32] because holochain's nonce type seems to
-/// have "non-serde" deserialization behavior.
-#[derive(Deserialize, Debug)]
-pub struct ZomeCallUnsignedTauri {
-    pub provenance: AgentPubKey,
-    pub cell_id: CellId,
-    pub zome_name: ZomeName,
-    pub fn_name: FunctionName,
-    pub cap_secret: Option<CapSecret>,
-    pub payload: ExternIO,
-    pub nonce: [u8; 32],
-    pub expires_at: Timestamp,
-}
-
-impl Into<ZomeCallUnsigned> for ZomeCallUnsignedTauri {
-    fn into(self) -> ZomeCallUnsigned {
-        ZomeCallUnsigned {
-            provenance: self.provenance,
-            cell_id: self.cell_id,
-            zome_name: self.zome_name,
-            fn_name: self.fn_name,
-            cap_secret: self.cap_secret,
-            payload: self.payload,
-            nonce: self.nonce.into(),
-            expires_at: self.expires_at,
-        }
-    }
-}
-
-impl Clone for ZomeCallUnsignedTauri {
-    fn clone(&self) -> Self {
-        ZomeCallUnsignedTauri {
-            provenance: self.provenance.clone(),
-            cell_id: self.cell_id.clone(),
-            zome_name: self.zome_name.clone(),
-            fn_name: self.fn_name.clone(),
-            cap_secret: self.cap_secret.clone(),
-            payload: self.payload.clone(),
-            nonce: self.nonce.clone(),
-            expires_at: self.expires_at.clone(),
-        }
-    }
 }

@@ -10,7 +10,7 @@
   "dependencies": {
     "@holochain/client": "^0.18.0-dev",
     "@msgpack/msgpack": "^3.0.0-beta2",
-    "@tauri-apps/api": "^2.0.0-rc",
+    "@tauri-apps/api": "^2.0.0-rc.4",
     "rollup-plugin-analyzer": "^4.0.0"
   },
   "devDependencies": {
