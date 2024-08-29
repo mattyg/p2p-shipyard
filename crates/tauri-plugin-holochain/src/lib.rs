@@ -58,7 +58,7 @@ pub struct HolochainRuntime {
     pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
     pub(crate) conductor_handle: ConductorHandle,
-    pub(crate) _local_signal_handle: Option<sbd_server::SbdServer>,
+    pub(crate) _local_signal_handle: sbd_server::SbdServer,
 }
 
 fn happ_origin(app_id: &String) -> String {
@@ -509,6 +509,7 @@ impl<R: Runtime, T: Manager<R>> crate::HolochainExt<R> for T {
 pub struct WANNetworkConfig {
     pub bootstrap_url: Url2,
     pub signal_url: Url2,
+    pub ice_servers_urls: Vec<Url2>,
 }
 
 pub struct HolochainPluginConfig {

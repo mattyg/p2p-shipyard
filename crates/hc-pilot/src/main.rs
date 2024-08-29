@@ -87,6 +87,7 @@ fn main() {
         (Some(signal_url), Some(bootstrap_url)) => Some(WANNetworkConfig {
             signal_url: url2!("{}", signal_url),
             bootstrap_url: url2!("{}", bootstrap_url),
+            ice_servers_urls: vec![],
         }),
         (None, None) => None,
         (Some(_), None) => {

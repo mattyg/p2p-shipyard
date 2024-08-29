@@ -6,6 +6,8 @@ use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConf
 use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
+const SIGNAL_URL: &'static str = "wss://sbd-0.main.infra.holo.host";
+const BOOTSTRAP_URL: &'static str = "https://bootstrap-0.infra.holochain.org";
 
 pub fn example_happ() -> AppBundle {
     let bytes = include_bytes!("../../workdir/forum.happ");
@@ -30,13 +32,16 @@ pub fn vec_to_locked(mut pass_tmp: Vec<u8>) -> std::io::Result<BufRead> {
 }
 
 fn wan_network_config() -> Option<WANNetworkConfig> {
-    // Resolved at compile time to be able to point to local services
     if tauri::is_dev() {
         None
     } else {
         Some(WANNetworkConfig {
-            signal_url: url2::url2!("wss://signal.holo.host"),
-            bootstrap_url: url2::url2!("https://bootstrap.holo.host")
+            signal_url: url2::url2!("{SIGNAL_URL}"),
+            bootstrap_url: url2::url2!("{BOOTSTRAP_URL}"),
+            ice_servers_urls: vec![
+                url2::url2!("stun:stun-0.main.infra.holo.host:443"),
+                url2::url2!("stun:stun-1.main.infra.holo.host:443"),
+            ]
         })
     }
 }

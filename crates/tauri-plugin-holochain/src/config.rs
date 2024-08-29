@@ -11,14 +11,14 @@ use kitsune_p2p_types::config::{
 };
 use url2::Url2;
 
-use crate::filesystem::FileSystem;
+use crate::{filesystem::FileSystem, WANNetworkConfig};
 
 pub fn conductor_config(
     fs: &FileSystem,
     admin_port: u16,
     lair_root: KeystorePath,
-    bootstrap_url: Option<Url2>,
-    signal_urls: Vec<Url2>,
+    wan_network_config: Option<WANNetworkConfig>,
+    local_signal_url: Url2,
     override_gossip_arc_clamping: Option<String>,
 ) -> ConductorConfig {
     let mut config = ConductorConfig::default();
@@ -37,18 +37,27 @@ pub fn conductor_config(
 
     network_config.tuning_params = Arc::new(tuning_params);
 
-    if let Some(bootstrap_url) = bootstrap_url {
-        network_config.bootstrap_service = Some(bootstrap_url);
-    }
-
-    // tx5
-    for signal_url in signal_urls {
+    if let Some(wan_network_config) = wan_network_config {
+        network_config.bootstrap_service = Some(wan_network_config.bootstrap_url);
+        // WAN
+        let webrtc_config = if wan_network_config.ice_servers_urls.is_empty() {
+            None
+        } else {
+            Some(webrtc_config_from_ice_urls(
+                wan_network_config.ice_servers_urls,
+            ))
+        };
         network_config.transport_pool.push(TransportConfig::WebRTC {
-            // TODO: expose this in WANNetworkConfig?
-            webrtc_config: None,
-            signal_url: signal_url.to_string(),
+            webrtc_config,
+            signal_url: wan_network_config.signal_url.to_string(),
         });
     }
+
+    // LAN
+    network_config.transport_pool.push(TransportConfig::WebRTC {
+        webrtc_config: None,
+        signal_url: local_signal_url.to_string(),
+    });
     config.network = network_config;
 
     // TODO: uncomment when we can set a custom origin for holochain-client-rust
@@ -66,4 +75,22 @@ pub fn conductor_config(
     }]);
 
     config
+}
+
+fn webrtc_config_from_ice_urls(ice_server_urls: Vec<Url2>) -> serde_json::Value {
+    let mut webrtc_config = serde_json::Map::new();
+    let mut ice_servers = Vec::new();
+    for url in ice_server_urls {
+        let mut url_mapping = serde_json::Map::new();
+        url_mapping.insert(
+            String::from("urls"),
+            serde_json::Value::Array(vec![serde_json::Value::String(url.to_string())]),
+        );
+        ice_servers.push(serde_json::Value::Object(url_mapping));
+    }
+    webrtc_config.insert(
+        String::from("ice_servers"),
+        serde_json::Value::Array(ice_servers),
+    );
+    serde_json::Value::Object(webrtc_config)
 }

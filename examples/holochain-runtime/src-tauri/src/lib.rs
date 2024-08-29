@@ -34,13 +34,16 @@ pub fn run() {
 }
 
 fn wan_network_config() -> Option<WANNetworkConfig> {
-    // Resolved at compile time to be able to point to local services
     if tauri::is_dev() {
         None
     } else {
         Some(WANNetworkConfig {
             signal_url: url2::url2!("wss://signal.holo.host"),
-            bootstrap_url: url2::url2!("https://bootstrap.holo.host")
+            bootstrap_url: url2::url2!("https://bootstrap.holo.host"),
+            ice_servers_urls: vec![
+                url2::url2!("stun:stun-0.main.infra.holo.host:443"),
+                url2::url2!("stun:stun-1.main.infra.holo.host:443"),
+            ]
         })
     }
 }
