@@ -3557,7 +3557,7 @@ dependencies = [
 [[package]]
 name = "holochain_client"
 version = "0.6.0-dev.6"
-source = "git+https://github.com/guillemcordoba/holochain-client-rust?branch=develop#431f710a171d34921487bfd72ee1c1fe039f262a"
+source = "git+https://github.com/holochain/holochain-client-rust?branch=add-list-cell-ids#9c260b83f394f708d1c395106935592838b86dba"
 dependencies = [
  "again",
  "anyhow",
@@ -9143,7 +9143,7 @@ dependencies = [
  "futures",
  "hc_seed_bundle",
  "holochain",
- "holochain_client 0.6.0-dev.6 (git+https://github.com/guillemcordoba/holochain-client-rust?branch=develop)",
+ "holochain_client 0.6.0-dev.6 (git+https://github.com/holochain/holochain-client-rust?branch=add-list-cell-ids)",
  "holochain_conductor_api",
  "holochain_keystore",
  "holochain_types",
