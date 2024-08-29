@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.follows = "holochain/nixpkgs";
+    webkitgtknixpkgs.url =
+      "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
 
     versions.url = "github:holochain/holochain?dir=versions/0_3";
 
@@ -226,10 +228,20 @@
           ];
 
           buildInputs =
-            flake.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
+            # TODO: revert to this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
+            # flake.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
+            flake.lib.tauriAppDeps.buildInputs {
+              inherit lib;
+              pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+            };
 
           nativeBuildInputs =
-            flake.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; };
+            # TODO: revert to this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
+            # flake.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; };
+            flake.lib.tauriAppDeps.nativeBuildInputs {
+              inherit lib;
+              pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+            };
 
           shellHook = ''
             export GIO_MODULE_DIR=${pkgs.glib-networking}/lib/gio/modules/
