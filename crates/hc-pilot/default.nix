@@ -43,10 +43,20 @@
         pname = crate;
         version = cargoToml.package.version;
       });
-    in craneLib.buildPackage (commonArgs // {
-      pname = crate;
-      version = cargoToml.package.version;
-      inherit cargoArtifacts;
-    });
+      binary = craneLib.buildPackage (commonArgs // {
+        pname = crate;
+        version = cargoToml.package.version;
+        inherit cargoArtifacts;
+      });
+    in pkgs.runCommandLocal "wrap-${crate}" {
+      buildInputs = [ pkgs.makeWrapper ];
+
+    } ''
+      mkdir $out
+      mkdir $out/bin
+      # Because we create this ourself, by creating a wrapper
+      makeWrapper ${binary}/bin/hc-pilot $out/bin/hc-pilot \
+        --set WEBKIT_DISABLE_DMABUF_RENDERER 1
+    '';
   };
 }

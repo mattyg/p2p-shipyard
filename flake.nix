@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.follows = "holochain/nixpkgs";
     webkitgtknixpkgs.url =
-      "github:nixos/nixpkgs/2230a20f2b5a14f2db3d7f13a2dc3c22517e790b";
+      "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
 
     versions.url = "github:holochain/holochain?dir=versions/0_3";
 
