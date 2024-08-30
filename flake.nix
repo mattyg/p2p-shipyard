@@ -2,21 +2,18 @@
   description = "Build cross-platform holochain apps and runtimes";
 
   inputs = {
-    nixpkgs.follows = "holochain/nixpkgs";
+    holonix.url = "github:holochain/holonix?ref=main-0.3";
+    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
+    hc-infra.url = "github:holochain-open-dev/infrastructure";
 
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
-    rust-overlay.follows = "holochain/rust-overlay";
+    nixpkgs.follows = "holonix/nixpkgs";
+    flake-parts.follows = "holonix/flake-parts";
+    rust-overlay.follows = "holonix/rust-overlay";
     android-nixpkgs = {
       url = "github:tadfisher/android-nixpkgs/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hc-infra.url = "github:holochain-open-dev/infrastructure";
-    crane.follows = "hc-infra/crane";
+    crane.follows = "holonix/crane";
   };
 
   nixConfig = {
@@ -33,7 +30,7 @@
   };
 
   outputs = inputs@{ ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake { inherit inputs; } rec {
+    inputs.holonix.inputs.flake-parts.lib.mkFlake { inherit inputs; } rec {
       flake = {
         lib = rec {
           tauriAppDeps = {
@@ -189,7 +186,7 @@
           #     network = pkgs.writeShellApplication {
           #       name = "local-holochain-network";
           #       runtimeInputs =
-          #         [ getFreePort holochain.packages.hc-run-local-services ];
+          #         [ getFreePort holonix.packages.hc-run-local-services ];
           #       text = ''
           #         BOOTSTRAP_PORT=$(get-free-port)
           #         SIGNAL_PORT=$(get-free-port)
@@ -212,7 +209,7 @@
         ./nix/modules/tauri-cli.nix
       ];
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem = { inputs', config, self', pkgs, system, lib, ... }: rec {
         checks.cargoArtifacts =
           flake.lib.tauriHappCargoArtifacts { inherit pkgs lib; };
@@ -271,9 +268,7 @@
 
         devShells.tauriAndroidDev = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
-            extensions = [ "rust-src" ];
+          rust = inputs.holonix.packages.${system}.rust.override {
             targets = [
               "armv7-linux-androideabi"
               "x86_64-linux-android"
@@ -303,10 +298,14 @@
 
         packages.tauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
-            extensions = [ "rust-src" ];
+          pkgs = import inputs.nixpkgs {
+            inherit system overlays;
           };
+          rust = (inputs.holonix.packages.${system}.rust.override
+            {
+              extensions = [ "clippy" "rustfmt" ];
+              targets = [ "wasm32-unknown-unknown" ];
+            });
           linuxCargo = pkgs.writeShellApplication {
             name = "cargo";
             runtimeInputs = [ rust ];
@@ -322,11 +321,7 @@
 
         packages.holochainTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
-            extensions = [ "rust-src" ];
-            targets = [ "wasm32-unknown-unknown" ];
-          };
+          rust = inputs.holonix.packages.${system}.rust;
           linuxCargo = pkgs.writeShellApplication {
             name = "cargo";
             runtimeInputs = [ rust ];
@@ -342,9 +337,7 @@
 
         packages.androidTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
-            extensions = [ "rust-src" ];
+          rust = inputs.holonix.packages.${system}.rust.override {
             targets = [
               "armv7-linux-androideabi"
               "x86_64-linux-android"
@@ -414,8 +407,10 @@
         in androidRust;
 
         devShells.holochainTauriDev = pkgs.mkShell {
-          inputsFrom =
-            [ devShells.tauriDev inputs'.holochain.devShells.holonix ];
+          inputsFrom = [ 
+            devShells.tauriDev 
+            inputs.holonix.devShells.${system}.default
+          ];
           packages = [ packages.holochainTauriRust ];
         };
 
@@ -423,7 +418,7 @@
           inputsFrom = [
             devShells.tauriDev
             devShells.androidDev
-            inputs'.holochain.devShells.holonix
+            inputs.holonix.devShells.${system}.default
           ];
           packages =
             [ packages.androidTauriRust self'.packages.custom-go-wrapper ];
