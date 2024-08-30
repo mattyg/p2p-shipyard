@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.follows = "holochain/nixpkgs";
     webkitgtknixpkgs.url =
-      "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
+      "github:nixos/nixpkgs/2230a20f2b5a14f2db3d7f13a2dc3c22517e790b";
 
     versions.url = "github:holochain/holochain?dir=versions/0_3";
 
@@ -229,6 +229,7 @@
 
           buildInputs =
             # TODO: revert to this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
+            # and this other bug as well: https://github.com/tauri-apps/tauri/issues/9304
             # flake.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
             flake.lib.tauriAppDeps.buildInputs {
               inherit lib;
@@ -237,6 +238,7 @@
 
           nativeBuildInputs =
             # TODO: revert to this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
+            # and this other bug as well: https://github.com/tauri-apps/tauri/issues/9304
             # flake.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; };
             flake.lib.tauriAppDeps.nativeBuildInputs {
               inherit lib;
