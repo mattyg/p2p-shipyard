@@ -17,12 +17,17 @@
         doCheck = false;
         buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
           inherit pkgs lib;
-        } ++ self.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
-        nativeBuildInputs =
-          (self.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; })
-          ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
-            inherit pkgs lib;
-          });
+        } ++ self.lib.tauriAppDeps.buildInputs {
+          inherit lib;
+          pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+        };
+        nativeBuildInputs = (self.lib.tauriAppDeps.nativeBuildInputs {
+
+          inherit lib;
+          pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+        }) ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
+          inherit pkgs lib;
+        });
 
         # TODO: remove this if possible
         postPatch = ''
