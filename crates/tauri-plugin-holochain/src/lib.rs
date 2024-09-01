@@ -22,7 +22,7 @@ mod error;
 mod features;
 
 pub use error::{Error, Result};
-pub use holochain_manager::{HolochainManagerConfig, WANNetworkConfig};
+pub use holochain_manager::{HolochainManagerConfig, WANNetworkConfig, error::Error as HolochainManagerError};
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
 
