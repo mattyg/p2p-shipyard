@@ -12,8 +12,7 @@
       url = "github:tadfisher/android-nixpkgs/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # hc-infra.url = "github:holochain-open-dev/infrastructure";
-    hc-infra.url = "/home/guillem/projects/holochain/open-dev/infrastructure";
+    hc-infra.url = "github:holochain-open-dev/infrastructure";
     crane.follows = "holonix/crane";
   };
 
