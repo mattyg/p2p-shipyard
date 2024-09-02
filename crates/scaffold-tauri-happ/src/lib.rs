@@ -405,20 +405,14 @@ mod tests {
   description = "Template for Holochain app development";
   
   inputs = {
-    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
-    nixpkgs.follows = "holochain/nixpkgs";
-
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
+    holonix.url = "github:holochain/holonix/main-0.3";
+    nixpkgs.follows = "holonix/nixpkgs";
     hc-infra.url = "github:holochain-open-dev/utils";
+    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
       specialArgs = {
@@ -427,7 +421,7 @@ mod tests {
     }
     {
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
         , config
@@ -441,14 +435,14 @@ mod tests {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriDev 
               inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.holonix.devShells.default
             ];
           };
           devShells.androidDev = pkgs.mkShell {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev 
               inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.holonix.devShells.default 
             ];
           };
         };
@@ -589,19 +583,13 @@ roles:
   description = "Template for Holochain app development";
   
   inputs = {
-    nixpkgs.follows = "holochain/nixpkgs";
-
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
+    holonix.url = "github:holochain/holonix/main-0.3";
+    nixpkgs.follows = "holonix/nixpkgs";
     hc-infra.url = "github:holochain-open-dev/utils";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
       specialArgs = {
@@ -610,7 +598,7 @@ roles:
     }
     {
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
         , config
@@ -623,7 +611,7 @@ roles:
           devShells.default = pkgs.mkShell {
             inputsFrom = [ 
               inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.holonix.devShells.default
             ];
           };
         };
