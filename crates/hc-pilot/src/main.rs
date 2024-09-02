@@ -26,6 +26,10 @@ struct Args {
     #[clap(long)]
     pub ui_port: String,
 
+    /// The admin port to bind the admin interface to
+    #[clap(long)]
+    pub admin_port: Option<u16>,
+
     /// The bundle identifier for the Tauri app
     #[clap(long)]
     pub agent_key: Option<String>,
@@ -109,6 +113,7 @@ fn main() {
             HolochainPluginConfig {
                 wan_network_config,
                 holochain_dir: conductor_dir,
+                admin_port: args.admin_port,
             },
         ))
         .setup(|app| {

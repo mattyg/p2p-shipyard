@@ -1,7 +1,6 @@
 use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainPluginConfig, HolochainExt, WANNetworkConfig};
-use url2::Url2;
 
 const SIGNAL_URL: &'static str = "wss://sbd.holo.host";
 const BOOTSTRAP_URL: &'static str = "https://bootstrap-0.infra.holochain.org";
@@ -16,10 +15,7 @@ pub fn run() {
         )
         .plugin(tauri_plugin_holochain::init(
             vec_to_locked(vec![]).expect("Can't build passphrase"),
-            HolochainPluginConfig {
-                wan_network_config: wan_network_config(),
-                holochain_dir: holochain_dir(),
-            },
+            HolochainPluginConfig::new(holochain_dir(), wan_network_config())
         ))
         .setup(|app| {
             let handle = app.handle().clone();
