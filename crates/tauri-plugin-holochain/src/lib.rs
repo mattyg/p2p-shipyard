@@ -509,10 +509,28 @@ pub struct WANNetworkConfig {
 }
 
 pub struct HolochainPluginConfig {
+    /// The directory where the holochain files and databases will be stored in
+    pub holochain_dir: PathBuf,
     /// If `None`, no WAN networking will take place, only mDNS based networking
     /// Peers in the same LAN will still be able to communicate with each other
     pub wan_network_config: Option<WANNetworkConfig>,
-    pub holochain_dir: PathBuf,
+    /// Force the conductor to run at this admin port
+    pub admin_port: Option<u16>,
+}
+
+impl HolochainPluginConfig {
+    pub fn new(holochain_dir: PathBuf, wan_network_config: Option<WANNetworkConfig>) -> Self {
+        HolochainPluginConfig {
+            holochain_dir,
+            wan_network_config,
+            admin_port: None,
+        }
+    }
+
+    pub fn admin_port(mut self, admin_port: u16) -> Self {
+        self.admin_port = Some(admin_port);
+        self
+    }
 }
 
 fn plugin_builder<R: Runtime>() -> Builder<R> {

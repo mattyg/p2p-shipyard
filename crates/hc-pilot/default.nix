@@ -31,22 +31,23 @@
         });
 
         # TODO: remove this if possible
-        # postPatch = ''
-        #   mkdir -p "$TMPDIR/nix-vendor"
-        #   cp -Lr "$cargoVendorDir" -T "$TMPDIR/nix-vendor"
-        #   sed -i "s|$cargoVendorDir|$TMPDIR/nix-vendor/|g" "$TMPDIR/nix-vendor/config.toml"
-        #   chmod -R +w "$TMPDIR/nix-vendor"
-        #   cargoVendorDir="$TMPDIR/nix-vendor"
-        # '';
+        # Without this build fails on MacOs
+        postPatch = ''
+          mkdir -p "$TMPDIR/nix-vendor"
+          cp -Lr "$cargoVendorDir" -T "$TMPDIR/nix-vendor"
+          sed -i "s|$cargoVendorDir|$TMPDIR/nix-vendor/|g" "$TMPDIR/nix-vendor/config.toml"
+          chmod -R +w "$TMPDIR/nix-vendor"
+          cargoVendorDir="$TMPDIR/nix-vendor"
+        '';
       };
-      cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
-        pname = crate;
-        version = cargoToml.package.version;
-      });
+      # cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
+      #   pname = crate;
+      #   version = cargoToml.package.version;
+      # });
       binary = craneLib.buildPackage (commonArgs // {
         pname = crate;
         version = cargoToml.package.version;
-        inherit cargoArtifacts;
+        # inherit cargoArtifacts;
       });
     in pkgs.runCommandLocal "wrap-${crate}" {
       buildInputs = [ pkgs.makeWrapper ];
