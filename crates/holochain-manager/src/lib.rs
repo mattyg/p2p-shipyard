@@ -23,7 +23,7 @@ pub mod filesystem;
 pub mod http_server;
 pub mod lair_signer;
 pub mod launch;
-pub mod bindings;
+pub mod utils;
 
 use commands::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};

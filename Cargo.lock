@@ -3495,7 +3495,10 @@ dependencies = [
 name = "holochain-manager-uniffi"
 version = "0.1.0"
 dependencies = [
+ "holochain-manager",
+ "thiserror",
  "uniffi",
+ "url2",
 ]
 
 [[package]]
