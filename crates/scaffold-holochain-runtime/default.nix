@@ -16,14 +16,11 @@
         src = (self.lib.cleanScaffoldingSource { inherit lib; })
           (craneLib.path ../../.);
         doCheck = false;
-        buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
-          inherit pkgs lib;
-        } ++ self.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
+        buildInputs =
+          inputs.hc-infra.outputs.lib.holochainDeps { inherit pkgs lib; }
+          ++ self.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
         nativeBuildInputs =
-          (self.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; })
-          ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
-            inherit pkgs lib;
-          });
+          (self.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; });
         cargoExtraArgs = "--locked --package scaffold-holochain-runtime";
       };
     in craneLib.buildPackage (commonArgs // {

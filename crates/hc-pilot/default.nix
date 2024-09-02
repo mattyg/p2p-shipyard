@@ -15,7 +15,7 @@
         src =
           (self.lib.cleanTauriSource { inherit lib; }) (craneLib.path ../../.);
         doCheck = false;
-        buildInputs = inputs.hc-infra.outputs.lib.holochainAppDeps.buildInputs {
+        buildInputs = inputs.hc-infra.outputs.lib.holochainDeps {
           inherit lib;
           pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
         } ++ self.lib.tauriAppDeps.buildInputs {
@@ -23,9 +23,6 @@
           pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
         };
         nativeBuildInputs = (self.lib.tauriAppDeps.nativeBuildInputs {
-          inherit lib;
-          pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
-        }) ++ (inputs.hc-infra.outputs.lib.holochainAppDeps.nativeBuildInputs {
           inherit lib;
           pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
         });
