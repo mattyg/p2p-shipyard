@@ -1,6 +1,6 @@
 #/usr/bin/env bash
 
-cargo build --release --package holochain-manager-uniffi
+#cargo build --release --package holochain-manager-uniffi
 
 cargo ndk -o ../../tauri-plugin-holochain-foreground-service/android/src/main/jniLibs \
   --manifest-path ./Cargo.toml \

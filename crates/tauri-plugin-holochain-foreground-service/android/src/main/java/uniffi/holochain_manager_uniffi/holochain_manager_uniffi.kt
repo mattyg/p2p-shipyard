@@ -766,6 +766,11 @@ internal interface UniffiLib : Library {
         `config`: RustBuffer.ByValue,
     ): Long
 
+    fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_get_admin_port(
+        `ptr`: Pointer,
+        uniffi_out_err: UniffiRustCallStatus,
+    ): Short
+
     fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_list_installed_apps(`ptr`: Pointer): Long
 
     fun ffi_holochain_manager_uniffi_rustbuffer_alloc(
@@ -984,6 +989,8 @@ internal interface UniffiLib : Library {
         uniffi_out_err: UniffiRustCallStatus,
     ): Unit
 
+    fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port(): Short
+
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps(): Short
 
     fun uniffi_holochain_manager_uniffi_checksum_constructor_holochainruntimeffi_launch(): Short
@@ -1003,6 +1010,9 @@ private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: UniffiLib) {
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port() != 6967.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps() != 46427.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -1093,6 +1103,23 @@ inline fun <T : Disposable?, R> T.use(block: (T) -> R) =
 
 /** Used to instantiate an interface without an actual pointer, for fakes in tests, mostly. */
 object NoPointer
+
+public object FfiConverterUShort : FfiConverter<UShort, Short> {
+    override fun lift(value: Short): UShort = value.toUShort()
+
+    override fun read(buf: ByteBuffer): UShort = lift(buf.getShort())
+
+    override fun lower(value: UShort): Short = value.toShort()
+
+    override fun allocationSize(value: UShort) = 2UL
+
+    override fun write(
+        value: UShort,
+        buf: ByteBuffer,
+    ) {
+        buf.putShort(value.toShort())
+    }
+}
 
 public object FfiConverterString : FfiConverter<String, RustBuffer.ByValue> {
     // Note: we don't inherit from FfiConverterRustBuffer, because we use a
@@ -1339,6 +1366,8 @@ private class JavaLangRefCleanable(
 }
 
 public interface HolochainRuntimeFfiInterface {
+    fun `getAdminPort`(): kotlin.UShort
+
     suspend fun `listInstalledApps`(): List<AppInfoFfi>
 
     companion object
@@ -1427,6 +1456,18 @@ open class HolochainRuntimeFfi :
         uniffiRustCall { status ->
             UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_clone_holochainruntimeffi(pointer!!, status)
         }
+
+    override fun `getAdminPort`(): kotlin.UShort =
+        FfiConverterUShort.lift(
+            callWithPointer {
+                uniffiRustCall { _status ->
+                    UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_get_admin_port(
+                        it,
+                        _status,
+                    )
+                }
+            },
+        )
 
     @Throws(HolochainRuntimeFfiException::class)
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")

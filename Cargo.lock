@@ -3568,8 +3568,10 @@ dependencies = [
 name = "holochain-manager-uniffi"
 version = "0.1.0"
 dependencies = [
+ "android_logger",
  "holochain-manager",
  "holochain_conductor_api",
+ "log",
  "thiserror",
  "uniffi",
  "url2",
