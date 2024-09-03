@@ -16,6 +16,8 @@ path = "uniffi-bindgen.rs"
 
 [dependencies]
 holochain-manager = { path = "../holochain-manager", default-features = false }
+holochain_conductor_api = "0.3.2"
+
 thiserror = "1.0.63"
 url2 = "0.0.6"
 uniffi = { version = "0.28.1", features = ["cli"] }

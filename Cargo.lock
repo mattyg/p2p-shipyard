@@ -3448,7 +3448,7 @@ dependencies = [
 
 [[package]]
 name = "holochain-manager"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-std",
@@ -3496,6 +3496,7 @@ name = "holochain-manager-uniffi"
 version = "0.1.0"
 dependencies = [
  "holochain-manager",
+ "holochain_conductor_api",
  "thiserror",
  "uniffi",
  "url2",
