@@ -53,9 +53,11 @@ pub async fn install_app(
 ) -> crate::Result<AppInfo> {
     log::info!("Installing app {}", app_id);
 
-    let deferred_memproofs = match bundle.manifest() {
+    let allow_deferred_memproofs = match bundle.manifest() {
         AppManifest::V1(v1) => v1.allow_deferred_memproofs,
     };
+
+    let memproofs_deferred = allow_deferred_memproofs && membrane_proofs.is_none();
 
     let app_info = admin_ws
         .install_app(InstallAppPayload {
@@ -66,12 +68,13 @@ pub async fn install_app(
             source: AppBundleSource::Bundle(bundle),
             installed_app_id: Some(app_id.clone()),
             ignore_genesis_failure: false,
+            allow_throwaway_random_agent_key: false,
         })
         .await
         .map_err(|err| crate::Error::ConductorApiError(err))?;
     log::info!("Installed app {app_info:?}");
 
-    if !deferred_memproofs {
+    if !memproofs_deferred {
         admin_ws
             .enable_app(app_id.clone())
             .await
