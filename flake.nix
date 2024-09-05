@@ -2,21 +2,18 @@
   description = "Build cross-platform holochain apps and runtimes";
 
   inputs = {
-    nixpkgs.follows = "holochain/nixpkgs";
+    nixpkgs.follows = "holonix/nixpkgs";
+    webkitgtknixpkgs.url =
+      "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
 
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
-    rust-overlay.follows = "holochain/rust-overlay";
+    holonix.url = "github:holochain/holonix/main-0.3";
+    rust-overlay.follows = "holonix/rust-overlay";
     android-nixpkgs = {
       url = "github:tadfisher/android-nixpkgs/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hc-infra.url = "github:holochain-open-dev/infrastructure";
-    crane.follows = "hc-infra/crane";
+    crane.follows = "holonix/crane";
   };
 
   nixConfig = {
@@ -33,7 +30,7 @@
   };
 
   outputs = inputs@{ ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake { inherit inputs; } rec {
+    inputs.holonix.inputs.flake-parts.lib.mkFlake { inherit inputs; } rec {
       flake = {
         lib = rec {
           tauriAppDeps = {
@@ -85,14 +82,9 @@
           tauriHappDeps = {
             buildInputs = { pkgs, lib }:
               (tauriAppDeps.buildInputs { inherit pkgs lib; })
-              ++ (inputs.hc-infra.lib.holochainAppDeps.buildInputs {
-                inherit pkgs lib;
-              });
+              ++ (inputs.hc-infra.lib.holochainDeps { inherit pkgs lib; });
             nativeBuildInputs = { pkgs, lib }:
-              (tauriAppDeps.nativeBuildInputs { inherit pkgs lib; })
-              ++ (inputs.hc-infra.lib.holochainAppDeps.nativeBuildInputs {
-                inherit pkgs lib;
-              });
+              (tauriAppDeps.nativeBuildInputs { inherit pkgs lib; });
           };
           tauriHappCargoArtifacts = { pkgs, lib }:
             let craneLib = inputs.crane.mkLib pkgs;
@@ -212,7 +204,7 @@
         ./nix/modules/tauri-cli.nix
       ];
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem = { inputs', config, self', pkgs, system, lib, ... }: rec {
         checks.cargoArtifacts =
           flake.lib.tauriHappCargoArtifacts { inherit pkgs lib; };
@@ -226,10 +218,22 @@
           ];
 
           buildInputs =
-            flake.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
+            # TODO: revert to this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
+            # and this other bug as well: https://github.com/tauri-apps/tauri/issues/9304
+            # flake.lib.tauriAppDeps.buildInputs { inherit pkgs lib; };
+            flake.lib.tauriAppDeps.buildInputs {
+              inherit lib;
+              pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+            };
 
           nativeBuildInputs =
-            flake.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; };
+            # TODO: revert to this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
+            # and this other bug as well: https://github.com/tauri-apps/tauri/issues/9304
+            # flake.lib.tauriAppDeps.nativeBuildInputs { inherit pkgs lib; };
+            flake.lib.tauriAppDeps.nativeBuildInputs {
+              inherit lib;
+              pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+            };
 
           shellHook = ''
             export GIO_MODULE_DIR=${pkgs.glib-networking}/lib/gio/modules/
@@ -414,25 +418,22 @@
         in androidRust;
 
         devShells.holochainTauriDev = pkgs.mkShell {
-          inputsFrom =
-            [ devShells.tauriDev inputs'.holochain.devShells.holonix ];
-          packages = [ packages.holochainTauriRust ];
+          inputsFrom = [ devShells.tauriDev ];
+          packages = [ packages.holochainTauriRust ]
+            ++ inputs.hc-infra.lib.holochainDeps { inherit pkgs lib; };
         };
 
         devShells.holochainTauriAndroidDev = pkgs.mkShell {
-          inputsFrom = [
-            devShells.tauriDev
-            devShells.androidDev
-            inputs'.holochain.devShells.holonix
-          ];
+          inputsFrom = [ devShells.tauriDev devShells.androidDev ];
           packages =
-            [ packages.androidTauriRust self'.packages.custom-go-wrapper ];
+            [ packages.androidTauriRust self'.packages.custom-go-wrapper ]
+            ++ inputs.hc-infra.lib.holochainDeps { inherit pkgs lib; };
         };
 
         devShells.default = pkgs.mkShell {
           inputsFrom = [
             inputs'.hc-infra.devShells.synchronized-pnpm
-            devShells.holochainTauriAndroidDev
+            devShells.holochainTauriDev
           ];
         };
       };

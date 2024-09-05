@@ -47,7 +47,11 @@ pub async fn launch_holochain_runtime(
     // }
 
     let filesystem = FileSystem::new(config.holochain_dir).await?;
-    let admin_port = portpicker::pick_unused_port().expect("No ports free");
+    let admin_port = if let Some(admin_port) = config.admin_port {
+        admin_port 
+    } else { 
+        portpicker::pick_unused_port().expect("No ports free")
+    };
 
     let mut signal_urls = vec![];
     let run_local_signal_server = if let Some(network_config) = &config.wan_network_config {
