@@ -35,17 +35,12 @@
         lib = rec {
           tauriAppDeps = {
             buildInputs = { pkgs, lib }:
-              let
-                apple_sdk = if pkgs.system == "x86_64-darwin" then
-                  pkgs.darwin.apple_sdk_10_12
-                else
-                  pkgs.darwin.apple_sdk_11_0;
-
-              in (with pkgs; [
+              (with pkgs; [
                 openssl
                 # this is required for glib-networking
                 glib
               ]) ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+                pkg-config
                 webkitgtk
                 webkitgtk.dev # Brings libwebkitgtk-4.0.so.37
                 webkitgtk_4_1 # Needed for javascriptcoregtk
