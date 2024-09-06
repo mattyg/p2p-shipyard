@@ -35,7 +35,13 @@
         lib = rec {
           tauriAppDeps = {
             buildInputs = { pkgs, lib }:
-              (with pkgs; [
+              let
+                apple_sdk = if pkgs.system == "x86_64-darwin" then
+                  pkgs.darwin.apple_sdk_10_12
+                else
+                  pkgs.darwin.apple_sdk_11_0;
+
+              in (with pkgs; [
                 openssl
                 # this is required for glib-networking
                 glib
