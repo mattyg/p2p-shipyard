@@ -42,7 +42,7 @@
               ]) ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
                 pkg-config
                 webkitgtk
-                webkitgtk.dev # Brings libwebkitgtk-4.0.so.37
+                # webkitgtk.dev # Brings libwebkitgtk-4.0.so.37
                 webkitgtk_4_1 # Needed for javascriptcoregtk
                 # webkitgtk_4_1.dev
                 # webkitgtk_6_0
