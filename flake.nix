@@ -36,18 +36,20 @@
           tauriAppDeps = {
             buildInputs = { pkgs, lib }:
               (with pkgs; [
-                openssl
+                # openssl
                 # this is required for glib-networking
                 glib
+                openssl_3
               ]) ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
-                pkg-config
-                webkitgtk
-                # webkitgtk.dev # Brings libwebkitgtk-4.0.so.37
+                webkitgtk # Brings libwebkit2gtk-4.0.so.37
+                # webkitgtk.dev 
                 webkitgtk_4_1 # Needed for javascriptcoregtk
                 # webkitgtk_4_1.dev
                 # webkitgtk_6_0
                 gdk-pixbuf
                 gtk3
+                harfbuzz
+                libstdcxx5
                 # Video/Audio data composition framework tools like "gst-inspect", "gst-launch" ...
                 gst_all_1.gstreamer
                 # Common plugins like "filesrc" to combine within e.g. gst-launch
@@ -62,7 +64,6 @@
                 gst_all_1.gst-vaapi
                 libsoup_3
                 dbus
-                openssl_3
                 librsvg
               ])) ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
                 darwin.apple_sdk.frameworks.Security
@@ -78,6 +79,21 @@
               ++ (lib.optionals pkgs.stdenv.isLinux
                 (with pkgs; [ wrapGAppsHook ]))
               ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
+
+            libraries = { pkgs, lib }:
+              with pkgs; [
+                webkitgtk
+                webkitgtk_4_1
+                gtk3
+                cairo
+                gdk-pixbuf
+                glib
+                dbus
+                openssl_3
+                librsvg
+                harfbuzz
+                libstdcxx5
+              ];
           };
 
           tauriHappDeps = {
@@ -241,6 +257,10 @@
             export GIO_EXTRA_MODULES=${pkgs.glib-networking}/lib/gio/modules
             export WEBKIT_DISABLE_COMPOSITING_MODE=1
             export XDG_DATA_DIRS=${pkgs.shared-mime-info}/share:${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS
+            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath (flake.lib.tauriAppDeps.libraries {
+              inherit lib;
+              pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+            })}:$LD_LIBRARY_PATH
           '';
         };
 
