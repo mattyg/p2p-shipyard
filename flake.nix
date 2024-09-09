@@ -96,6 +96,7 @@
                   dbus
                   librsvg
                 ])) ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+                  basez
                   darwin.apple_sdk.frameworks.Security
                   darwin.apple_sdk.frameworks.CoreServices
                   darwin.apple_sdk.frameworks.CoreFoundation
@@ -317,8 +318,9 @@
               inputs'.webkitgtknixpkgs.legacyPackages
             }/bin:$PATH
             unset SOURCE_DATE_EPOCH
-          '' else
-            "";
+          '' else ''
+            export PATH=${pkgs.basez}/bin:$PATH
+          '';
         };
 
         devShells.androidDev = pkgs.mkShell {
