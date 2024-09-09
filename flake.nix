@@ -34,14 +34,14 @@
       flake = {
         lib = rec {
           tauriAppDeps = rec {
-              customGlib = pkgs: pkgs.runCommandLocal "custom-glib" {
-                  src = pkgs.glib.dev;
-                } ''
-                  mkdir $out
-                  cp -R ${pkgs.glib.dev}/* $out --no-preserve=all
-                  sed -i "s?^prefix=.*?prefix=${pkgs.glib.dev}?" $out/lib/pkgconfig/gio-2.0.pc
-                '';
-              customCp = pkgs: pkgs.runCommandLocal "custom-cp" {
+            customGlib = pkgs:
+              pkgs.runCommandLocal "custom-glib" { src = pkgs.glib.dev; } ''
+                mkdir $out
+                cp -R ${pkgs.glib.dev}/* $out --no-preserve=all
+                sed -i "s?^prefix=.*?prefix=${pkgs.glib.dev}?" $out/lib/pkgconfig/gio-2.0.pc
+              '';
+            customCp = pkgs:
+              pkgs.runCommandLocal "custom-cp" {
                 buildInputs = [ pkgs.makeWrapper ];
               } ''
                 mkdir $out
@@ -50,8 +50,9 @@
                   --append-flags "--preserve=links --no-preserve=all"
               '';
 
-              buildInputs = { pkgs, lib }:
-                (with pkgs; [
+            buildInputs = { pkgs, lib }:
+              (with pkgs;
+                [
                   # this is required for glib-networking
                   # openssl
                   openssl_3
@@ -103,39 +104,40 @@
                   darwin.apple_sdk.frameworks.WebKit
                   darwin.apple_sdk.frameworks.Cocoa
                 ]);
-              nativeBuildInputs = { pkgs, lib }:
-                (with pkgs; [ perl pkg-config makeWrapper ])
-                ++ (lib.optionals pkgs.stdenv.isLinux
-                  (with pkgs; [ wrapGAppsHook ensureNewerSourcesForZipFilesHook ]))
-                ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
+            nativeBuildInputs = { pkgs, lib }:
+              (with pkgs; [ perl pkg-config makeWrapper ])
+              ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+                wrapGAppsHook
+                ensureNewerSourcesForZipFilesHook
+              ])) ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
 
-              libraries = { pkgs, lib }:
-                with pkgs; [
-                  (customGlib pkgs)
-                  webkitgtk
-                  webkitgtk_4_1
-                  gtk3
-                  cairo
-                  gdk-pixbuf
-                  glib
-                  # glib.dev
-                  dbus
-                  # openssl_3
-                  librsvg
-                  harfbuzz
-                  harfbuzzFull
-                  stdenv.cc.cc.lib
-                  libz
-                  xorg.libX11
-                  xorg.libxcb
-                  fribidi
-                  fontconfig
-                  freetype
-                  libgpg-error
-                  mesa
-                  libdrm
-                  libglvnd
-                ];
+            libraries = { pkgs, lib }:
+              with pkgs; [
+                (customGlib pkgs)
+                webkitgtk
+                webkitgtk_4_1
+                gtk3
+                cairo
+                gdk-pixbuf
+                glib
+                # glib.dev
+                dbus
+                # openssl_3
+                librsvg
+                harfbuzz
+                harfbuzzFull
+                stdenv.cc.cc.lib
+                libz
+                xorg.libX11
+                xorg.libxcb
+                fribidi
+                fontconfig
+                freetype
+                libgpg-error
+                mesa
+                libdrm
+                libglvnd
+              ];
           };
 
           tauriHappDeps = {
@@ -294,20 +296,29 @@
               pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
             };
 
-          shellHook = ''
+          shellHook = if pkgs.stdenv.isLinux then ''
             export GIO_MODULE_DIR=${pkgs.glib-networking}/lib/gio/modules/
             export GIO_EXTRA_MODULES=${pkgs.glib-networking}/lib/gio/modules
             export WEBKIT_DISABLE_COMPOSITING_MODE=1
 
             export XDG_DATA_DIRS=${pkgs.shared-mime-info}/share:${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS
-            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath (flake.lib.tauriAppDeps.libraries {
-              inherit lib;
-              pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
-            })}:$LD_LIBRARY_PATH
-            export PKG_CONFIG_PATH=${flake.lib.tauriAppDeps.customGlib inputs'.webkitgtknixpkgs.legacyPackages}/lib/pkgconfig:$PKG_CONFIG_PATH
-            export PATH=${flake.lib.tauriAppDeps.customCp inputs'.webkitgtknixpkgs.legacyPackages}/bin:$PATH
+            export LD_LIBRARY_PATH=${
+              pkgs.lib.makeLibraryPath (flake.lib.tauriAppDeps.libraries {
+                inherit lib;
+                pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
+              })
+            }:$LD_LIBRARY_PATH
+            export PKG_CONFIG_PATH=${
+              flake.lib.tauriAppDeps.customGlib
+              inputs'.webkitgtknixpkgs.legacyPackages
+            }/lib/pkgconfig:$PKG_CONFIG_PATH
+            export PATH=${
+              flake.lib.tauriAppDeps.customCp
+              inputs'.webkitgtknixpkgs.legacyPackages
+            }/bin:$PATH
             unset SOURCE_DATE_EPOCH
-          '';
+          '' else
+            "";
         };
 
         devShells.androidDev = pkgs.mkShell {
