@@ -33,67 +33,109 @@
     inputs.holonix.inputs.flake-parts.lib.mkFlake { inherit inputs; } rec {
       flake = {
         lib = rec {
-          tauriAppDeps = {
-            buildInputs = { pkgs, lib }:
-              (with pkgs; [
-                # openssl
-                # this is required for glib-networking
-                glib
-                openssl_3
-              ]) ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
-                webkitgtk # Brings libwebkit2gtk-4.0.so.37
-                # webkitgtk.dev 
-                webkitgtk_4_1 # Needed for javascriptcoregtk
-                # webkitgtk_4_1.dev
-                # webkitgtk_6_0
-                gdk-pixbuf
-                gtk3
-                harfbuzz
-                libstdcxx5
-                # Video/Audio data composition framework tools like "gst-inspect", "gst-launch" ...
-                gst_all_1.gstreamer
-                # Common plugins like "filesrc" to combine within e.g. gst-launch
-                gst_all_1.gst-plugins-base
-                # Specialized plugins separated by quality
-                gst_all_1.gst-plugins-good
-                gst_all_1.gst-plugins-bad
-                gst_all_1.gst-plugins-ugly
-                # Plugins to reuse ffmpeg to play almost every video format
-                gst_all_1.gst-libav
-                # Support the Video Audio (Hardware) Acceleration API
-                gst_all_1.gst-vaapi
-                libsoup_3
-                dbus
-                librsvg
-              ])) ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
-                darwin.apple_sdk.frameworks.Security
-                darwin.apple_sdk.frameworks.CoreServices
-                darwin.apple_sdk.frameworks.CoreFoundation
-                darwin.apple_sdk.frameworks.Foundation
-                darwin.apple_sdk.frameworks.AppKit
-                darwin.apple_sdk.frameworks.WebKit
-                darwin.apple_sdk.frameworks.Cocoa
-              ]);
-            nativeBuildInputs = { pkgs, lib }:
-              (with pkgs; [ perl pkg-config makeWrapper ])
-              ++ (lib.optionals pkgs.stdenv.isLinux
-                (with pkgs; [ wrapGAppsHook ]))
-              ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
+          tauriAppDeps = rec {
+              customGlib = pkgs: pkgs.runCommandLocal "custom-glib" {
+                  src = pkgs.glib.dev;
+                } ''
+                  mkdir $out
+                  cp -R ${pkgs.glib.dev}/* $out --no-preserve=all
+                  sed -i "s?^prefix=.*?prefix=${pkgs.glib.dev}?" $out/lib/pkgconfig/gio-2.0.pc
+                '';
+              customCp = pkgs: pkgs.runCommandLocal "custom-cp" {
+                buildInputs = [ pkgs.makeWrapper ];
+              } ''
+                mkdir $out
+                mkdir $out/bin
+                makeWrapper ${pkgs.coreutils}/bin/cp $out/bin/cp \
+                  --append-flags "--preserve=links --no-preserve=all"
+              '';
 
-            libraries = { pkgs, lib }:
-              with pkgs; [
-                webkitgtk
-                webkitgtk_4_1
-                gtk3
-                cairo
-                gdk-pixbuf
-                glib
-                dbus
-                openssl_3
-                librsvg
-                harfbuzz
-                libstdcxx5
-              ];
+              buildInputs = { pkgs, lib }:
+                (with pkgs; [
+                  # this is required for glib-networking
+                  # openssl
+                  openssl_3
+                ]) ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
+                  (customCp pkgs)
+                  (customGlib pkgs)
+                  webkitgtk # Brings libwebkit2gtk-4.0.so.37
+                  # webkitgtk.dev 
+                  webkitgtk_4_1 # Needed for javascriptcoregtk
+                  # webkitgtk_4_1.dev
+                  # webkitgtk_6_0
+                  gdk-pixbuf
+                  gtk3
+                  glib
+                  stdenv.cc.cc.lib
+                  harfbuzz
+                  harfbuzzFull
+                  libz
+                  xorg.libX11
+                  xorg.libxcb
+                  fribidi
+                  fontconfig
+                  freetype
+                  libgpg-error
+                  mesa
+                  libdrm
+                  libglvnd
+                  # Video/Audio data composition framework tools like "gst-inspect", "gst-launch" ...
+                  gst_all_1.gstreamer
+                  # Common plugins like "filesrc" to combine within e.g. gst-launch
+                  gst_all_1.gst-plugins-base
+                  # Specialized plugins separated by quality
+                  gst_all_1.gst-plugins-good
+                  gst_all_1.gst-plugins-bad
+                  gst_all_1.gst-plugins-ugly
+                  # Plugins to reuse ffmpeg to play almost every video format
+                  gst_all_1.gst-libav
+                  # Support the Video Audio (Hardware) Acceleration API
+                  gst_all_1.gst-vaapi
+                  libsoup_3
+                  dbus
+                  librsvg
+                ])) ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+                  darwin.apple_sdk.frameworks.Security
+                  darwin.apple_sdk.frameworks.CoreServices
+                  darwin.apple_sdk.frameworks.CoreFoundation
+                  darwin.apple_sdk.frameworks.Foundation
+                  darwin.apple_sdk.frameworks.AppKit
+                  darwin.apple_sdk.frameworks.WebKit
+                  darwin.apple_sdk.frameworks.Cocoa
+                ]);
+              nativeBuildInputs = { pkgs, lib }:
+                (with pkgs; [ perl pkg-config makeWrapper ])
+                ++ (lib.optionals pkgs.stdenv.isLinux
+                  (with pkgs; [ wrapGAppsHook ensureNewerSourcesForZipFilesHook ]))
+                ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
+
+              libraries = { pkgs, lib }:
+                with pkgs; [
+                  (customGlib pkgs)
+                  webkitgtk
+                  webkitgtk_4_1
+                  gtk3
+                  cairo
+                  gdk-pixbuf
+                  glib
+                  # glib.dev
+                  dbus
+                  # openssl_3
+                  librsvg
+                  harfbuzz
+                  harfbuzzFull
+                  stdenv.cc.cc.lib
+                  libz
+                  xorg.libX11
+                  xorg.libxcb
+                  fribidi
+                  fontconfig
+                  freetype
+                  libgpg-error
+                  mesa
+                  libdrm
+                  libglvnd
+                ];
           };
 
           tauriHappDeps = {
@@ -256,11 +298,15 @@
             export GIO_MODULE_DIR=${pkgs.glib-networking}/lib/gio/modules/
             export GIO_EXTRA_MODULES=${pkgs.glib-networking}/lib/gio/modules
             export WEBKIT_DISABLE_COMPOSITING_MODE=1
+
             export XDG_DATA_DIRS=${pkgs.shared-mime-info}/share:${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS
             export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath (flake.lib.tauriAppDeps.libraries {
               inherit lib;
               pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
             })}:$LD_LIBRARY_PATH
+            export PKG_CONFIG_PATH=${flake.lib.tauriAppDeps.customGlib inputs'.webkitgtknixpkgs.legacyPackages}/lib/pkgconfig:$PKG_CONFIG_PATH
+            export PATH=${flake.lib.tauriAppDeps.customCp inputs'.webkitgtknixpkgs.legacyPackages}/bin:$PATH
+            unset SOURCE_DATE_EPOCH
           '';
         };
 
