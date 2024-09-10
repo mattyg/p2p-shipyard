@@ -501,6 +501,11 @@
           inputsFrom = [ devShells.tauriDev ];
           packages = [ packages.holochainTauriRust ]
             ++ inputs.hc-infra.lib.holochainDeps { inherit pkgs lib; };
+
+          shellHook = ''
+            # Fix lair_keystore compiling error
+            export FIX_SQL_FMT=1
+          '';
         };
 
         devShells.holochainTauriAndroidDev = pkgs.mkShell {
@@ -508,6 +513,11 @@
           packages =
             [ packages.androidTauriRust self'.packages.custom-go-wrapper ]
             ++ inputs.hc-infra.lib.holochainDeps { inherit pkgs lib; };
+
+          shellHook = ''
+            # Fix lair_keystore compiling error
+            export FIX_SQL_FMT=1
+          '';
         };
 
         devShells.default = pkgs.mkShell {
