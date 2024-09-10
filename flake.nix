@@ -107,10 +107,9 @@
                 ]);
             nativeBuildInputs = { pkgs, lib }:
               (with pkgs; [ perl pkg-config makeWrapper ])
-              ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
-                wrapGAppsHook
-                ensureNewerSourcesForZipFilesHook
-              ])) ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
+              ++ (lib.optionals pkgs.stdenv.isLinux
+                (with pkgs; [ wrapGAppsHook ]))
+              ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
 
             libraries = { pkgs, lib }:
               with pkgs; [
