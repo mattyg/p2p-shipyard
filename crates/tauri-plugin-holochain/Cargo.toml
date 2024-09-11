@@ -20,6 +20,8 @@ holochain_types = "0.3.2"
 holochain_keystore = "0.3.2"
 holochain_conductor_api = "0.3.2"
 
+sqlformat = "=0.2.3"
+
 kitsune_p2p_mdns = "0.3.2"
 kitsune_p2p_types = "0.3.2"
 

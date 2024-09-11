@@ -2,7 +2,3 @@
 members = ["crates/*", "nix/reference-tauri-happ"]
 resolver = "2"
 exclude = [ "examples/end-user-happ", "examples/holochain-runtime" ]
-
-[patch.crates-io]
-# Revert to crates.io once https://github.com/holochain/lair/issues/133 is fixed 
-lair_keystore = { git = "https://github.com/guillemcordoba/lair", branch = "fix-sqlformat" }
