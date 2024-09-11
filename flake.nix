@@ -505,9 +505,9 @@
         in androidRust;
 
         devShells.holochainTauriDev = pkgs.mkShell {
-          inputsFrom = [ devShells.tauriDev ];
-          packages = [ packages.holochainTauriRust ]
-            ++ inputs.hc-infra.lib.holochainDeps { inherit pkgs lib; };
+          inputsFrom =
+            [ devShells.tauriDev inputs'.hc-infra.devShells.holochainDev ];
+          packages = [ packages.holochainTauriRust ];
         };
 
         devShells.holochainTauriAndroidDev = pkgs.mkShell {
