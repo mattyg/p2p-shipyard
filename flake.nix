@@ -40,8 +40,8 @@
                 cp -R ${pkgs.glib.dev}/* $out --no-preserve=all
                 sed -i "s?^prefix=.*?prefix=${pkgs.glib.dev}?" $out/lib/pkgconfig/gio-2.0.pc
               '';
-            customCp = pkgs: 
-              let 
+            customCp = pkgs:
+              let
                 cp = pkgs.runCommandLocal "custom-cp" {
                   buildInputs = [ pkgs.makeWrapper ];
                 } ''
@@ -49,7 +49,7 @@
                   mkdir $out/bin
                   makeWrapper ${pkgs.coreutils}/bin/cp $out/bin/cp \
                     --append-flags "--preserve=links,timestamps --no-preserve=ownership,mode"
-                ''; 
+                '';
               in pkgs.writeShellScriptBin "cp" ''
                 if [[ "$@" == *"/nix/store"* ]]; then
                   ${cp}/bin/cp "$@"
@@ -68,7 +68,7 @@
                   (customCp pkgs)
                   (customGlib pkgs)
                   webkitgtk # Brings libwebkit2gtk-4.0.so.37
-                  webkitgtk.dev 
+                  webkitgtk.dev
                   webkitgtk_4_1 # Needed for javascriptcoregtk
                   webkitgtk_4_1.dev
                   # webkitgtk_6_0
@@ -113,39 +113,39 @@
                   darwin.apple_sdk.frameworks.WebKit
                   darwin.apple_sdk.frameworks.Cocoa
                 ]);
-              nativeBuildInputs = { pkgs, lib }:
-                (with pkgs; [ perl pkg-config makeWrapper ])
-                ++ (lib.optionals pkgs.stdenv.isLinux
-                  (with pkgs; [ wrapGAppsHook ensureNewerSourcesForZipFilesHook ]))
-                ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
+            nativeBuildInputs = { pkgs, lib }:
+              (with pkgs; [ perl pkg-config makeWrapper ])
+              ++ (lib.optionals pkgs.stdenv.isLinux
+                (with pkgs; [ wrapGAppsHook ]))
+              ++ (lib.optionals pkgs.stdenv.isDarwin [ pkgs.libiconv ]);
 
-              libraries = { pkgs, lib }:
-                with pkgs; [
-                  (customGlib pkgs)
-                  webkitgtk
-                  webkitgtk_4_1
-                  # gtk3
-                  # cairo
-                  # gdk-pixbuf
-                  # glib
-                  # # glib.dev
-                  # dbus
-                  # # openssl_3
-                  # librsvg
-                  # harfbuzz
-                  # harfbuzzFull
-                  # stdenv.cc.cc.lib
-                  # zlib
-                  # xorg.libX11
-                  # xorg.libxcb
-                  # fribidi
-                  # fontconfig
-                  # freetype
-                  # libgpg-error
-                  # mesa
-                  # libdrm
-                  # libglvnd
-                ];
+            libraries = { pkgs, lib }:
+              with pkgs; [
+                (customGlib pkgs)
+                webkitgtk
+                webkitgtk_4_1
+                # gtk3
+                # cairo
+                # gdk-pixbuf
+                # glib
+                # # glib.dev
+                # dbus
+                # # openssl_3
+                # librsvg
+                # harfbuzz
+                # harfbuzzFull
+                # stdenv.cc.cc.lib
+                # zlib
+                # xorg.libX11
+                # xorg.libxcb
+                # fribidi
+                # fontconfig
+                # freetype
+                # libgpg-error
+                # mesa
+                # libdrm
+                # libglvnd
+              ];
           };
 
           tauriHappDeps = {
