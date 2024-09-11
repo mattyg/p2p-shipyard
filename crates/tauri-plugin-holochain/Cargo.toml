@@ -29,9 +29,7 @@ tx5-signal = "0.0.14-alpha"
 # Lair dependencies
 hc_seed_bundle = "0.2"
 
-# Revert to crates.io once https://github.com/holochain/lair/issues/133 is fixed 
-# lair_keystore = "0.4.5"
-lair_keystore = { git = "https://github.com/guillemcordoba/lair", branch = "fix-sqlformat" }
+lair_keystore = "0.4.5"
 lair_keystore_api = "0.4.5"
 
 # Holochain client
