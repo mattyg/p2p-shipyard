@@ -21,7 +21,7 @@ import kotlinx.coroutines.runBlocking
 class HolochainService : Service() {
     private val isAboveOrEqualAndroid10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     public var runtime: HolochainRuntimeFfi? = null
-    public var admin_port: Int? = null
+    public var adminPort: UShort? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground()
@@ -55,37 +55,15 @@ class HolochainService : Service() {
                 "wss://signal.holo.host",
                 getFilesDir().toString(),
             )
-            runBlocking {
-                try {
-                    Log.d("HolochainService", "runtime 0")
-                    val runtime: HolochainRuntimeFfi = HolochainRuntimeFfi.launch(password, config)
-                    Log.d("HolochainService", "runtime 1")
-
-                    val installedApps: List<AppInfoFfi> = runtime.listInstalledApps()
-                    Log.d("HolochainService", "installed apps ")
-                } catch(e: HolochainRuntimeFfiException) {
-                    Log.d("HolochainService", "failed ot launch conductor")
-                }
+            this.runtime = runBlocking {
+                var r: HolochainRuntimeFfi = HolochainRuntimeFfi.launch(password, config)
+                r
             }
-            // admin_port = this.runtime.getAdminPort()
-            // Log.d("holochain service", "admin port" + admin_port)
-
-   
-            /*
-            if (isAboveOrEqualAndroid10) {
-                try {
-                    ServiceCompat.startForeground(
-                        this,
-                        id,
-                        notification,
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-                    )
-                } catch (e: Exception) {
-                    Log.d("HolochainService", "Exception caught at ForegroundServiceHelper.startService: $e")
-                }
-            } else {
-            } */
-
+            this.adminPort = runBlocking {
+                var port: UShort? = runtime?.getAdminPort()
+                port             
+            }
+            Log.d("holochain service", "admin port " + adminPort)
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                     && e is ForegroundServiceStartNotAllowedException) {
@@ -103,8 +81,4 @@ class HolochainService : Service() {
 //
     //    return apps
     //}
-
-    // public fun getAdminWebsocketPort() {
-    //     return this.runtime?.getAdminPort()
-    // }
 }
