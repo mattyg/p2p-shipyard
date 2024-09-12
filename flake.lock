@@ -446,7 +446,7 @@
         "hc-infra": "hc-infra",
         "holonix": "holonix_2",
         "nixpkgs": [
-          "holonix",
+          "hc-infra",
           "nixpkgs"
         ],
         "rust-overlay": [
