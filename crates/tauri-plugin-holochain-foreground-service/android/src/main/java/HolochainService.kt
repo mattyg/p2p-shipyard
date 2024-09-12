@@ -18,6 +18,8 @@ import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiException
 import uniffi.holochain_manager_uniffi.AppInfoFfi
 import kotlinx.coroutines.runBlocking
 
+val NOTIFICATION_CHANNEl_ID = 98234982398
+
 class HolochainService : Service() {
     private val isAboveOrEqualAndroid10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     public var runtime: HolochainRuntimeFfi? = null
