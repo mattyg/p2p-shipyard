@@ -57,6 +57,7 @@ class HolochainService : Service() {
             )
             runBlocking {
                 try {
+                    Log.d("HolochainService", "runtime 0")
                     val runtime: HolochainRuntimeFfi = HolochainRuntimeFfi.launch(password, config)
                     Log.d("HolochainService", "runtime 1")
 

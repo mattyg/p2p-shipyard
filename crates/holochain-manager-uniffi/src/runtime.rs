@@ -11,7 +11,7 @@ pub struct HolochainRuntimeFFI {
     runtime: HolochainRuntime,
 }
 
-#[uniffi::export]
+#[uniffi::export(async_runtime = "tokio")]
 impl HolochainRuntimeFFI {
     #[uniffi::constructor]
     pub async fn launch(passphrase: Vec<u8>, config: HolochainRuntimeFFIConfig) -> Result<Self, HolochainRuntimeFFIError> {
