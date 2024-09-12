@@ -2,7 +2,8 @@
   description = "Build cross-platform holochain apps and runtimes";
 
   inputs = {
-    nixpkgs.follows = "holonix/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    # nixpkgs.follows = "holonix/nixpkgs";
     webkitgtknixpkgs.url =
       "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
 

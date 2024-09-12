@@ -155,11 +155,7 @@
           "crane"
         ],
         "holonix": "holonix",
-        "nixpkgs": [
-          "hc-infra",
-          "holonix",
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs_2",
         "rust-overlay": [
           "hc-infra",
           "holonix",
@@ -167,11 +163,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726079384,
-        "narHash": "sha256-GTojv3eBrL2NaI2mrUR5aH7NO11xb9b9iVy7cmB6Wno=",
+        "lastModified": 1726135195,
+        "narHash": "sha256-qQgW3nPIFCaEdGQhzd8OLuBDi4TIuopms4wcKKAgxqs=",
         "owner": "holochain-open-dev",
         "repo": "infrastructure",
-        "rev": "a523034734552b5515b4b5ed6e75fa990285df88",
+        "rev": "1c9456054969df9aa82eaf6704422fcfd2c45775",
         "type": "github"
       },
       "original": {
@@ -316,7 +312,7 @@
         "hc-scaffold": "hc-scaffold_2",
         "holochain": "holochain_2",
         "lair-keystore": "lair-keystore_2",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
@@ -409,6 +405,22 @@
       }
     },
     "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1725930920,
+        "narHash": "sha256-RVhD9hnlTT2nJzPHlAqrWqCkA7T6CYrP41IoVRkciZM=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "44a71ff39c182edaf25a7ace5c9454e7cba2c658",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1717179513,
         "narHash": "sha256-vboIEwIQojofItm2xGCdZCzW96U85l9nDW3ifMuAIdM=",
