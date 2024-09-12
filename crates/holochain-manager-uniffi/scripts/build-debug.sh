@@ -10,4 +10,7 @@ cargo ndk -o ../tauri-plugin-holochain-foreground-service/android/src/main/jniLi
   #-t x86 \
   #-t x86_64 \
 
-cargo run --bin uniffi-bindgen generate --library ../../target/debug/libholochain_manager_uniffi.so --language kotlin --out-dir ../tauri-plugin-holochain-foreground-service/android/src/main/java/
+cargo run --bin uniffi-bindgen generate \
+  --library ../../target/debug/libholochain_manager_uniffi.so \
+  --language kotlin \
+  --out-dir ../tauri-plugin-holochain-foreground-service/android/src/main/java/
