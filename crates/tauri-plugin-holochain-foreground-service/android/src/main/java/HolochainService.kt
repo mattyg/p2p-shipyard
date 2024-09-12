@@ -21,13 +21,13 @@ import kotlinx.coroutines.runBlocking
 val NOTIFICATION_CHANNEl_ID = 98234982398
 
 class HolochainService : Service() {
+    private val LOG_TAG = "HolochainService"
     private val isAboveOrEqualAndroid10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     public var runtime: HolochainRuntimeFfi? = null
     public var adminPort: UShort? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground()
-
         return START_REDELIVER_INTENT
     }
 
@@ -45,12 +45,9 @@ class HolochainService : Service() {
             val notification = NotificationCompat.Builder(this, "HolochainServiceChannel")
                 .setContentTitle("Holochain Conductor is Running")
                 .build()
-            val id = 100
-            startForeground(id, notification)
+            startForeground(NOTIFICATION_CHANNEl_ID, notification)
 
-            // start holochain conductor
-            // TODO run this in new thread
-
+            // Start holochain conductor
             val password = byteArrayOf(0x48, 101, 108, 108, 111)
             val config = HolochainRuntimeFfiConfig(
                 "https://bootstrap.holo.host",
@@ -61,11 +58,14 @@ class HolochainService : Service() {
                 var r: HolochainRuntimeFfi = HolochainRuntimeFfi.launch(password, config)
                 r
             }
+            Log.d(LOG_TAG, "Holochain started successfully")
+
+            // Get admin port
             this.adminPort = runBlocking {
                 var port: UShort? = runtime?.getAdminPort()
                 port             
             }
-            Log.d("holochain service", "admin port " + adminPort)
+            Log.d(LOG_TAG, "Admin Port: " + adminPort)
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                     && e is ForegroundServiceStartNotAllowedException) {
