@@ -68,26 +68,26 @@
                   (customCp pkgs)
                   (customGlib pkgs)
                   webkitgtk # Brings libwebkit2gtk-4.0.so.37
-                  webkitgtk.dev
+                  # webkitgtk.dev
                   webkitgtk_4_1 # Needed for javascriptcoregtk
-                  webkitgtk_4_1.dev
+                  # webkitgtk_4_1.dev
                   # webkitgtk_6_0
                   gdk-pixbuf
                   gtk3
-                  glib
-                  stdenv.cc.cc.lib
-                  harfbuzz
-                  harfbuzzFull
-                  zlib
-                  xorg.libX11
-                  xorg.libxcb
-                  fribidi
-                  fontconfig
-                  freetype
-                  libgpg-error
-                  mesa
-                  libdrm
-                  libglvnd
+                  # glib
+                  # stdenv.cc.cc.lib
+                  # harfbuzz
+                  # harfbuzzFull
+                  # zlib
+                  # xorg.libX11
+                  # xorg.libxcb
+                  # fribidi
+                  # fontconfig
+                  # freetype
+                  # libgpg-error
+                  # mesa
+                  # libdrm
+                  # libglvnd
                   # Video/Audio data composition framework tools like "gst-inspect", "gst-launch" ...
                   gst_all_1.gstreamer
                   # Common plugins like "filesrc" to combine within e.g. gst-launch
