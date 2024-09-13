@@ -4,8 +4,7 @@
   "author": "guillem@darksoil.studio",
   "description": "",
   "scripts": {
-    "build:holochain-manager-uniffi:debug": "cd crates/holochain-manager-uniffi && ./scripts/build-debug.sh",
-    "build:holochain-manager-uniffi:release": "cd crates/holochain-manager-uniffi && ./scripts/build-release.sh",
+    "build:holochain-manager-uniffi": "cd crates/holochain-manager-uniffi && ./scripts/build.sh",
     "start": "cd examples/end-user-happ && nix develop --command bash -c \"npm run tauri dev\"",
     "android:start": "cd examples/end-user-happ && nix develop .#androidDev --command bash -c \"npm run tauri android dev\""
   },
