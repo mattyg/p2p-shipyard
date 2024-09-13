@@ -295,6 +295,48 @@
       "type": "string",
       "oneOf": [
         {
+          "description": "allow-create-app-websocket -> Enables the create_app_websocket command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-create-app-websocket"
+          ]
+        },
+        {
+          "description": "deny-create-app-websocket -> Denies the create_app_websocket command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-create-app-websocket"
+          ]
+        },
+        {
+          "description": "allow-get-admin-port -> Enables the get_admin_port command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-get-admin-port"
+          ]
+        },
+        {
+          "description": "deny-get-admin-port -> Denies the get_admin_port command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-get-admin-port"
+          ]
+        },
+        {
+          "description": "allow-install-app -> Enables the install_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-install-app"
+          ]
+        },
+        {
+          "description": "deny-install-app -> Denies the install_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-install-app"
+          ]
+        },
+        {
           "description": "allow-launch -> Enables the launch command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -306,6 +348,48 @@
           "type": "string",
           "enum": [
             "deny-launch"
+          ]
+        },
+        {
+          "description": "allow-sign-zome-call -> Enables the sign_zome_call command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-sign-zome-call"
+          ]
+        },
+        {
+          "description": "deny-sign-zome-call -> Denies the sign_zome_call command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-sign-zome-call"
+          ]
+        },
+        {
+          "description": "allow-start -> Enables the start command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-start"
+          ]
+        },
+        {
+          "description": "deny-start -> Denies the start command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-start"
+          ]
+        },
+        {
+          "description": "allow-stop -> Enables the stop command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-stop"
+          ]
+        },
+        {
+          "description": "deny-stop -> Denies the stop command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-stop"
           ]
         },
         {

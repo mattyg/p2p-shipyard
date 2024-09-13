@@ -18,13 +18,24 @@ import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiException
 import uniffi.holochain_manager_uniffi.AppInfoFfi
 import kotlinx.coroutines.runBlocking
 
-val NOTIFICATION_CHANNEl_ID = 98234982398
+val NOTIFICATION_CHANNEl_ID: Int = 9823498
 
 class HolochainService : Service() {
+    public var runtime: HolochainRuntimeFfi? = null
+    public var runtimeAdminWebsocketPort: UShort? = null
+
     private val LOG_TAG = "HolochainService"
     private val isAboveOrEqualAndroid10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    public var runtime: HolochainRuntimeFfi? = null
-    public var adminPort: UShort? = null
+    private val binder = object : IHolochainService.Stub() {
+        override fun getAdminPort(): Int {
+            Log.d("IHolochainService", "getAdminPort")
+            if(runtimeAdminWebsocketPort is UShort) {
+                return runtimeAdminWebsocketPort!!.toInt()
+            } else {
+                return -1
+            }
+        }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground()
@@ -35,9 +46,7 @@ class HolochainService : Service() {
         super.onDestroy()
     }
 
-    override fun onBind(p0: Intent): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?): IBinder? = binder
 
     private fun startForeground() {
         try {
@@ -61,11 +70,10 @@ class HolochainService : Service() {
             Log.d(LOG_TAG, "Holochain started successfully")
 
             // Get admin port
-            this.adminPort = runBlocking {
+            this.runtimeAdminWebsocketPort = runBlocking {
                 var port: UShort? = runtime?.getAdminPort()
-                port             
+                port     
             }
-            Log.d(LOG_TAG, "Admin Port: " + adminPort)
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                     && e is ForegroundServiceStartNotAllowedException) {
@@ -74,6 +82,7 @@ class HolochainService : Service() {
             }
             // ...
         }
+        Log.d(LOG_TAG, "Admin Port: " + this.runtimeAdminWebsocketPort)
     }
 
     //public fun listInstalledApps() {

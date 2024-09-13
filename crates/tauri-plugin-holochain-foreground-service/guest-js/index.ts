@@ -5,3 +5,15 @@ export async function launch(): Promise<string | null> {
     payload: {},
   }).then((r) => (r.value ? r.value : null));
 }
+
+export async function stop(): Promise<string | null> {
+  return await invoke<{value?: string}>('plugin:holochain-foreground-service|stop', {
+    payload: {},
+  }).then((r) => (r.value ? r.value : null));
+}
+
+export async function getAdminPort(): Promise<string | null> {
+  return await invoke<{value?: string}>('plugin:holochain-foreground-service|get_admin_port', {
+    payload: {},
+  }).then((r) => (r.value ? r.value : null));
+}

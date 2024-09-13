@@ -28,10 +28,39 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct HolochainForegroundService<R: Runtime>(pub PluginHandle<R>);
 
 impl<R: Runtime> HolochainForegroundService<R> {
-  pub fn launch(&self, payload: HolochainRequest) -> crate::Result<HolochainResponse> {
-    self
-      .0
-      .run_mobile_plugin("launch", payload)
+  pub fn start(&self, payload: HolochainRequest) -> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("start", payload)
+      .map_err(Into::into)
+  }
+  
+  pub fn stop(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("stop", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn get_admin_port(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("getAdminPort", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn install_app(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("installApp", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn create_app_websocket(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("createAppWebsocket", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn sign_zome_call(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("signZomeCall", payload)
       .map_err(Into::into)
   }
 }
