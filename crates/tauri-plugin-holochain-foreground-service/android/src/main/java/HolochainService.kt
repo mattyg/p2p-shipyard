@@ -47,6 +47,15 @@ class HolochainService : Service() {
         override fun shutdown() {
             var x = stopForeground()
         }
+        
+        /// Install an app
+        override fun installApp(
+            request: InstallAppRequest
+        ): Long = {
+            runBlocking {
+                this.runtime?.installApp(request.appId, request.appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

@@ -1,10 +1,12 @@
+use std::{collections::HashMap, sync::Arc};
+
 use crate::config::HolochainRuntimeFFIConfig;
 use crate::error::HolochainRuntimeFFIError;
 use crate::types::AppInfoFFI;
 use holochain_manager::{HolochainRuntime, launch::launch_holochain_runtime, utils::vec_to_locked};
 use log::LevelFilter;
 use android_logger::Config;
-
+use holochain_types::prelude::{AgentPubKey, AppBundle, MembraneProof, RoleName, SerializedBytes, UnsafeBytes};
 
 #[derive(uniffi::Object)]
 pub struct HolochainRuntimeFFI {
@@ -13,6 +15,8 @@ pub struct HolochainRuntimeFFI {
 
 #[uniffi::export(async_runtime = "tokio")]
 impl HolochainRuntimeFFI {
+
+    /// Start the holochain conductor
     #[uniffi::constructor]
     pub async fn launch(passphrase: Vec<u8>, config: HolochainRuntimeFFIConfig) -> Result<Self, HolochainRuntimeFFIError> {
         android_logger::init_once(
@@ -61,7 +65,30 @@ impl HolochainRuntimeFFI {
         Ok(apps)
     }
 
-    pub fn get_admin_port(&self) -> u16 {
-        self.runtime.admin_port
+    /// Install an app
+    pub async fn install_app(
+        &self,
+        app_id: String,
+        app_bundle_bytes: Vec<u8>,
+        membrane_proofs: HashMap<String, Vec<u8>>,
+        agent: Option<Vec<u8>>,
+        network_seed: Option<String>
+    ) -> Result<(), HolochainRuntimeFFIError> {
+        let agent = agent.and_then(|a| 
+                Some(AgentPubKey::from_raw_39(a))
+            ).transpose()
+            .map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
+        let app_bundle = AppBundle::decode(app_bundle_bytes.as_slice()).map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
+        let mut membrane_proofs_typed: HashMap<RoleName, MembraneProof> = HashMap::new();
+        for (k, v) in membrane_proofs {
+            let proof = SerializedBytes::try_from(UnsafeBytes::from(v))
+                .map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
+            membrane_proofs_typed.insert(k, Arc::new(proof));
+        }
+        
+        self.runtime.install_app(app_id, app_bundle, membrane_proofs_typed, agent, network_seed)
+           .await
+           .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(())
     }
 }
