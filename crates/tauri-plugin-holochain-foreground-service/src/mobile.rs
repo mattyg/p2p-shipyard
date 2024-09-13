@@ -28,15 +28,15 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct HolochainForegroundService<R: Runtime>(pub PluginHandle<R>);
 
 impl<R: Runtime> HolochainForegroundService<R> {
-  pub fn start(&self, payload: HolochainRequest) -> crate::Result<HolochainResponse> {
+  pub fn launch(&self, payload: HolochainRequest) -> crate::Result<HolochainResponse> {
     self.0
-      .run_mobile_plugin("start", payload)
+      .run_mobile_plugin("launch", payload)
       .map_err(Into::into)
   }
   
-  pub fn stop(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+  pub fn shutdown(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
     self.0
-      .run_mobile_plugin("stop", payload)
+      .run_mobile_plugin("shutdown", payload)
       .map_err(Into::into)
   }
 

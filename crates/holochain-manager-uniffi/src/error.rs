@@ -17,7 +17,10 @@ pub enum HolochainRuntimeFFIError {
     PoisonError,
 
     #[error("IO Error: {0}")]
-    IOError(String)
+    IOError(String),
+
+    #[error("Infallible: {0}")]
+    Infallible(String)
 }
 impl<T> From<PoisonError<T>> for HolochainRuntimeFFIError {
     fn from(_err: PoisonError<T>) -> Self {

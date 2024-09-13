@@ -2,8 +2,8 @@
 
 Default permissions for the plugin
 
-- `allow-start`
-- `allow-stop`
+- `allow-launch`
+- `allow-shutdown`
 - `allow-get-admin-port`
 
 ## Permission Table 
@@ -115,6 +115,32 @@ Enables the launch command without any pre-configured scope.
 <td>
 
 Denies the launch command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-shutdown`
+
+</td>
+<td>
+
+Enables the shutdown command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-shutdown`
+
+</td>
+<td>
+
+Denies the shutdown command without any pre-configured scope.
 
 </td>
 </tr>

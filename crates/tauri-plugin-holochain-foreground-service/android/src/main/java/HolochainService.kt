@@ -21,12 +21,19 @@ import kotlinx.coroutines.runBlocking
 val NOTIFICATION_CHANNEl_ID: Int = 9823498
 
 class HolochainService : Service() {
+    /// The uniffi-generated holochain runtime bindings
     public var runtime: HolochainRuntimeFfi? = null
+
+    /// Holochain conductor admin websocket port
     public var runtimeAdminWebsocketPort: UShort? = null
 
     private val LOG_TAG = "HolochainService"
     private val isAboveOrEqualAndroid10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+    
+    /// The IPC receiver that other activities can call into
     private val binder = object : IHolochainService.Stub() {
+        
+        /// Get Current Admin Port
         override fun getAdminPort(): Int {
             Log.d("IHolochainService", "getAdminPort")
             if(runtimeAdminWebsocketPort is UShort) {
@@ -34,6 +41,11 @@ class HolochainService : Service() {
             } else {
                 return -1
             }
+        }
+
+        /// Stop the service
+        override fun shutdown() {
+            var x = stopForeground()
         }
     }
 
@@ -83,6 +95,20 @@ class HolochainService : Service() {
             // ...
         }
         Log.d(LOG_TAG, "Admin Port: " + this.runtimeAdminWebsocketPort)
+    }
+
+    fun stopForeground() {
+        // Shutdown conductor
+        runBlocking {
+            runtime?.shutdown()
+        }
+        
+        this.runtime = null
+        this.runtimeAdminWebsocketPort = null
+        
+        // Stop service
+        super.stopForeground(true)
+        stopSelf()
     }
 
     //public fun listInstalledApps() {

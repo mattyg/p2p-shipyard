@@ -771,7 +771,18 @@ internal interface UniffiLib : Library {
         uniffi_out_err: UniffiRustCallStatus,
     ): Short
 
+    fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_install_app(
+        `ptr`: Pointer,
+        `appId`: RustBuffer.ByValue,
+        `appBundleBytes`: RustBuffer.ByValue,
+        `membraneProofs`: RustBuffer.ByValue,
+        `agent`: RustBuffer.ByValue,
+        `networkSeed`: RustBuffer.ByValue,
+    ): Long
+
     fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_list_installed_apps(`ptr`: Pointer): Long
+
+    fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_shutdown(`ptr`: Pointer): Long
 
     fun ffi_holochain_manager_uniffi_rustbuffer_alloc(
         `size`: Long,
@@ -991,7 +1002,11 @@ internal interface UniffiLib : Library {
 
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port(): Short
 
+    fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_install_app(): Short
+
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps(): Short
+
+    fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_shutdown(): Short
 
     fun uniffi_holochain_manager_uniffi_checksum_constructor_holochainruntimeffi_launch(): Short
 
@@ -1010,13 +1025,19 @@ private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: UniffiLib) {
-    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port() != 6967.toShort()) {
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port() != 35115.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps() != 46427.toShort()) {
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_install_app() != 24051.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_holochain_manager_uniffi_checksum_constructor_holochainruntimeffi_launch() != 36886.toShort()) {
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps() != 12726.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_shutdown() != 63694.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_holochain_manager_uniffi_checksum_constructor_holochainruntimeffi_launch() != 4585.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1366,9 +1387,31 @@ private class JavaLangRefCleanable(
 }
 
 public interface HolochainRuntimeFfiInterface {
+    /**
+     * Get an admin port on the conductor
+     */
     fun `getAdminPort`(): kotlin.UShort
 
+    /**
+     * Install an app
+     */
+    suspend fun `installApp`(
+        `appId`: kotlin.String,
+        `appBundleBytes`: kotlin.ByteArray,
+        `membraneProofs`: Map<kotlin.String, kotlin.ByteArray>,
+        `agent`: kotlin.ByteArray?,
+        `networkSeed`: kotlin.String?,
+    )
+
+    /**
+     * List apps installed on the conductor
+     */
     suspend fun `listInstalledApps`(): List<AppInfoFfi>
+
+    /**
+     * Shutdown the holochain conductor
+     */
+    suspend fun `shutdown`()
 
     companion object
 }
@@ -1457,6 +1500,9 @@ open class HolochainRuntimeFfi :
             UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_clone_holochainruntimeffi(pointer!!, status)
         }
 
+    /**
+     * Get an admin port on the conductor
+     */
     override fun `getAdminPort`(): kotlin.UShort =
         FfiConverterUShort.lift(
             callWithPointer {
@@ -1469,6 +1515,46 @@ open class HolochainRuntimeFfi :
             },
         )
 
+    /**
+     * Install an app
+     */
+    @Throws(HolochainRuntimeFfiException::class)
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `installApp`(
+        `appId`: kotlin.String,
+        `appBundleBytes`: kotlin.ByteArray,
+        `membraneProofs`: Map<kotlin.String, kotlin.ByteArray>,
+        `agent`: kotlin.ByteArray?,
+        `networkSeed`: kotlin.String?,
+    ) = uniffiRustCallAsync(
+        callWithPointer { thisPtr ->
+            UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_install_app(
+                thisPtr,
+                FfiConverterString.lower(`appId`),
+                FfiConverterByteArray.lower(`appBundleBytes`),
+                FfiConverterMapStringByteArray.lower(`membraneProofs`),
+                FfiConverterOptionalByteArray.lower(`agent`),
+                FfiConverterOptionalString.lower(`networkSeed`),
+            )
+        },
+        {
+                future,
+                callback,
+                continuation,
+            ->
+            UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_poll_void(future, callback, continuation)
+        },
+        { future, continuation -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        // Error FFI converter
+        HolochainRuntimeFfiException.ErrorHandler,
+    )
+
+    /**
+     * List apps installed on the conductor
+     */
     @Throws(HolochainRuntimeFfiException::class)
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `listInstalledApps`(): List<AppInfoFfi> =
@@ -1498,7 +1584,37 @@ open class HolochainRuntimeFfi :
             HolochainRuntimeFfiException.ErrorHandler,
         )
 
+    /**
+     * Shutdown the holochain conductor
+     */
+    @Throws(HolochainRuntimeFfiException::class)
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `shutdown`() =
+        uniffiRustCallAsync(
+            callWithPointer { thisPtr ->
+                UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_shutdown(
+                    thisPtr,
+                )
+            },
+            {
+                    future,
+                    callback,
+                    continuation,
+                ->
+                UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_poll_void(future, callback, continuation)
+            },
+            { future, continuation -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_complete_void(future, continuation) },
+            { future -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_free_void(future) },
+            // lift function
+            { Unit },
+            // Error FFI converter
+            HolochainRuntimeFfiException.ErrorHandler,
+        )
+
     companion object {
+        /**
+         * Start the holochain conductor
+         */
         @Throws(HolochainRuntimeFfiException::class)
         @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
         suspend fun `launch`(
@@ -1701,6 +1817,13 @@ sealed class HolochainRuntimeFfiException : kotlin.Exception() {
             get() = "v1=${ v1 }"
     }
 
+    class Infallible(
+        val v1: kotlin.String,
+    ) : HolochainRuntimeFfiException() {
+        override val message
+            get() = "v1=${ v1 }"
+    }
+
     companion object ErrorHandler : UniffiRustCallStatusErrorHandler<HolochainRuntimeFfiException> {
         override fun lift(error_buf: RustBuffer.ByValue): HolochainRuntimeFfiException =
             FfiConverterTypeHolochainRuntimeFFIError.lift(error_buf)
@@ -1722,6 +1845,10 @@ public object FfiConverterTypeHolochainRuntimeFFIError : FfiConverterRustBuffer<
             4 -> HolochainRuntimeFfiException.PoisonException()
             5 ->
                 HolochainRuntimeFfiException.IoException(
+                    FfiConverterString.read(buf),
+                )
+            6 ->
+                HolochainRuntimeFfiException.Infallible(
                     FfiConverterString.read(buf),
                 )
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
@@ -1748,6 +1875,11 @@ public object FfiConverterTypeHolochainRuntimeFFIError : FfiConverterRustBuffer<
                 4UL
             )
             is HolochainRuntimeFfiException.IoException -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4UL +
+                    FfiConverterString.allocationSize(value.v1)
+            )
+            is HolochainRuntimeFfiException.Infallible -> (
                 // Add the size for the Int that specifies the variant plus the size needed for all fields
                 4UL +
                     FfiConverterString.allocationSize(value.v1)
@@ -1782,7 +1914,70 @@ public object FfiConverterTypeHolochainRuntimeFFIError : FfiConverterRustBuffer<
                 FfiConverterString.write(value.v1, buf)
                 Unit
             }
+            is HolochainRuntimeFfiException.Infallible -> {
+                buf.putInt(6)
+                FfiConverterString.write(value.v1, buf)
+                Unit
+            }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
+public object FfiConverterOptionalString : FfiConverterRustBuffer<kotlin.String?> {
+    override fun read(buf: ByteBuffer): kotlin.String? {
+        if (buf.get().toInt() == 0) {
+            return null
+        }
+        return FfiConverterString.read(buf)
+    }
+
+    override fun allocationSize(value: kotlin.String?): ULong {
+        if (value == null) {
+            return 1UL
+        } else {
+            return 1UL + FfiConverterString.allocationSize(value)
+        }
+    }
+
+    override fun write(
+        value: kotlin.String?,
+        buf: ByteBuffer,
+    ) {
+        if (value == null) {
+            buf.put(0)
+        } else {
+            buf.put(1)
+            FfiConverterString.write(value, buf)
+        }
+    }
+}
+
+public object FfiConverterOptionalByteArray : FfiConverterRustBuffer<kotlin.ByteArray?> {
+    override fun read(buf: ByteBuffer): kotlin.ByteArray? {
+        if (buf.get().toInt() == 0) {
+            return null
+        }
+        return FfiConverterByteArray.read(buf)
+    }
+
+    override fun allocationSize(value: kotlin.ByteArray?): ULong {
+        if (value == null) {
+            return 1UL
+        } else {
+            return 1UL + FfiConverterByteArray.allocationSize(value)
+        }
+    }
+
+    override fun write(
+        value: kotlin.ByteArray?,
+        buf: ByteBuffer,
+    ) {
+        if (value == null) {
+            buf.put(0)
+        } else {
+            buf.put(1)
+            FfiConverterByteArray.write(value, buf)
+        }
     }
 }
 
@@ -1807,6 +2002,44 @@ public object FfiConverterSequenceTypeAppInfoFFI : FfiConverterRustBuffer<List<A
         buf.putInt(value.size)
         value.iterator().forEach {
             FfiConverterTypeAppInfoFFI.write(it, buf)
+        }
+    }
+}
+
+public object FfiConverterMapStringByteArray : FfiConverterRustBuffer<Map<kotlin.String, kotlin.ByteArray>> {
+    override fun read(buf: ByteBuffer): Map<kotlin.String, kotlin.ByteArray> {
+        val len = buf.getInt()
+        return buildMap<kotlin.String, kotlin.ByteArray>(len) {
+            repeat(len) {
+                val k = FfiConverterString.read(buf)
+                val v = FfiConverterByteArray.read(buf)
+                this[k] = v
+            }
+        }
+    }
+
+    override fun allocationSize(value: Map<kotlin.String, kotlin.ByteArray>): ULong {
+        val spaceForMapSize = 4UL
+        val spaceForChildren =
+            value
+                .map { (k, v) ->
+                    FfiConverterString.allocationSize(k) +
+                        FfiConverterByteArray.allocationSize(v)
+                }.sum()
+        return spaceForMapSize + spaceForChildren
+    }
+
+    override fun write(
+        value: Map<kotlin.String, kotlin.ByteArray>,
+        buf: ByteBuffer,
+    ) {
+        buf.putInt(value.size)
+        // The parens on `(k, v)` here ensure we're calling the right method,
+        // which is important for compatibility with older android devices.
+        // Ref https://blog.danlew.net/2017/03/16/kotlin-puzzler-whose-line-is-it-anyways/
+        value.forEach { (k, v) ->
+            FfiConverterString.write(k, buf)
+            FfiConverterByteArray.write(v, buf)
         }
     }
 }

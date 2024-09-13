@@ -300,6 +300,16 @@ impl HolochainRuntime {
 
         Ok(())
     }
+
+    /// Shutdown the running conductor
+    pub async fn shutdown(&self) -> crate::Result<()> {
+        self.conductor_handle
+            .shutdown()
+            .await
+            .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?
+            .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?;
+        Ok(())
+    }
 }
 
 pub struct WANNetworkConfig {

@@ -351,6 +351,20 @@
           ]
         },
         {
+          "description": "allow-shutdown -> Enables the shutdown command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-shutdown"
+          ]
+        },
+        {
+          "description": "deny-shutdown -> Denies the shutdown command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-shutdown"
+          ]
+        },
+        {
           "description": "allow-sign-zome-call -> Enables the sign_zome_call command without any pre-configured scope.",
           "type": "string",
           "enum": [

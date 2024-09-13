@@ -2174,6 +2174,13 @@
           ]
         },
         {
+          "description": "holochain-foreground-service:allow-shutdown -> Enables the shutdown command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "holochain-foreground-service:allow-shutdown"
+          ]
+        },
+        {
           "description": "holochain-foreground-service:allow-sign-zome-call -> Enables the sign_zome_call command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -2220,6 +2227,13 @@
           "type": "string",
           "enum": [
             "holochain-foreground-service:deny-launch"
+          ]
+        },
+        {
+          "description": "holochain-foreground-service:deny-shutdown -> Denies the shutdown command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "holochain-foreground-service:deny-shutdown"
           ]
         },
         {

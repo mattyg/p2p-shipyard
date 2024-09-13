@@ -36,6 +36,19 @@ impl HolochainRuntimeFFI {
         })
     }
 
+    /// Shutdown the holochain conductor
+    pub async fn shutdown(&self) -> Result<(), HolochainRuntimeFFIError> {
+        self.runtime.shutdown().await
+            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(())
+    }
+
+    /// Get an admin port on the conductor
+    pub fn get_admin_port(&self) -> u16 {
+        self.runtime.admin_port
+    }
+
+    /// List apps installed on the conductor
     pub async fn list_installed_apps(&self) -> Result<Vec<AppInfoFFI>, HolochainRuntimeFFIError> {
         let apps = self.runtime.admin_websocket().await
             .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?

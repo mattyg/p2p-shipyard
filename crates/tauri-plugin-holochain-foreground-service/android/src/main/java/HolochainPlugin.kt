@@ -44,26 +44,25 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     override fun load(webView: WebView) {
         super.load(webView)
 
-        // Start the service and wait for admin ws
+        // Start the service
         runBlocking {
-            startInternal()
+            launchInternal()
         }
     }
-    
 
     /// Start the service
     @Command
-    fun start(invoke: Invoke) {
+    fun launch(invoke: Invoke) {
         val args = invoke.parseArgs(HolochainArgs::class.java)
-        startInternal()
+        launchInternal()
         invoke.resolve()
     }
     
     /// Stop the service
     @Command
-    fun stop(invoke: Invoke) {
+    fun shutdown(invoke: Invoke) {
         val args = invoke.parseArgs(HolochainArgs::class.java)
-        // TODO: call service stop fn
+        this.mService?.shutdown()
         invoke.resolve()
     }
 
@@ -117,8 +116,8 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         invoke.resolve()
     }
 
-    /// Start service
-    private fun startInternal() {
+    /// Start service, which then starts the holochain conductor on initialization
+    private fun launchInternal() {
         // Create notification channel
         val notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(NotificationChannel(
