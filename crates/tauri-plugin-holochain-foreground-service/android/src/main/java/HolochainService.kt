@@ -51,9 +51,9 @@ class HolochainService : Service() {
         /// Install an app
         override fun installApp(
             request: InstallAppRequest
-        ): Long = {
+        ) {
             runBlocking {
-                this.runtime?.installApp(request.appId, request.appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
+                runtime?.installApp(request.appId, request.appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
             }
         }
     }
@@ -95,6 +95,7 @@ class HolochainService : Service() {
                 var port: UShort? = runtime?.getAdminPort()
                 port     
             }
+            Log.d(LOG_TAG, "Holochain admin port " + this.runtimeAdminWebsocketPort)
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                     && e is ForegroundServiceStartNotAllowedException) {

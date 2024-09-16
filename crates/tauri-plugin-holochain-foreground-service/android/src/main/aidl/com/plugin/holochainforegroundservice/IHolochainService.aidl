@@ -1,7 +1,9 @@
 package com.plugin.holochainforegroundservice;
 
+parcelable InstallAppRequest;
+
 interface IHolochainService {
     void shutdown();
     int getAdminPort();
-    long installApp(request: InstallAppRequest);
+    void installApp(in InstallAppRequest request);
 }

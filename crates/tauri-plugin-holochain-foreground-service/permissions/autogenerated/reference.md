@@ -5,6 +5,7 @@ Default permissions for the plugin
 - `allow-launch`
 - `allow-shutdown`
 - `allow-get-admin-port`
+- `allow-install-app`
 
 ## Permission Table 
 

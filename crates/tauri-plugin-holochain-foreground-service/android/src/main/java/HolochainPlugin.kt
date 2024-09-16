@@ -78,16 +78,8 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     /// Install a happ into conductor
     @Command
     fun installApp(invoke: Invoke) {
-        val args = invoke.parseArgs(InstallAppRequestArg::class.java)
-        val res: Long? = this.mService?.installApp(InstallAppRequest(
-            args.appId,
-            args.appBundleBytes,
-            args.membraneProofs,
-            args.agent,
-            args.networkSeed
-        ))
-        val obj = JSObject()
-        obj.put("port", res)
+        val args = invoke.parseArgs(InstallAppRequest::class.java)
+        this.mService?.installApp(args)
         invoke.resolve()
     }
 

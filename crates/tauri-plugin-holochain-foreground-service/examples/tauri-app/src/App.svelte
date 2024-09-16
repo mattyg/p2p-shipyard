@@ -1,13 +1,27 @@
-<script>
+<script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  import happUrl from "./forum.happ?url";
 
   let adminPort;
+  let appId = "forum";
+  let networkSeed = "p2p-shipyard-dev-2024-09-16";
 
   const getAdminPort = async () => {
     adminPort = (await invoke('plugin:holochain-foreground-service|get_admin_port')).port;
   };
   const launch = () => invoke('plugin:holochain-foreground-service|launch');
-  const shutdown = () =>invoke('plugin:holochain-foreground-service|shutdown');
+  const shutdown = () => invoke('plugin:holochain-foreground-service|shutdown');
+  const installApp = async () => {
+    const appBundleBytes = new Uint8Array(await (await fetch(happUrl)).arrayBuffer())
+
+    return invoke('plugin:holochain-foreground-service|install_app', {
+      appId,
+      appBundleBytes,
+      membraneProofs: {},
+      agent: null,
+      networkSeed,
+    })
+  };
 
   let interval = setInterval(async () => {
     if(!adminPort) {
@@ -32,9 +46,22 @@
   <div class="my-4">
    <h2>Admin Port</h2>
     <div style="margin-top: 10px;">
-      <pre>{JSON.stringify(adminPort)}</pre>
+      <pre>{adminPort}</pre>
     </div>
   </div>
+
+  <div class="my-4">
+    <h2>Install Forum App</h2>
+    <div>
+      <b>App Id:</b> <input bind:value={appId} />
+    </div>
+    <div>
+      <b>Network Seed:</b> <input bind:value={networkSeed} />
+    </div>
+    <div>
+      <button on:click={installApp}>Install App</button>
+    </div>
+   </div>
 </main>
 
 <style>

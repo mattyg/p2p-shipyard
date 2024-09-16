@@ -3584,6 +3584,7 @@ dependencies = [
  "android_logger",
  "holochain-manager",
  "holochain_conductor_api",
+ "holochain_types",
  "log",
  "thiserror",
  "uniffi",
