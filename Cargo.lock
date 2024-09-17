@@ -7215,7 +7215,6 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-holochain",
- "tauri-plugin-log",
  "tempdir",
  "url2",
 ]

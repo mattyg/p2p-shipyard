@@ -25,7 +25,6 @@ holochain_types = { version = "0.4.0-dev" }
 lair_keystore = { version = "0.5" }
 holochain_client = { version = "0.6.0-dev" }
 log = "0.4"
-tauri-plugin-log = "2.0.0-rc"
 url2 = "0.0.6"
 app_dirs2 = "2.5.5"
 tempdir = "0.3.7"
