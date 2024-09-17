@@ -3128,6 +3128,7 @@ dependencies = [
  "clap 4.5.17",
  "holochain_client",
  "holochain_types",
+ "lair_keystore",
  "log",
  "tauri",
  "tauri-build",

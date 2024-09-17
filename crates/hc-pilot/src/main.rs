@@ -168,13 +168,14 @@ async fn setup(
     let admin_ws = handle.holochain()?.admin_websocket().await?;
     let app_info = admin_ws
         .install_app(InstallAppPayload {
-            ignore_genesis_failure: false,
             agent_key,
             existing_cells,
             membrane_proofs,
             network_seed,
             source: holochain_types::app::AppBundleSource::Path(app_bundle_path),
             installed_app_id: None,
+            ignore_genesis_failure: false,
+            allow_throwaway_random_agent_key: false,
         })
         .await
         .map_err(|err| anyhow!("Error installing the app: {err:?}"))?;
