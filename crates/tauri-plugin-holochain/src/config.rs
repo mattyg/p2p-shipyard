@@ -11,7 +11,7 @@ use kitsune_p2p_types::config::{
 };
 use url2::Url2;
 
-use crate::{filesystem::FileSystem, WANNetworkConfig};
+use crate::{filesystem::FileSystem, launch::DEVICE_SEED_LAIR_KEYSTORE_TAG, WANNetworkConfig};
 
 pub fn conductor_config(
     fs: &FileSystem,
@@ -26,6 +26,7 @@ pub fn conductor_config(
     config.keystore = KeystoreConfig::LairServerInProc {
         lair_root: Some(lair_root),
     };
+    config.device_seed_lair_tag = Some(DEVICE_SEED_LAIR_KEYSTORE_TAG.into());
 
     let mut network_config = KitsuneP2pConfig::default();
 
