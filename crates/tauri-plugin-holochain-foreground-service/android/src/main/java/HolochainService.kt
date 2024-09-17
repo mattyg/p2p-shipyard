@@ -56,6 +56,13 @@ class HolochainService : Service() {
                 runtime?.installApp(request.appId, request.appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
             }
         }
+
+        /// List installed apps
+        override fun listInstalledApps(): List<AppInfoFfiExt> {
+            return runBlocking {
+                runtime?.listInstalledApps()?.map { AppInfoFfiExt(it.installedAppId) } ?: emptyList<AppInfoFfiExt>()
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -120,12 +127,4 @@ class HolochainService : Service() {
         super.stopForeground(true)
         stopSelf()
     }
-
-    //public fun listInstalledApps() {
-    //    val apps = runBlocking {
-    //        this.runtime?.listInstalledApps()
-    //    }
-//
-    //    return apps
-    //}
 }

@@ -6,6 +6,7 @@ Default permissions for the plugin
 - `allow-shutdown`
 - `allow-get-admin-port`
 - `allow-install-app`
+- `allow-list-installed-apps`
 
 ## Permission Table 
 
@@ -116,6 +117,32 @@ Enables the launch command without any pre-configured scope.
 <td>
 
 Denies the launch command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-list-installed-apps`
+
+</td>
+<td>
+
+Enables the list_installed_apps command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-list-installed-apps`
+
+</td>
+<td>
+
+Denies the list_installed_apps command without any pre-configured scope.
 
 </td>
 </tr>

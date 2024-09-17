@@ -10,6 +10,7 @@ import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.JSObject
+import app.tauri.plugin.JSArray
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
 import android.app.NotificationChannel
@@ -21,6 +22,15 @@ import kotlinx.coroutines.delay
 
 @InvokeArg
 class HolochainArgs {
+}
+
+@InvokeArg
+class InstallAppRequestArgs {
+    lateinit var appId: String
+    lateinit var appBundleBytes: ByteArray
+    lateinit var membraneProofs: Map<String, ByteArray>
+    var agent: ByteArray? = null
+    var networkSeed: String? = null
 }
 
 @TauriPlugin
@@ -51,6 +61,9 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     }
 
     /// Start the service
+    /// - Starts the foreground service
+    /// - Launches a conductor
+    /// - Creates an admin websocket
     @Command
     fun launch(invoke: Invoke) {
         val args = invoke.parseArgs(HolochainArgs::class.java)
@@ -61,7 +74,6 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     /// Stop the service
     @Command
     fun shutdown(invoke: Invoke) {
-        val args = invoke.parseArgs(HolochainArgs::class.java)
         this.mService?.shutdown()
         invoke.resolve()
     }
@@ -78,9 +90,24 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     /// Install a happ into conductor
     @Command
     fun installApp(invoke: Invoke) {
-        val args = invoke.parseArgs(InstallAppRequest::class.java)
-        this.mService?.installApp(args)
+        val args = invoke.parseArgs(InstallAppRequestArgs::class.java)
+        this.mService?.installApp(InstallAppRequest(
+            args.appId,
+            args.appBundleBytes,
+            args.membraneProofs,
+            args.agent,
+            args.networkSeed
+        ))
         invoke.resolve()
+    }
+
+    /// List installed happs in conductor
+    @Command
+    fun listInstalledApps(invoke: Invoke) {
+        val res = this.mService?.listInstalledApps()
+        val obj = JSObject();
+        obj.put("installedApps", JSArray(res!!.map { it.installedAppId }))
+        invoke.resolve(obj)
     }
 
     /// Create a new app websocket

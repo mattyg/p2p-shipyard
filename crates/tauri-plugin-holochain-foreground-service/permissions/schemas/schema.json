@@ -351,6 +351,20 @@
           ]
         },
         {
+          "description": "allow-list-installed-apps -> Enables the list_installed_apps command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-list-installed-apps"
+          ]
+        },
+        {
+          "description": "deny-list-installed-apps -> Denies the list_installed_apps command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-list-installed-apps"
+          ]
+        },
+        {
           "description": "allow-shutdown -> Enables the shutdown command without any pre-configured scope.",
           "type": "string",
           "enum": [

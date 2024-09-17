@@ -2174,6 +2174,13 @@
           ]
         },
         {
+          "description": "holochain-foreground-service:allow-list-installed-apps -> Enables the list_installed_apps command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "holochain-foreground-service:allow-list-installed-apps"
+          ]
+        },
+        {
           "description": "holochain-foreground-service:allow-shutdown -> Enables the shutdown command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -2227,6 +2234,13 @@
           "type": "string",
           "enum": [
             "holochain-foreground-service:deny-launch"
+          ]
+        },
+        {
+          "description": "holochain-foreground-service:deny-list-installed-apps -> Denies the list_installed_apps command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "holochain-foreground-service:deny-list-installed-apps"
           ]
         },
         {
