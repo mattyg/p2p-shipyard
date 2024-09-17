@@ -41,7 +41,7 @@
                 glib
               ]) ++ (lib.optionals pkgs.stdenv.isLinux (with pkgs; [
                 webkitgtk
-                webkitgtk.dev # Brings libwebkitgtk-4.0.so.37
+                # webkitgtk.dev # Brings libwebkitgtk-4.0.so.37
                 webkitgtk_4_1 # Needed for javascriptcoregtk
                 # webkitgtk_4_1.dev
                 # webkitgtk_6_0
@@ -276,7 +276,7 @@
         devShells.tauriAndroidDev = let
           overlays = [ (import inputs.rust-overlay) ];
           rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
@@ -308,7 +308,7 @@
         packages.tauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
           rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
             extensions = [ "rust-src" ];
           };
           linuxCargo = pkgs.writeShellApplication {
@@ -327,7 +327,7 @@
         packages.holochainTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
           rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
             extensions = [ "rust-src" ];
             targets = [ "wasm32-unknown-unknown" ];
           };
@@ -347,7 +347,7 @@
         packages.androidTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
           rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
