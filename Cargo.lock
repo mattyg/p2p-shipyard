@@ -3128,7 +3128,6 @@ dependencies = [
  "clap 4.5.17",
  "holochain_client",
  "holochain_types",
- "lair_keystore",
  "log",
  "tauri",
  "tauri-build",
@@ -8495,9 +8494,9 @@ dependencies = [
 
 [[package]]
 name = "sqlformat"
-version = "0.2.6"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7bba3a93db0cc4f7bdece8bb09e77e2e785c20bfebf79eb8340ed80708048790"
+checksum = "f895e3734318cc55f1fe66258926c9b910c124d47520339efecbb6c59cec7c1f"
 dependencies = [
  "nom",
  "unicode_categories",
@@ -9060,6 +9059,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha256",
+ "sqlformat",
  "symlink",
  "tauri",
  "tauri-plugin",
