@@ -74,7 +74,7 @@
       </div>
       <ul style="margin-top: 10px;">
           {#each installedApps as app}
-            <li>{app}</li>
+            <li>{app.installedAppId}</li>
           {/each}
       </ul>
    </div>

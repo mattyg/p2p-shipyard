@@ -19,6 +19,7 @@ import android.util.Log
 import android.webkit.WebView
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.delay
+import com.plugin.holochainforegroundservice.toJSArray
 
 @InvokeArg
 class HolochainArgs {
@@ -106,7 +107,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     fun listInstalledApps(invoke: Invoke) {
         val res = this.mService?.listInstalledApps()
         val obj = JSObject();
-        obj.put("installedApps", JSArray(res!!.map { it.installedAppId }))
+        obj.put("installedApps", res!!.toJSArray())
         invoke.resolve(obj)
     }
 
@@ -159,3 +160,4 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         activity.bindService(intent, this.mConnection, 0)
     }
 }
+

@@ -47,4 +47,5 @@ dependencies {
     // Uniffi
     implementation("net.java.dev.jna:jna:5.13.0@aar")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation(kotlin("reflect"))
 }
