@@ -64,6 +64,7 @@
                 openssl_3
                 librsvg
               ])) ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+                basez
                 darwin.apple_sdk.frameworks.Security
                 darwin.apple_sdk.frameworks.CoreServices
                 darwin.apple_sdk.frameworks.CoreFoundation
