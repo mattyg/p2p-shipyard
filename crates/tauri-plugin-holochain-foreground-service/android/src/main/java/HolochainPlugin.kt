@@ -34,6 +34,11 @@ class InstallAppRequestArgs {
     var networkSeed: String? = null
 }
 
+@InvokeArg
+class AppWebsocketAuthRequest {
+    lateinit var appId: String
+}
+
 @TauriPlugin
 class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     private var mService: IHolochainService? = null
@@ -111,21 +116,17 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         invoke.resolve(obj)
     }
 
-    /// Create a new app websocket
+    /// Get or create an app websocket with authentication token
     @Command
-    fun createAppWebsocket(invoke: Invoke) {
-        val args = invoke.parseArgs(HolochainArgs::class.java)
-
-        // Create app websocket
-        /*
-            TODO: return LauncherEnvironment
-            export interface LauncherEnvironment {
-                APP_INTERFACE_PORT?: number;
-                ADMIN_INTERFACE_PORT?: number;
-                INSTALLED_APP_ID?: InstalledAppId;
-                APP_INTERFACE_TOKEN?: AppAuthenticationToken;
-        } */        
-        invoke.resolve()
+    fun appWebsocketAuth(invoke: Invoke) {
+        val args = invoke.parseArgs(AppWebsocketAuthRequest::class.java)
+        Log.d(LOG_TAG, "appWebsocketAuth args " + args)
+        val res = this.mService?.appWebsocketAuth(args.appId)
+        Log.d(LOG_TAG, "appWebsocketAuth res " + res)
+        
+        val obj = JSObject();
+        obj.put("appWebsocketAuth", res!!.toJSObject())
+        invoke.resolve(obj)       
     }
 
     @Command

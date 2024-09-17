@@ -2146,6 +2146,13 @@
           ]
         },
         {
+          "description": "holochain-foreground-service:allow-app-websocket-auth -> Enables the app_websocket_auth command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "holochain-foreground-service:allow-app-websocket-auth"
+          ]
+        },
+        {
           "description": "holochain-foreground-service:allow-create-app-websocket -> Enables the create_app_websocket command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -2206,6 +2213,13 @@
           "type": "string",
           "enum": [
             "holochain-foreground-service:allow-stop"
+          ]
+        },
+        {
+          "description": "holochain-foreground-service:deny-app-websocket-auth -> Denies the app_websocket_auth command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "holochain-foreground-service:deny-app-websocket-auth"
           ]
         },
         {

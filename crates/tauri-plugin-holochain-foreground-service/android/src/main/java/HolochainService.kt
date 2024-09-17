@@ -63,6 +63,14 @@ class HolochainService : Service() {
                 runtime?.listInstalledApps()?.map { AppInfoFfiExt(it.installedAppId) } ?: emptyList<AppInfoFfiExt>()
             }
         }
+
+        /// Get or create an app websocket with an authenticated token
+        override fun appWebsocketAuth(appId: String): AppWebsocketAuthFfiExt {
+            return runBlocking {
+                val res = runtime?.appWebsocketAuth(appId)!!
+                AppWebsocketAuthFfiExt(res.appId, res.port.toInt(), res.token)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

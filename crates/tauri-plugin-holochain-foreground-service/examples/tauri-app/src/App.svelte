@@ -7,6 +7,8 @@
   let appId = "forum";
   let networkSeed = "p2p-shipyard-dev-2024-09-16";
   let installedApps = [];
+  let selectedAppId;
+  let selectedAppWebsocketAuth;
 
   const getAdminPort = async () => {
     adminPort = (await invoke('plugin:holochain-foreground-service|get_admin_port')).port;
@@ -27,6 +29,11 @@
   const listInstalledApps = async () => {
     installedApps = (await invoke('plugin:holochain-foreground-service|list_installed_apps')).installedApps;
   };
+  const appWebsocketAuth = async () => {
+    selectedAppWebsocketAuth = (await invoke('plugin:holochain-foreground-service|app_websocket_auth', { 
+      appId: selectedAppId 
+    })).appWebsocketAuth;
+  }
 
   let interval = setInterval(async () => {
     if(!adminPort) {
@@ -35,6 +42,8 @@
       clearInterval(interval);
     }
   }, 500);
+
+  $: adminPort, listInstalledApps();
 </script>
 
 <main class="container">
@@ -77,6 +86,31 @@
             <li>{app.installedAppId}</li>
           {/each}
       </ul>
+   </div>
+
+   <div class="my-4 flex-center">
+    <h2>App Websocket Auth</h2>
+      <Labelled label="App Id">
+        <select bind:value={selectedAppId}>
+          {#each installedApps as app}
+            <option value={app.installedAppId}>{app.installedAppId}</option>
+          {/each}
+        </select>
+      </Labelled>
+      <div>
+        <button on:click={appWebsocketAuth} disabled={selectedAppId === null}>Get App Websocket Auth</button>
+      </div>
+      {#if selectedAppWebsocketAuth}
+        <Labelled label="App Id">
+          {selectedAppWebsocketAuth.appId}
+        </Labelled>
+        <Labelled label="Port">
+          {selectedAppWebsocketAuth.port}
+        </Labelled>
+        <Labelled label="Token">
+          {selectedAppWebsocketAuth.token}
+        </Labelled>
+      {/if}
    </div>
  
 </main>

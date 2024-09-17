@@ -766,6 +766,11 @@ internal interface UniffiLib : Library {
         `config`: RustBuffer.ByValue,
     ): Long
 
+    fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_app_websocket_auth(
+        `ptr`: Pointer,
+        `appId`: RustBuffer.ByValue,
+    ): Long
+
     fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_get_admin_port(
         `ptr`: Pointer,
         uniffi_out_err: UniffiRustCallStatus,
@@ -1000,6 +1005,8 @@ internal interface UniffiLib : Library {
         uniffi_out_err: UniffiRustCallStatus,
     ): Unit
 
+    fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_app_websocket_auth(): Short
+
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port(): Short
 
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_install_app(): Short
@@ -1025,6 +1032,9 @@ private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: UniffiLib) {
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_app_websocket_auth() != 48064.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port() != 35115.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -1387,6 +1397,8 @@ private class JavaLangRefCleanable(
 }
 
 public interface HolochainRuntimeFfiInterface {
+    suspend fun `appWebsocketAuth`(`appId`: kotlin.String): AppWebsocketAuthFfi
+
     /**
      * Get an admin port on the conductor
      */
@@ -1499,6 +1511,36 @@ open class HolochainRuntimeFfi :
         uniffiRustCall { status ->
             UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_clone_holochainruntimeffi(pointer!!, status)
         }
+
+    @Throws(HolochainRuntimeFfiException::class)
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `appWebsocketAuth`(`appId`: kotlin.String): AppWebsocketAuthFfi =
+        uniffiRustCallAsync(
+            callWithPointer { thisPtr ->
+                UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_app_websocket_auth(
+                    thisPtr,
+                    FfiConverterString.lower(`appId`),
+                )
+            },
+            {
+                    future,
+                    callback,
+                    continuation,
+                ->
+                UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_poll_rust_buffer(future, callback, continuation)
+            },
+            {
+                    future,
+                    continuation,
+                ->
+                UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_complete_rust_buffer(future, continuation)
+            },
+            { future -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_free_rust_buffer(future) },
+            // lift function
+            { FfiConverterTypeAppWebsocketAuthFFI.lift(it) },
+            // Error FFI converter
+            HolochainRuntimeFfiException.ErrorHandler,
+        )
 
     /**
      * Get an admin port on the conductor
@@ -1696,6 +1738,39 @@ public object FfiConverterTypeAppInfoFFI : FfiConverterRustBuffer<AppInfoFfi> {
         buf: ByteBuffer,
     ) {
         FfiConverterString.write(value.`installedAppId`, buf)
+    }
+}
+
+data class AppWebsocketAuthFfi(
+    var `appId`: kotlin.String,
+    var `port`: kotlin.UShort,
+    var `token`: kotlin.ByteArray,
+) {
+    companion object
+}
+
+public object FfiConverterTypeAppWebsocketAuthFFI : FfiConverterRustBuffer<AppWebsocketAuthFfi> {
+    override fun read(buf: ByteBuffer): AppWebsocketAuthFfi =
+        AppWebsocketAuthFfi(
+            FfiConverterString.read(buf),
+            FfiConverterUShort.read(buf),
+            FfiConverterByteArray.read(buf),
+        )
+
+    override fun allocationSize(value: AppWebsocketAuthFfi) =
+        (
+            FfiConverterString.allocationSize(value.`appId`) +
+                FfiConverterUShort.allocationSize(value.`port`) +
+                FfiConverterByteArray.allocationSize(value.`token`)
+        )
+
+    override fun write(
+        value: AppWebsocketAuthFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterString.write(value.`appId`, buf)
+        FfiConverterUShort.write(value.`port`, buf)
+        FfiConverterByteArray.write(value.`token`, buf)
     }
 }
 

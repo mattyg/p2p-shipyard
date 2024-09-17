@@ -7,6 +7,7 @@ Default permissions for the plugin
 - `allow-get-admin-port`
 - `allow-install-app`
 - `allow-list-installed-apps`
+- `allow-app-websocket-auth`
 
 ## Permission Table 
 
@@ -16,6 +17,32 @@ Default permissions for the plugin
 <th>Description</th>
 </tr>
 
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-app-websocket-auth`
+
+</td>
+<td>
+
+Enables the app_websocket_auth command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-app-websocket-auth`
+
+</td>
+<td>
+
+Denies the app_websocket_auth command without any pre-configured scope.
+
+</td>
+</tr>
 
 <tr>
 <td>

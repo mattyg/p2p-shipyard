@@ -295,6 +295,20 @@
       "type": "string",
       "oneOf": [
         {
+          "description": "allow-app-websocket-auth -> Enables the app_websocket_auth command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-app-websocket-auth"
+          ]
+        },
+        {
+          "description": "deny-app-websocket-auth -> Denies the app_websocket_auth command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-app-websocket-auth"
+          ]
+        },
+        {
           "description": "allow-create-app-websocket -> Enables the create_app_websocket command without any pre-configured scope.",
           "type": "string",
           "enum": [

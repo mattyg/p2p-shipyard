@@ -16,3 +16,10 @@ data class InstallAppRequest(
 data class AppInfoFfiExt(
   val installedAppId: String
 ): Parcelable
+
+@Parcelize
+data class AppWebsocketAuthFfiExt(
+  val appId: String,
+  val port: Int,
+  val token: ByteArray,
+): Parcelable

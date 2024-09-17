@@ -17,11 +17,21 @@ object Utils {
                 is String, is Int, is Long, is Double, is Boolean -> obj.put(property.name, value)
                 is Enum<*> -> obj.put(property.name, value.name)
                 null -> obj.put(property.name, null)
-                is Collection<*> -> {
+                is ByteArray -> {
+                    val byteCollection: MutableCollection<Byte> = value.toMutableList()
+                    val jsValue = try {
+                        (byteCollection as? Collection<Byte>)?.toJSArray()
+                    } catch (e: Exception) {
+                        Log.e("toJSObject", "Error converting property ${property.name} to toJSArray", e)
+                        null
+                    }
+                    obj.put(property.name, jsValue)
+                }
+                is Collection<*>, is MutableCollection<*> -> {
                     val jsValue = try {
                         (value as? Collection<Any>)?.toJSArray()
                     } catch (e: Exception) {
-                        Log.e("toJSArray", "Error converting property ${property.name} to toJSArray", e)
+                        Log.e("toJSObject", "Error converting property ${property.name} to toJSArray", e)
                         null
                     }
                     obj.put(property.name, jsValue)
@@ -44,9 +54,9 @@ object Utils {
         val arr = JSArray()
         for (element in data) {
             when (element) {
-                is String, is Int, is Long, is Double, is Float, is Boolean -> arr.put(element)
+                is String, is Int, is Long, is Double, is Float, is Boolean, is Byte -> arr.put(element)
                 is Enum<*> -> arr.put(element.name)
-                is Collection<*> -> {
+                is Collection<*>, is MutableCollection<*> -> {
                     val jsValue = try {
                         (element as? Collection<Any>)?.toJSArray()
                     } catch (e: Exception) {
@@ -59,7 +69,7 @@ object Utils {
                     val jsValue = try {
                         (element as? Any)?.toJSObject()
                     } catch (e: Exception) {
-                        Log.e("toJSObject", "Error converting element ${element} to toJSObject", e)
+                        Log.e("toJSArray", "Error converting element ${element} to toJSObject", e)
                         null
                     }
                     arr.put(jsValue)

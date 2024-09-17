@@ -1,12 +1,12 @@
 use std::{collections::HashMap, sync::Arc};
 
-use crate::config::HolochainRuntimeFFIConfig;
+use crate::{config::HolochainRuntimeFFIConfig, types::AppWebsocketAuthFFI};
 use crate::error::HolochainRuntimeFFIError;
 use crate::types::AppInfoFFI;
-use holochain_manager::{HolochainRuntime, launch::launch_holochain_runtime, utils::vec_to_locked};
+use holochain_manager::{launch::launch_holochain_runtime, utils::vec_to_locked, HolochainRuntime};
 use log::LevelFilter;
 use android_logger::Config;
-use holochain_types::prelude::{AgentPubKey, AppBundle, MembraneProof, RoleName, SerializedBytes, UnsafeBytes};
+use holochain_types::{prelude::{AgentPubKey, AppBundle, MembraneProof, RoleName, SerializedBytes, UnsafeBytes}, websocket::AllowedOrigins};
 
 #[derive(uniffi::Object)]
 pub struct HolochainRuntimeFFI {
@@ -90,5 +90,13 @@ impl HolochainRuntimeFFI {
            .await
            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
         Ok(())
+    }
+
+    /// Get or create an app websocket with an authentication for the given app id
+    pub async fn app_websocket_auth(&self, app_id: String) -> Result<AppWebsocketAuthFFI, HolochainRuntimeFFIError> {
+        let app_websocket_auth = self.runtime.get_app_websocket_auth(&app_id, false, AllowedOrigins::Any)
+            .await
+            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(app_websocket_auth.into())
     }
 }
