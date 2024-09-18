@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { invoke } from "@tauri-apps/api/core";
+  import { launch, shutdown, getAdminPort, installApp, listInstalledApps, appWebsocketAuth } from "tauri-plugin-holochain-foreground-service-api";
   import Labelled from './Labelled.svelte';
   import happUrl from "./forum.happ?url";
   import { AppWebsocket } from "@holochain/client";
@@ -13,34 +13,24 @@
   let selectedAppWebsocketAuth;
   let newPost = {title: "", content: ""};
   let allPosts = [];
-  let appWs: AppWebsocket | null = null;
+  let appWs: AppWebsocket | undefined = undefined;
 
   const loadHolochainClient = async () => {
     appWs = await AppWebsocket.connect();
-  }
-  const getAdminPort = async () => {
-    adminPort = (await invoke('plugin:holochain-foreground-service|get_admin_port')).port;
   };
-  const launch = () => invoke('plugin:holochain-foreground-service|launch');
-  const shutdown = () => invoke('plugin:holochain-foreground-service|shutdown');
-  const installApp = async () => {
-    const appBundleBytes = new Uint8Array(await (await fetch(happUrl)).arrayBuffer())
-
-    return invoke('plugin:holochain-foreground-service|install_app', {
+  const loadInstalledApps = async () => {
+    installedApps = await listInstalledApps();
+  };
+  const installForumApp = async () => installApp({
       appId,
-      appBundleBytes,
+      appBundleBytes: new Uint8Array(await (await fetch(happUrl)).arrayBuffer()),
       membraneProofs: {},
       agent: null,
       networkSeed,
-    })
-  };
-  const listInstalledApps = async () => {
-    installedApps = (await invoke('plugin:holochain-foreground-service|list_installed_apps')).installedApps;
-  };
-  const appWebsocketAuth = async () => {
-    selectedAppWebsocketAuth = (await invoke('plugin:holochain-foreground-service|app_websocket_auth', { 
-      appId: selectedAppId 
-    })).appWebsocketAuth;
+    });
+  const loadAppWebsocketAuth = async () => {
+    if(!selectedAppId) return;
+    selectedAppWebsocketAuth = await appWebsocketAuth(selectedAppId);
   }
   const callZomeCreatePost = async () => {
     if(!appWs) throw Error("No AppWebsocket connected");
@@ -80,17 +70,25 @@
       }
     }));
   }
+  const selectFirstInstalledApp = () => {
+    if(installedApps.length > 0 && selectedAppId === undefined) {
+      selectedAppId = installedApps[0].installedAppId;
+    }
+  };
 
   let interval = setInterval(async () => {
     if(!adminPort) {
-      await getAdminPort();
+      adminPort = await getAdminPort();
     } else {
       clearInterval(interval);
     }
   }, 500);
 
-  $: adminPort, listInstalledApps();
+  $: adminPort, loadInstalledApps();
+  $: installedApps, selectFirstInstalledApp();
+  $: selectedAppId, loadAppWebsocketAuth();
   $: selectedAppWebsocketAuth, loadHolochainClient();
+  $: appWs, allPosts = [];
 </script>
 
 <main class="container">
@@ -119,7 +117,7 @@
       <input bind:value={networkSeed} />
     </Labelled>
     <div>
-      <button on:click={installApp}>Install App</button>
+      <button on:click={installForumApp}>Install App</button>
     </div>
   </div>
   
@@ -145,7 +143,7 @@
    <div class="my-4 flex-center">
     <h2>App Websocket Auth</h2>
       <div>
-        <button on:click={appWebsocketAuth} disabled={selectedAppId === null}>Get Selected App Websocket Auth</button>
+        <button on:click={loadAppWebsocketAuth} disabled={selectedAppId === null}>Get Selected App Websocket Auth</button>
       </div>
       {#if selectedAppWebsocketAuth}
         <Labelled label="App Id">
