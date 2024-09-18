@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.follows = "holonix/nixpkgs";
-    gradlenixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     webkitgtknixpkgs.url =
       "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
 
@@ -11,7 +10,7 @@
     rust-overlay.follows = "holonix/rust-overlay";
     android-nixpkgs = {
       url = "github:tadfisher/android-nixpkgs/stable";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     hc-infra.url = "github:holochain-open-dev/infrastructure/next";
     crane.follows = "holonix/crane";
@@ -248,12 +247,7 @@
         };
 
         devShells.androidDev = pkgs.mkShell {
-          packages = [
-            packages.android-sdk
-            inputs'.gradlenixpkgs.legacyPackages.gradle
-            pkgs.jdk17
-            pkgs.aapt
-          ];
+          packages = [ packages.android-sdk pkgs.gradle pkgs.jdk17 pkgs.aapt ];
 
           shellHook = ''
             export GRADLE_OPTS="-Dorg.gradle.project.android.aapt2FromMavenOverride=${pkgs.aapt}/bin/aapt2";
