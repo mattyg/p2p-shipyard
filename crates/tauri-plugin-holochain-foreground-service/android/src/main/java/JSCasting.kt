@@ -6,7 +6,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.KProperty1
 import android.util.Log
 
-object JSCastingUtils {
+object JSCasting {
     /// Convert Any object to a JSObject
     /// This is intended to be as generic as possible, but may not work for every object.
     /// If you run into errors, you likely need to override handling of certain property types.
@@ -89,5 +89,5 @@ object JSCastingUtils {
     }
 }
 
-fun Any.toJSObject(): JSObject = JSCastingUtils.toJSObject(this)
-fun Collection<Any>.toJSArray(): JSArray = JSCastingUtils.toJSArray(this)
+fun Any.toJSObject(): JSObject = JSCasting.toJSObject(this)
+fun Collection<Any>.toJSArray(): JSArray = JSCasting.toJSArray(this)
