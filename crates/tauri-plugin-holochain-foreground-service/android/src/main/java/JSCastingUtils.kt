@@ -6,7 +6,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.KProperty1
 import android.util.Log
 
-object Utils {
+object JSCastingUtils {
     inline fun <reified T : Any> toJSObject(data: T): JSObject {
         val obj = JSObject()
         val properties = data::class.memberProperties
@@ -81,5 +81,5 @@ object Utils {
     }
 }
 
-fun Any.toJSObject(): JSObject = Utils.toJSObject(this)
-fun Collection<Any>.toJSArray(): JSArray = Utils.toJSArray(this)
+fun Any.toJSObject(): JSObject = JSCastingUtils.toJSObject(this)
+fun Collection<Any>.toJSArray(): JSArray = JSCastingUtils.toJSArray(this)
