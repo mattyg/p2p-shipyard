@@ -4,7 +4,7 @@ import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
 
 @Parcelize
-data class InstallAppRequest(
+data class InstallAppRequestAidl(
   val appId: String,
   val appBundleBytes: ByteArray,
   val membraneProofs: Map<String, ByteArray>,
@@ -13,19 +13,19 @@ data class InstallAppRequest(
 ): Parcelable
 
 @Parcelize
-data class AppInfoFfiExt(
+data class AppInfoFfiAidl(
   val installedAppId: String
 ): Parcelable
 
 @Parcelize
-data class AppWebsocketAuthFfiExt(
+data class AppWebsocketAuthFfiAidl(
   val appId: String,
   val port: Int,
   val token: UByteArray,
 ): Parcelable
 
 @Parcelize
-data class SignZomeCallRequest(
+data class SignZomeCallRequestAidl(
   val provenance: ByteArray,
   val cellIdDnaHash: ByteArray,
   val cellIdAgentPubKey: ByteArray,
@@ -38,7 +38,7 @@ data class SignZomeCallRequest(
 ): Parcelable
 
 @Parcelize
-data class ZomeCallSignedFfiExt(
+data class ZomeCallSignedFfiAidl(
   val cellIdDnaHash: ByteArray,
   val cellIdAgentPubKey: ByteArray,
   val zomeName: String,

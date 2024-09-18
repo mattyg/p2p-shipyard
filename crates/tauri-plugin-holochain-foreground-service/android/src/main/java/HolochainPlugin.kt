@@ -112,7 +112,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun installApp(invoke: Invoke) {
         val args = invoke.parseArgs(InstallAppRequestArgs::class.java)
-        this.mService?.installApp(InstallAppRequest(
+        this.mService?.installApp(InstallAppRequestAidl(
             args.appId,
             args.appBundleBytes,
             args.membraneProofs,
@@ -201,7 +201,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun signZomeCall(invoke: Invoke) {
         val args = invoke.parseArgs(SignZomeCallRequestArgs::class.java)
-        val res = this.mService?.signZomeCall(SignZomeCallRequest(
+        val res = this.mService?.signZomeCall(SignZomeCallRequestAidl(
             args.provenance,
             args.cellIdDnaHash,
             args.cellIdAgentPubKey,

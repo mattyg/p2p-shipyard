@@ -1,17 +1,17 @@
 package com.plugin.holochainforegroundservice;
 
-parcelable InstallAppRequest;
+parcelable InstallAppRequestAidl;
 parcelable ListInstalledAppsResponse;
-parcelable AppInfoFfiExt;
-parcelable AppWebsocketAuthFfiExt;
-parcelable ZomeCallSignedFfiExt;
-parcelable SignZomeCallRequest;
+parcelable AppInfoFfiAidl;
+parcelable AppWebsocketAuthFfiAidl;
+parcelable SignZomeCallRequestAidl;
+parcelable ZomeCallSignedFfiAidl;
 
 interface IHolochainService {
     void shutdown();
     int getAdminPort();
-    void installApp(in InstallAppRequest request);
-    List<AppInfoFfiExt> listInstalledApps();
-    AppWebsocketAuthFfiExt appWebsocketAuth(String appId);
-    ZomeCallSignedFfiExt signZomeCall(in SignZomeCallRequest request);
+    void installApp(in InstallAppRequestAidl request);
+    List<AppInfoFfiAidl> listInstalledApps();
+    AppWebsocketAuthFfiAidl appWebsocketAuth(String appId);
+    ZomeCallSignedFfiAidl signZomeCall(in SignZomeCallRequestAidl request);
 }

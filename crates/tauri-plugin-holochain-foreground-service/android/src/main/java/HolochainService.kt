@@ -52,7 +52,7 @@ class HolochainService : Service() {
         
         /// Install an app
         override fun installApp(
-            request: InstallAppRequest
+            request: InstallAppRequestAidl
         ) {
             runBlocking {
                 runtime?.installApp(request.appId, request.appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
@@ -60,22 +60,22 @@ class HolochainService : Service() {
         }
 
         /// List installed apps
-        override fun listInstalledApps(): List<AppInfoFfiExt> {
+        override fun listInstalledApps(): List<AppInfoFfiAidl> {
             return runBlocking {
-                runtime?.listInstalledApps()?.map { AppInfoFfiExt(it.installedAppId) } ?: emptyList<AppInfoFfiExt>()
+                runtime?.listInstalledApps()?.map { AppInfoFfiAidl(it.installedAppId) } ?: emptyList<AppInfoFfiAidl>()
             }
         }
 
         /// Get or create an app websocket with an authenticated token
-        override fun appWebsocketAuth(appId: String): AppWebsocketAuthFfiExt {
+        override fun appWebsocketAuth(appId: String): AppWebsocketAuthFfiAidl {
             return runBlocking {
                 val res = runtime?.appWebsocketAuth(appId)!!
-                AppWebsocketAuthFfiExt(res.appId, res.port.toInt(), res.token.toUByteArray())
+                AppWebsocketAuthFfiAidl(res.appId, res.port.toInt(), res.token.toUByteArray())
             }
         }
 
         /// Sign a zome call
-        override fun signZomeCall(request: SignZomeCallRequest): ZomeCallSignedFfiExt {
+        override fun signZomeCall(request: SignZomeCallRequestAidl): ZomeCallSignedFfiAidl {
             return runBlocking {
                 val res = runtime?.signZomeCall(ZomeCallUnsignedTauriFfi(
                     request.provenance,
@@ -91,7 +91,7 @@ class HolochainService : Service() {
                     request.expiresAt,
                 ))!!
                 
-                ZomeCallSignedFfiExt(
+                ZomeCallSignedFfiAidl(
                     res.cellId.dnaHash,
                     res.cellId.agentPubKey,
                     res.zomeName,
