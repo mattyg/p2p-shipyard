@@ -9,7 +9,7 @@ rm -rf forum-scaffold-tauri-happ
 
 hc-scaffold --template lit web-app forum-scaffold-tauri-happ --setup-nix true -F --package-manager npm
 cd /tmp/forum-scaffold-tauri-happ
-nix flake update --override-input versions \"github:holochain/holochain?dir=versions/0_3\"
+nix flake update
 nix develop --command bash -c \"hc-scaffold --version && npm i && hc scaffold dna forum && hc scaffold zome posts --integrity dnas/forum/zomes/integrity/ --coordinator dnas/forum/zomes/coordinator/\"
 "
 
