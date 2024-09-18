@@ -7,10 +7,9 @@ use std::{
 use async_std::sync::Mutex;
 use lair_signer::LairAgentSignerWithProvenance;
 use holochain::{
-    conductor::ConductorHandle,
-    prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName},
+    conductor::ConductorHandle, core::ZomeCallUnsigned, prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName}
 };
-use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId};
+use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, ZomeCall};
 use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
 use tx5_signal_srv::SrvHnd;
 use url2::Url2;
@@ -25,7 +24,7 @@ pub mod lair_signer;
 pub mod launch;
 pub mod utils;
 
-use commands::{install_app, install_web_app, update_app, UpdateAppError};
+use commands::{install_app, install_web_app, sign_zome_call_with_client, update_app, UpdateAppError, ZomeCallUnsignedTauri};
 pub use error::{Error, Result};
 use filesystem::{AppBundleStore, BundleStore, FileSystem};
 
@@ -309,6 +308,25 @@ impl HolochainRuntime {
             .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?
             .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?;
         Ok(())
+    }
+
+    /// Sign Zome Call
+    pub async fn sign_zome_call(
+        &self,
+        zome_call_unsigned: ZomeCallUnsignedTauri,
+    ) -> crate::Result<ZomeCall> {
+        let zome_call_unsigned_converted: ZomeCallUnsigned = zome_call_unsigned.into();
+
+        let signed_zome_call = sign_zome_call_with_client(
+            zome_call_unsigned_converted,
+            &self
+                .conductor_handle
+                .keystore()
+                .lair_client()
+        )
+        .await?;
+
+        Ok(signed_zome_call)
     }
 }
 

@@ -8,6 +8,7 @@ Default permissions for the plugin
 - `allow-install-app`
 - `allow-list-installed-apps`
 - `allow-app-websocket-auth`
+- `allow-sign-zome-call`
 
 ## Permission Table 
 

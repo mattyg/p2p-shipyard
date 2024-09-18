@@ -16,6 +16,8 @@ import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiConfig
 import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiConfigException
 import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiException
 import uniffi.holochain_manager_uniffi.AppInfoFfi
+import uniffi.holochain_manager_uniffi.CellIdFfi
+import uniffi.holochain_manager_uniffi.ZomeCallUnsignedTauriFfi
 import kotlinx.coroutines.runBlocking
 
 val NOTIFICATION_CHANNEl_ID: Int = 9823498
@@ -68,7 +70,39 @@ class HolochainService : Service() {
         override fun appWebsocketAuth(appId: String): AppWebsocketAuthFfiExt {
             return runBlocking {
                 val res = runtime?.appWebsocketAuth(appId)!!
-                AppWebsocketAuthFfiExt(res.appId, res.port.toInt(), res.token)
+                AppWebsocketAuthFfiExt(res.appId, res.port.toInt(), res.token.toUByteArray())
+            }
+        }
+
+        /// Sign a zome call
+        override fun signZomeCall(request: SignZomeCallRequest): ZomeCallSignedFfiExt {
+            return runBlocking {
+                val res = runtime?.signZomeCall(ZomeCallUnsignedTauriFfi(
+                    request.provenance,
+                    CellIdFfi(
+                        request.cellIdDnaHash,
+                        request.cellIdAgentPubKey,
+                    ),
+                    request.zomeName,
+                    request.fnName,
+                    request.capSecret,
+                    request.payload,
+                    request.nonce,
+                    request.expiresAt,
+                ))!!
+                
+                ZomeCallSignedFfiExt(
+                    res.cellId.dnaHash,
+                    res.cellId.agentPubKey,
+                    res.zomeName,
+                    res.fnName,
+                    res.payload,
+                    res.capSecret,
+                    res.provenance,
+                    res.signature,
+                    res.nonce,
+                    res.expiresAt,
+                )
             }
         }
     }

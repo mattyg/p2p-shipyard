@@ -789,6 +789,11 @@ internal interface UniffiLib : Library {
 
     fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_shutdown(`ptr`: Pointer): Long
 
+    fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_sign_zome_call(
+        `ptr`: Pointer,
+        `zomeCallUnsigned`: RustBuffer.ByValue,
+    ): Long
+
     fun ffi_holochain_manager_uniffi_rustbuffer_alloc(
         `size`: Long,
         uniffi_out_err: UniffiRustCallStatus,
@@ -1015,6 +1020,8 @@ internal interface UniffiLib : Library {
 
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_shutdown(): Short
 
+    fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_sign_zome_call(): Short
+
     fun uniffi_holochain_manager_uniffi_checksum_constructor_holochainruntimeffi_launch(): Short
 
     fun ffi_holochain_manager_uniffi_uniffi_contract_version(): Int
@@ -1032,7 +1039,7 @@ private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: UniffiLib) {
-    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_app_websocket_auth() != 48064.toShort()) {
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_app_websocket_auth() != 53925.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_get_admin_port() != 35115.toShort()) {
@@ -1045,6 +1052,9 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_shutdown() != 63694.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_sign_zome_call() != 60200.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_holochain_manager_uniffi_checksum_constructor_holochainruntimeffi_launch() != 4585.toShort()) {
@@ -1149,6 +1159,23 @@ public object FfiConverterUShort : FfiConverter<UShort, Short> {
         buf: ByteBuffer,
     ) {
         buf.putShort(value.toShort())
+    }
+}
+
+public object FfiConverterLong : FfiConverter<Long, Long> {
+    override fun lift(value: Long): Long = value
+
+    override fun read(buf: ByteBuffer): Long = buf.getLong()
+
+    override fun lower(value: Long): Long = value
+
+    override fun allocationSize(value: Long) = 8UL
+
+    override fun write(
+        value: Long,
+        buf: ByteBuffer,
+    ) {
+        buf.putLong(value)
     }
 }
 
@@ -1397,6 +1424,9 @@ private class JavaLangRefCleanable(
 }
 
 public interface HolochainRuntimeFfiInterface {
+    /**
+     * Get or create an app websocket with an authentication for the given app id
+     */
     suspend fun `appWebsocketAuth`(`appId`: kotlin.String): AppWebsocketAuthFfi
 
     /**
@@ -1424,6 +1454,11 @@ public interface HolochainRuntimeFfiInterface {
      * Shutdown the holochain conductor
      */
     suspend fun `shutdown`()
+
+    /**
+     * Sign a zome call
+     */
+    suspend fun `signZomeCall`(`zomeCallUnsigned`: ZomeCallUnsignedTauriFfi): ZomeCallFfi
 
     companion object
 }
@@ -1512,6 +1547,9 @@ open class HolochainRuntimeFfi :
             UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_clone_holochainruntimeffi(pointer!!, status)
         }
 
+    /**
+     * Get or create an app websocket with an authentication for the given app id
+     */
     @Throws(HolochainRuntimeFfiException::class)
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `appWebsocketAuth`(`appId`: kotlin.String): AppWebsocketAuthFfi =
@@ -1653,6 +1691,39 @@ open class HolochainRuntimeFfi :
             HolochainRuntimeFfiException.ErrorHandler,
         )
 
+    /**
+     * Sign a zome call
+     */
+    @Throws(HolochainRuntimeFfiException::class)
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `signZomeCall`(`zomeCallUnsigned`: ZomeCallUnsignedTauriFfi): ZomeCallFfi =
+        uniffiRustCallAsync(
+            callWithPointer { thisPtr ->
+                UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_sign_zome_call(
+                    thisPtr,
+                    FfiConverterTypeZomeCallUnsignedTauriFFI.lower(`zomeCallUnsigned`),
+                )
+            },
+            {
+                    future,
+                    callback,
+                    continuation,
+                ->
+                UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_poll_rust_buffer(future, callback, continuation)
+            },
+            {
+                    future,
+                    continuation,
+                ->
+                UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_complete_rust_buffer(future, continuation)
+            },
+            { future -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_free_rust_buffer(future) },
+            // lift function
+            { FfiConverterTypeZomeCallFFI.lift(it) },
+            // Error FFI converter
+            HolochainRuntimeFfiException.ErrorHandler,
+        )
+
     companion object {
         /**
          * Start the holochain conductor
@@ -1774,6 +1845,35 @@ public object FfiConverterTypeAppWebsocketAuthFFI : FfiConverterRustBuffer<AppWe
     }
 }
 
+data class CellIdFfi(
+    var `dnaHash`: kotlin.ByteArray,
+    var `agentPubKey`: kotlin.ByteArray,
+) {
+    companion object
+}
+
+public object FfiConverterTypeCellIdFFI : FfiConverterRustBuffer<CellIdFfi> {
+    override fun read(buf: ByteBuffer): CellIdFfi =
+        CellIdFfi(
+            FfiConverterByteArray.read(buf),
+            FfiConverterByteArray.read(buf),
+        )
+
+    override fun allocationSize(value: CellIdFfi) =
+        (
+            FfiConverterByteArray.allocationSize(value.`dnaHash`) +
+                FfiConverterByteArray.allocationSize(value.`agentPubKey`)
+        )
+
+    override fun write(
+        value: CellIdFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterByteArray.write(value.`dnaHash`, buf)
+        FfiConverterByteArray.write(value.`agentPubKey`, buf)
+    }
+}
+
 data class HolochainRuntimeFfiConfig(
     /**
      * URL of bootstrap server
@@ -1813,6 +1913,116 @@ public object FfiConverterTypeHolochainRuntimeFFIConfig : FfiConverterRustBuffer
         FfiConverterString.write(value.`bootstrapUrl`, buf)
         FfiConverterString.write(value.`signalUrl`, buf)
         FfiConverterString.write(value.`holochainDir`, buf)
+    }
+}
+
+data class ZomeCallFfi(
+    var `cellId`: CellIdFfi,
+    var `zomeName`: kotlin.String,
+    var `fnName`: kotlin.String,
+    var `payload`: kotlin.ByteArray,
+    var `capSecret`: kotlin.ByteArray?,
+    var `provenance`: kotlin.ByteArray,
+    var `signature`: kotlin.ByteArray,
+    var `nonce`: kotlin.ByteArray,
+    var `expiresAt`: kotlin.Long,
+) {
+    companion object
+}
+
+public object FfiConverterTypeZomeCallFFI : FfiConverterRustBuffer<ZomeCallFfi> {
+    override fun read(buf: ByteBuffer): ZomeCallFfi =
+        ZomeCallFfi(
+            FfiConverterTypeCellIdFFI.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterOptionalByteArray.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterLong.read(buf),
+        )
+
+    override fun allocationSize(value: ZomeCallFfi) =
+        (
+            FfiConverterTypeCellIdFFI.allocationSize(value.`cellId`) +
+                FfiConverterString.allocationSize(value.`zomeName`) +
+                FfiConverterString.allocationSize(value.`fnName`) +
+                FfiConverterByteArray.allocationSize(value.`payload`) +
+                FfiConverterOptionalByteArray.allocationSize(value.`capSecret`) +
+                FfiConverterByteArray.allocationSize(value.`provenance`) +
+                FfiConverterByteArray.allocationSize(value.`signature`) +
+                FfiConverterByteArray.allocationSize(value.`nonce`) +
+                FfiConverterLong.allocationSize(value.`expiresAt`)
+        )
+
+    override fun write(
+        value: ZomeCallFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterTypeCellIdFFI.write(value.`cellId`, buf)
+        FfiConverterString.write(value.`zomeName`, buf)
+        FfiConverterString.write(value.`fnName`, buf)
+        FfiConverterByteArray.write(value.`payload`, buf)
+        FfiConverterOptionalByteArray.write(value.`capSecret`, buf)
+        FfiConverterByteArray.write(value.`provenance`, buf)
+        FfiConverterByteArray.write(value.`signature`, buf)
+        FfiConverterByteArray.write(value.`nonce`, buf)
+        FfiConverterLong.write(value.`expiresAt`, buf)
+    }
+}
+
+data class ZomeCallUnsignedTauriFfi(
+    var `provenance`: kotlin.ByteArray,
+    var `cellId`: CellIdFfi,
+    var `zomeName`: kotlin.String,
+    var `fnName`: kotlin.String,
+    var `capSecret`: kotlin.ByteArray?,
+    var `payload`: kotlin.ByteArray,
+    var `nonce`: kotlin.ByteArray,
+    var `expiresAt`: kotlin.Long,
+) {
+    companion object
+}
+
+public object FfiConverterTypeZomeCallUnsignedTauriFFI : FfiConverterRustBuffer<ZomeCallUnsignedTauriFfi> {
+    override fun read(buf: ByteBuffer): ZomeCallUnsignedTauriFfi =
+        ZomeCallUnsignedTauriFfi(
+            FfiConverterByteArray.read(buf),
+            FfiConverterTypeCellIdFFI.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterOptionalByteArray.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterLong.read(buf),
+        )
+
+    override fun allocationSize(value: ZomeCallUnsignedTauriFfi) =
+        (
+            FfiConverterByteArray.allocationSize(value.`provenance`) +
+                FfiConverterTypeCellIdFFI.allocationSize(value.`cellId`) +
+                FfiConverterString.allocationSize(value.`zomeName`) +
+                FfiConverterString.allocationSize(value.`fnName`) +
+                FfiConverterOptionalByteArray.allocationSize(value.`capSecret`) +
+                FfiConverterByteArray.allocationSize(value.`payload`) +
+                FfiConverterByteArray.allocationSize(value.`nonce`) +
+                FfiConverterLong.allocationSize(value.`expiresAt`)
+        )
+
+    override fun write(
+        value: ZomeCallUnsignedTauriFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterByteArray.write(value.`provenance`, buf)
+        FfiConverterTypeCellIdFFI.write(value.`cellId`, buf)
+        FfiConverterString.write(value.`zomeName`, buf)
+        FfiConverterString.write(value.`fnName`, buf)
+        FfiConverterOptionalByteArray.write(value.`capSecret`, buf)
+        FfiConverterByteArray.write(value.`payload`, buf)
+        FfiConverterByteArray.write(value.`nonce`, buf)
+        FfiConverterLong.write(value.`expiresAt`, buf)
     }
 }
 

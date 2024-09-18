@@ -4,6 +4,8 @@ parcelable InstallAppRequest;
 parcelable ListInstalledAppsResponse;
 parcelable AppInfoFfiExt;
 parcelable AppWebsocketAuthFfiExt;
+parcelable ZomeCallSignedFfiExt;
+parcelable SignZomeCallRequest;
 
 interface IHolochainService {
     void shutdown();
@@ -11,4 +13,5 @@ interface IHolochainService {
     void installApp(in InstallAppRequest request);
     List<AppInfoFfiExt> listInstalledApps();
     AppWebsocketAuthFfiExt appWebsocketAuth(String appId);
+    ZomeCallSignedFfiExt signZomeCall(in SignZomeCallRequest request);
 }

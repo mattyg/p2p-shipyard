@@ -18,9 +18,9 @@ object Utils {
                 is Enum<*> -> obj.put(property.name, value.name)
                 null -> obj.put(property.name, null)
                 is ByteArray -> {
-                    val byteCollection: MutableCollection<Byte> = value.toMutableList()
+                    val byteCollection: MutableCollection<UByte> = value.toUByteArray().toMutableList()
                     val jsValue = try {
-                        (byteCollection as? Collection<Byte>)?.toJSArray()
+                        (byteCollection as? Collection<UByte>)?.toJSArray()
                     } catch (e: Exception) {
                         Log.e("toJSObject", "Error converting property ${property.name} to toJSArray", e)
                         null
@@ -55,6 +55,7 @@ object Utils {
         for (element in data) {
             when (element) {
                 is String, is Int, is Long, is Double, is Float, is Boolean, is Byte -> arr.put(element)
+                is UByte -> arr.put(element.toInt())
                 is Enum<*> -> arr.put(element.name)
                 is Collection<*>, is MutableCollection<*> -> {
                     val jsValue = try {

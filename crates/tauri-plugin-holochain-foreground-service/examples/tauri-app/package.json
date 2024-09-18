@@ -10,13 +10,15 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@holochain/client": "0.17.1",
+    "@msgpack/msgpack": "2.8.0",
     "@tauri-apps/api": "^2.0.0-alpha.11",
     "tauri-plugin-holochain-foreground-service-api": "link:../../"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
+    "@tauri-apps/cli": "^2.0.0-alpha.17",
     "svelte": "^3.49.0",
-    "vite": "^3.0.2",
-    "@tauri-apps/cli": "^2.0.0-alpha.17"
+    "vite": "^3.0.2"
   }
 }

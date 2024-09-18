@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use crate::{config::HolochainRuntimeFFIConfig, types::AppWebsocketAuthFFI};
 use crate::error::HolochainRuntimeFFIError;
-use crate::types::AppInfoFFI;
+use crate::types::{AppInfoFFI, ZomeCallFFI, ZomeCallUnsignedTauriFFI};
 use holochain_manager::{launch::launch_holochain_runtime, utils::vec_to_locked, HolochainRuntime};
 use log::LevelFilter;
 use android_logger::Config;
@@ -98,5 +98,13 @@ impl HolochainRuntimeFFI {
             .await
             .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
         Ok(app_websocket_auth.into())
+    }
+
+    /// Sign a zome call
+    pub async fn sign_zome_call(&self, zome_call_unsigned: ZomeCallUnsignedTauriFFI) -> Result<ZomeCallFFI, HolochainRuntimeFFIError> {
+        let zome_call = self.runtime.sign_zome_call(zome_call_unsigned.into())
+            .await
+            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(zome_call.into())
     }
 }
