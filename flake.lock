@@ -155,7 +155,12 @@
           "crane"
         ],
         "holonix": "holonix",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": [
+          "hc-infra",
+          "holonix",
+          "nixpkgs"
+        ],
+        "pnpmnixpkgs": "pnpmnixpkgs",
         "rust-overlay": [
           "hc-infra",
           "holonix",
@@ -163,11 +168,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726643453,
-        "narHash": "sha256-RNHFczpyV/0ZCVHRRbFVT6Pojma1F7+kBA78+ilhUFg=",
+        "lastModified": 1726667762,
+        "narHash": "sha256-wFFgvhVnOg/fXFJhnuPvFMD9NVsmPFiEgEHe5Y6q+fU=",
         "owner": "holochain-open-dev",
         "repo": "infrastructure",
-        "rev": "3df9f6b328c6d97d3600754d5e3414bb50d4c9b7",
+        "rev": "0eb9281d47c8d1432048919817da8d9226214f26",
         "type": "github"
       },
       "original": {
@@ -312,7 +317,7 @@
         "hc-scaffold": "hc-scaffold_2",
         "holochain": "holochain_2",
         "lair-keystore": "lair-keystore_2",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_2",
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
@@ -406,22 +411,6 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1726447378,
-        "narHash": "sha256-2yV8nmYE1p9lfmLHhOCbYwQC/W8WYfGQABoGzJOb1JQ=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "086b448a5d54fd117f4dc2dee55c9f0ff461bdc1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-24.05",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_3": {
-      "locked": {
         "lastModified": 1717179513,
         "narHash": "sha256-vboIEwIQojofItm2xGCdZCzW96U85l9nDW3ifMuAIdM=",
         "owner": "nixos",
@@ -432,6 +421,22 @@
       "original": {
         "owner": "nixos",
         "ref": "24.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "pnpmnixpkgs": {
+      "locked": {
+        "lastModified": 1726447378,
+        "narHash": "sha256-2yV8nmYE1p9lfmLHhOCbYwQC/W8WYfGQABoGzJOb1JQ=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "086b448a5d54fd117f4dc2dee55c9f0ff461bdc1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.05",
         "repo": "nixpkgs",
         "type": "github"
       }
