@@ -3,7 +3,7 @@ set -e
 
 DIR=$(pwd)
 
-nix shell --refresh --override-input versions "github:holochain/holochain?dir=versions/0_3" github:holochain/holochain#hc-scaffold --command bash -c "
+nix shell --refresh github:holochain/scaffolding/develop-0.3#hc-scaffold --command bash -c "
 cd /tmp
 rm -rf forum-scaffold-tauri-happ
 
