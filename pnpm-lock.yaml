@@ -15,6 +15,34 @@ importers:
         specifier: ^2.1.0
         version: 2.6.3
 
+  crates/tauri-plugin-holochain-foreground-service:
+    dependencies:
+      '@holochain/client':
+        specifier: 0.17.1
+        version: 0.17.1
+      '@tauri-apps/api':
+        specifier: '>=2.0.0-beta.6'
+        version: 2.0.0-rc.0
+    devDependencies:
+      '@rollup/plugin-node-resolve':
+        specifier: ^15.2.3
+        version: 15.2.3(rollup@4.18.0)
+      '@rollup/plugin-terser':
+        specifier: ^0.4.4
+        version: 0.4.4(rollup@4.18.0)
+      rollup:
+        specifier: ^4.9.6
+        version: 4.18.0
+      tsc:
+        specifier: ^2.0.4
+        version: 2.0.4
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
   crates/tauri-plugin-holochain-foreground-service/examples/tauri-app:
     dependencies:
       '@holochain/client':
@@ -1394,6 +1422,10 @@ packages:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
     hasBin: true
 
+  tsc@2.0.4:
+    resolution: {integrity: sha512-fzoSieZI5KKJVBYGvwbVZs/J5za84f2lSTLPYf6AGiIf43tZ3GNrI1QzTLcjtyDDP4aLxd46RTZq1nQxe7+k5Q==}
+    hasBin: true
+
   tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
 
@@ -2684,6 +2716,8 @@ snapshots:
       is-number: 7.0.0
 
   tree-kill@1.2.2: {}
+
+  tsc@2.0.4: {}
 
   tslib@2.6.3: {}
 

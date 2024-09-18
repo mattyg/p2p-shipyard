@@ -1,3 +1,5 @@
+/// Helper functions to wrap tauri plugin commands
+
 import { invoke } from '@tauri-apps/api/core'
 
 export async function launch(): Promise<string | null> {
