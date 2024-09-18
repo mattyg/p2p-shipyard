@@ -247,6 +247,8 @@ pub fn scaffold_tauri_happ(
         &mut file_tree,
         PathBuf::from("flake.nix").as_path(),
         |flake_nix_content| {
+            let flake_nix_content = 
+                flake_nix_content.replace("            rust # For Rust development, with the WASM target included for zome builds","" );
 
             // - Add the `p2p-shipyard` as input to the flake
             let flake_nix_content = add_flake_input_to_flake_file(
@@ -354,7 +356,7 @@ pub fn get_scope_open_and_close_char_indexes(
 
 #[cfg(test)]
 mod tests {
-use pretty_assertions::{assert_eq};
+    use pretty_assertions::assert_eq;
     use super::*;
     use build_fs_tree::{dir, file};
     use file_tree_utils::file_content;
