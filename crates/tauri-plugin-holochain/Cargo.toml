@@ -14,8 +14,14 @@ tauri = { version = "2.0.0-rc.8", features = [
 ] }
 
 # Holochain dependencies
-mr_bundle = "0.4.0-dev"
-holochain = "0.4.0-dev"
+mr_bundle = { version = "0.4.0-dev" }
+holochain = { version = "0.4.0-dev", default-features = false, features = [
+  "chc",
+  "metrics_influxive",
+  "sqlite-encrypted",
+  "tx2",
+  "tx5",
+]}
 holochain_types = "0.4.0-dev"
 holochain_keystore = "0.4.0-dev"
 holochain_conductor_api = "0.4.0-dev"
@@ -66,8 +72,11 @@ async-trait = "0.1"
 tauri-plugin = { version = "2.0.0-rc", features = ["build"] }
 
 [features]
-default = ["gossip_arc_normal"]
+default = ["gossip_arc_normal", "wasm_compiler"]
 
 gossip_arc_empty = []
 gossip_arc_full = []
 gossip_arc_normal = []
+
+wasm_compiler = ["holochain/wasmer_sys"]
+wasm_interpreter = ["holochain/wasmer_wamr"]
