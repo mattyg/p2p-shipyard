@@ -7,6 +7,10 @@ import kotlin.reflect.KProperty1
 import android.util.Log
 
 object JSCastingUtils {
+    /// Convert Any object to a JSObject
+    /// This is intended to be as generic as possible, but may not work for every object.
+    /// If you run into errors, you likely need to override handling of certain property types.
+    /// JSObject will accept Any type, but may cast it to a String if it doesn't know how to handle it specifically.
     inline fun <reified T : Any> toJSObject(data: T): JSObject {
         val obj = JSObject()
         val properties = data::class.memberProperties
@@ -50,6 +54,10 @@ object JSCastingUtils {
         return obj
     }
 
+    /// Convert Collection<Any> to a JSArray
+    /// This is intended to be as generic as possible, but may not work for every array.
+    /// If you run into errors, you likely need to override handling of certain property types.
+    /// JSArray will accept Any type, but may cast it to a String if it doesn't know how to handle it specifically.
     inline fun <reified T : Collection<Any>> toJSArray(data: T): JSArray {
         val arr = JSArray()
         for (element in data) {
