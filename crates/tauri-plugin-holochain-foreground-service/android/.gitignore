@@ -3,4 +3,4 @@
 .gradle
 
 src/main/jniLibs/
-src/main/javascript/
+src/main/res/raw/

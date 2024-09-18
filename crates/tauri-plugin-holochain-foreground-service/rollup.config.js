@@ -1,6 +1,3 @@
-import { readFileSync } from 'fs'
-import { join } from 'path'
-import { cwd } from 'process'
 import terser from '@rollup/plugin-terser'
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
@@ -19,7 +16,8 @@ export default [
         format: 'esm',
       },
       {
-        file: "android/src/main/javascript/injectHolochainClientEnv.min.js",
+        // Android resource filenames must be lowercase and have only a single '.' extension
+        file: "android/src/main/res/raw/injectholochainclientenv.js",
         format: 'esm'
       },
     ],
