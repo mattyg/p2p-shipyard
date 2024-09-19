@@ -416,6 +416,10 @@
                 --set CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER ${toolchainBinsPath}/x86_64-linux-android24-clang \
                 --set CC_armv7_linux_androideabi ${toolchainBinsPath}/armv7a-linux-androideabi24-clang \
                 --set CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER ${toolchainBinsPath}/armv7a-linux-androideabi24-clang
+                --set CMAKE_TOOLCHAIN_FILE_aarch64_linux_android ${pkgs.android-sdk}/share/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake
+                --set CMAKE_TOOLCHAIN_FILE_i686_linux_android ${pkgs.android-sdk}/share/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake
+                --set CMAKE_TOOLCHAIN_FILE_x86_64_linux_android ${pkgs.android-sdk}/share/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake
+                --set CMAKE_TOOLCHAIN_FILE_armv7_linux_androideabi ${pkgs.android-sdk}/share/android-sdk/ndk-bundle/build/cmake/android.toolchain.cmake
             '';
           };
         in androidRust;
