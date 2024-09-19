@@ -381,12 +381,7 @@
               ];
 
             text = ''
-              if [ "$#" -ne 0 ] && [ "$1" = "build" ]
-              then
-                cargo-zigbuild "$@"
-              else
-                cargo "$@"
-              fi
+              cargo "$@"
             '';
           };
           androidRust = pkgs.symlinkJoin {
