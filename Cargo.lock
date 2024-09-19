@@ -8014,6 +8014,7 @@ dependencies = [
  "nix_scaffolding_utils",
  "npm_scaffolding_utils",
  "path-clean",
+ "pretty_assertions",
  "regex",
  "rust_scaffolding_utils",
  "serde",
