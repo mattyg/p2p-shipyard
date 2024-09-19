@@ -386,9 +386,6 @@
 
         packages.tauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          pkgs = import inputs.nixpkgs {
-            inherit system overlays;
-          };
           rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
           };
