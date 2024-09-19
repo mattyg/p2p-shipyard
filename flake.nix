@@ -387,7 +387,6 @@
 
         packages.tauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
           rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
           };
@@ -426,7 +425,6 @@
 
         packages.androidTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
           rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [
