@@ -357,6 +357,7 @@
         devShells.tauriAndroidDev = let
           overlays = [ (import inputs.rust-overlay) ];
           rust = inputs.holonix.packages.${system}.rust.override {
+            extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
               "x86_64-linux-android"
