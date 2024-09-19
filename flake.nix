@@ -389,11 +389,9 @@
           pkgs = import inputs.nixpkgs {
             inherit system overlays;
           };
-          rust = (inputs.holonix.packages.${system}.rust.override
-            {
-              extensions = [ "clippy" "rustfmt" ];
-              targets = [ "wasm32-unknown-unknown" ];
-            });
+          rust = inputs.holonix.packages.${system}.rust.override {
+            extensions = [ "rust-src" ];
+          };
           linuxCargo = pkgs.writeShellApplication {
             name = "cargo";
             runtimeInputs = [ rust ];
@@ -409,7 +407,10 @@
 
         packages.holochainTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rust = inputs.holonix.packages.${system}.rust;
+          rust = inputs.holonix.packages.${system}.rust.override {
+            extensions = [ "rust-src" ];
+            targets = [ "wasm32-unknown-unknown" ];
+          };
           linuxCargo = pkgs.writeShellApplication {
             name = "cargo";
             runtimeInputs = [ rust ];
@@ -426,6 +427,7 @@
         packages.androidTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
           rust = inputs.holonix.packages.${system}.rust.override {
+            extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
               "x86_64-linux-android"
