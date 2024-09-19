@@ -405,7 +405,6 @@
 
         packages.holochainTauriRust = let
           overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
           rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [ "wasm32-unknown-unknown" ];
