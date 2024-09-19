@@ -19,5 +19,3 @@ path = "dnas/forum/zomes/coordinator/posts"
 [workspace.dependencies.posts_integrity]
 path = "dnas/forum/zomes/integrity/posts"
 
-[patch.crates-io]
-holochain_client = { git ="https://github.com/holochain/holochain-client-rust",branch="develop" }

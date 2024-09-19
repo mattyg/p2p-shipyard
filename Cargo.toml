@@ -2,6 +2,3 @@
 members = ["crates/*", "nix/reference-tauri-happ"]
 resolver = "2"
 exclude = [ "examples/end-user-happ", "examples/holochain-runtime" ]
-
-[patch.crates-io]
-holochain_client = { git ="https://github.com/holochain/holochain-client-rust",branch="develop" }
