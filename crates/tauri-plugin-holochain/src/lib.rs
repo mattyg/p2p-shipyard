@@ -57,7 +57,7 @@ pub struct HolochainRuntime {
     pub filesystem: FileSystem,
     pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
-    pub(crate) conductor_handle: ConductorHandle,
+    pub conductor_handle: ConductorHandle,
     pub(crate) _local_signal_handle: sbd_server::SbdServer,
 }
 
