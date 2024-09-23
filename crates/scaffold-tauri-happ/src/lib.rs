@@ -432,14 +432,14 @@ mod tests {
         }: {
           devShells.default = pkgs.mkShell {
             inputsFrom = [
-              inputs'.p2p-shipyard.devShells.holochainTauriDev
+              inputs'.p2p-shipyard.devShells.holochainTauriDev 
               inputs'.hc-infra.devShells.synchronized-pnpm
               inputs'.holonix.devShells.default
             ];
           };
           devShells.androidDev = pkgs.mkShell {
             inputsFrom = [
-              inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev
+              inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev 
               inputs'.hc-infra.devShells.synchronized-pnpm
               inputs'.holonix.devShells.default
             ];
