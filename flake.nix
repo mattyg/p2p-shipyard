@@ -48,17 +48,17 @@
                 gdk-pixbuf
                 gtk3
                 # Video/Audio data composition framework tools like "gst-inspect", "gst-launch" ...
-                gst_all_1.gstreamer
-                # Common plugins like "filesrc" to combine within e.g. gst-launch
-                gst_all_1.gst-plugins-base
-                # Specialized plugins separated by quality
-                gst_all_1.gst-plugins-good
-                gst_all_1.gst-plugins-bad
-                gst_all_1.gst-plugins-ugly
-                # Plugins to reuse ffmpeg to play almost every video format
-                gst_all_1.gst-libav
-                # Support the Video Audio (Hardware) Acceleration API
-                gst_all_1.gst-vaapi
+                # gst_all_1.gstreamer
+                # # Common plugins like "filesrc" to combine within e.g. gst-launch
+                # gst_all_1.gst-plugins-base
+                # # Specialized plugins separated by quality
+                # gst_all_1.gst-plugins-good
+                # gst_all_1.gst-plugins-bad
+                # gst_all_1.gst-plugins-ugly
+                # # Plugins to reuse ffmpeg to play almost every video format
+                # gst_all_1.gst-libav
+                # # Support the Video Audio (Hardware) Acceleration API
+                # gst_all_1.gst-vaapi
                 libsoup_3
                 dbus
                 openssl_3
@@ -277,9 +277,7 @@
         };
 
         devShells.tauriAndroidDev = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
@@ -309,9 +307,7 @@
           ]);
 
         packages.tauriRust = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
           };
           linuxCargo = pkgs.writeShellApplication {
@@ -328,9 +324,7 @@
         in if pkgs.stdenv.isLinux then linuxRust else rust;
 
         packages.holochainTauriRust = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [ "wasm32-unknown-unknown" ];
           };
@@ -348,9 +342,7 @@
         in if pkgs.stdenv.isLinux then linuxRust else rust;
 
         packages.androidTauriRust = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.80.0".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"

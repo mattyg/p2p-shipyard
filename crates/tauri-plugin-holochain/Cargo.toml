@@ -15,7 +15,7 @@ tauri = { version = "2.0.0-rc.8", features = [
 
 # Holochain dependencies
 mr_bundle = "0.4.0-dev"
-holochain = "0.4.0-dev"
+holochain = "0.4.0-dev.25"
 holochain_types = "0.4.0-dev"
 holochain_keystore = "0.4.0-dev"
 holochain_conductor_api = "0.4.0-dev"
@@ -32,7 +32,7 @@ lair_keystore_api = "0.5"
 lair_keystore = { version = "0.5.1" }
 
 # Holochain client
-holochain_client = "0.6.0-dev.8"
+holochain_client = "0.6.0-dev.9"
 
 local-ip-address = "0.6"
 serde_json = "1"
