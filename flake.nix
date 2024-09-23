@@ -325,13 +325,42 @@
         };
 
         devShells.androidDev = pkgs.mkShell {
-          packages = [ packages.android-sdk pkgs.gradle pkgs.jdk17 pkgs.aapt ];
+          packages = [ 
+            packages.android-sdk
+            pkgs.gradle
+            pkgs.jdk17
+            pkgs.aapt
+            pkgs.libclang
+            pkgs.glibc_multi
+          ];
 
           shellHook = ''
             export GRADLE_OPTS="-Dorg.gradle.project.android.aapt2FromMavenOverride=${pkgs.aapt}/bin/aapt2";
 
             export NDK_HOME=$ANDROID_SDK_ROOT/ndk-bundle
             export ANDROID_NDK_LATEST_HOME=$NDK_HOME
+
+            export LIBCLANG_PATH="${pkgs.libclang.lib}/lib";
+
+            # From: https://github.com/NixOS/nixpkgs/blob/1fab95f5190d087e66a3502481e34e15d62090aa/pkgs/applications/networking/browsers/firefox/common.nix#L247-L253
+            # Set C flags for Rust's bindgen program. Unlike ordinary C
+            # compilation, bindgen does not invoke $CC directly. Instead it
+            # uses LLVM's libclang. To make sure all necessary flags are
+            # included we need to look in a few places.
+            export BINDGEN_EXTRA_CLANG_ARGS=" \
+              $(< ${pkgs.stdenv.cc}/nix-support/libc-crt1-cflags) \
+              $(< ${pkgs.stdenv.cc}/nix-support/libc-cflags) \
+              $(< ${pkgs.stdenv.cc}/nix-support/cc-cflags) \
+              $(< ${pkgs.stdenv.cc}/nix-support/libcxx-cxxflags) \
+              ${pkgs.lib.optionalString pkgs.stdenv.cc.isClang " \
+                -idirafter ${pkgs.stdenv.cc.cc}/lib/clang/${pkgs.lib.getVersion pkgs.stdenv.cc.cc}/include"
+              } \
+              ${pkgs.lib.optionalString pkgs.stdenv.cc.isGNU " \
+                -isystem ${pkgs.glibc_multi.dev}/include \
+                -isystem ${pkgs.stdenv.cc.cc}/include/c++/${pkgs.lib.getVersion pkgs.stdenv.cc.cc} \
+                -isystem ${pkgs.stdenv.cc.cc}/include/c++/${pkgs.lib.getVersion pkgs.stdenv.cc.cc}/${pkgs.stdenv.hostPlatform.config} \
+                -idirafter ${pkgs.stdenv.cc.cc}/lib/gcc/${pkgs.stdenv.hostPlatform.config}/${pkgs.pkgs.lib.getVersion pkgs.stdenv.cc.cc}/include"
+              }";
           '';
         };
 
