@@ -33,7 +33,7 @@
     inputs.holonix.inputs.flake-parts.lib.mkFlake { inherit inputs; } rec {
       flake = {
         lib = rec {
-          tauriAppDeps = rec {
+          tauriAppDeps = {
             customGlib = pkgs:
               pkgs.runCommandLocal "custom-glib" { src = pkgs.glib.dev; } ''
                 mkdir $out

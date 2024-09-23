@@ -206,11 +206,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1727083248,
-        "narHash": "sha256-QfxiO4VUOvFFfSIYYdSMWf8D6eG4noQvUTUI3lZjDs8=",
+        "lastModified": 1727089071,
+        "narHash": "sha256-26MaxOqHIoJaZXNoIIogOZt3hT/ZI+khW5UN8vjsXzM=",
         "owner": "holochain-open-dev",
         "repo": "infrastructure",
-        "rev": "ddeb140c2181111d6f9ee164393da3bee9faacee",
+        "rev": "cb5703560743019e31eaf8313d388193f7595f1f",
         "type": "github"
       },
       "original": {
@@ -595,7 +595,7 @@
         "holonix": "holonix_3",
         "nixpkgs": [
           "p2p-shipyard",
-          "holonix",
+          "hc-infra",
           "nixpkgs"
         ],
         "rust-overlay": [
@@ -607,7 +607,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-iLtlb0nZw88/W25RKkJcYdSLp3bCbhtp9ecBuhfNKnU=",
+        "narHash": "sha256-EgcT1nILDpkk1ufsoY1CyzrHAueXEtf3uGoRZndfw/Y=",
         "path": "../..",
         "type": "path"
       },
