@@ -6,7 +6,6 @@
 
     nixpkgs.follows = "holonix/nixpkgs";
     flake-parts.follows = "holonix/flake-parts";
-
   };
 
   outputs = inputs:
