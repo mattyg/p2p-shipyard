@@ -206,11 +206,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726667436,
-        "narHash": "sha256-ff0OFn4KwMk2zBSyFFwy/PrNUiMh0CuEIwIfez6wF8U=",
+        "lastModified": 1727083248,
+        "narHash": "sha256-QfxiO4VUOvFFfSIYYdSMWf8D6eG4noQvUTUI3lZjDs8=",
         "owner": "holochain-open-dev",
         "repo": "infrastructure",
-        "rev": "3174a8e7625550939aa15560b067796fde22cb9a",
+        "rev": "ddeb140c2181111d6f9ee164393da3bee9faacee",
         "type": "github"
       },
       "original": {
@@ -607,7 +607,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-DugEunJ/8Hs52ZlqvMZD3DCqwUanwy0qWx5Jfp3QrEA=",
+        "narHash": "sha256-iLtlb0nZw88/W25RKkJcYdSLp3bCbhtp9ecBuhfNKnU=",
         "path": "../..",
         "type": "path"
       },
@@ -618,11 +618,11 @@
     },
     "pnpmnixpkgs": {
       "locked": {
-        "lastModified": 1726447378,
-        "narHash": "sha256-2yV8nmYE1p9lfmLHhOCbYwQC/W8WYfGQABoGzJOb1JQ=",
+        "lastModified": 1726838390,
+        "narHash": "sha256-NmcVhGElxDbmEWzgXsyAjlRhUus/nEqPC5So7BOJLUM=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "086b448a5d54fd117f4dc2dee55c9f0ff461bdc1",
+        "rev": "944b2aea7f0a2d7c79f72468106bc5510cbf5101",
         "type": "github"
       },
       "original": {
