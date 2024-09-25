@@ -24,22 +24,16 @@ export async function installApp(request: {
   return await invoke('plugin:holochain-foreground-service|install_app', request);
 }
 
-export async function uninstallApp(request: {
-  appId: string
-}): Promise<string | null> {
-  return await invoke('plugin:holochain-foreground-service|uninstall_app', request);
+export async function uninstallApp(appId: string): Promise<string | null> {
+  return await invoke('plugin:holochain-foreground-service|uninstall_app', { appId });
 }
 
-export async function enableApp(request: {
-  appId: string
-}): Promise<string | null> {
-  return await invoke('plugin:holochain-foreground-service|enable_app', request);
+export async function enableApp(appId: string): Promise<string | null> {
+  return await invoke('plugin:holochain-foreground-service|enable_app', { appId });
 }
 
-export async function disableApp(request: {
-  appId: string
-}): Promise<string | null> {
-  return await invoke('plugin:holochain-foreground-service|disable_app', request);
+export async function disableApp(appId: string): Promise<string | null> {
+  return await invoke('plugin:holochain-foreground-service|disable_app', { appId });
 }
 
 export async function listInstalledApps(): Promise<{installedAppId: string}[]> {

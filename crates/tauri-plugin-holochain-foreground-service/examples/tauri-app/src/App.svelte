@@ -124,7 +124,7 @@
   <div class="my-4 flex-center">
     <h2>Installed Apps</h2>
       <div>
-        <button on:click={listInstalledApps}>List Installed Apps</button>
+        <button on:click={loadInstalledApps}>Refresh</button>
       </div>
       <ul style="margin-top: 10px;">
           {#each installedApps as app}
