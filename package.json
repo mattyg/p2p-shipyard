@@ -4,9 +4,10 @@
   "author": "guillem@darksoil.studio",
   "description": "",
   "scripts": {
+    "build:tauri-plugin-holochain-foreground-service": "pnpm run build:holochain-manager-uniffi && cd crates/tauri-plugin-holochain-foreground-service && pnpm run build",
     "build:holochain-manager-uniffi": "cd crates/holochain-manager-uniffi && ./scripts/build.sh",
-    "start": "cd examples/end-user-happ && nix develop --command bash -c \"npm run tauri dev\"",
-    "android:start": "cd examples/end-user-happ && nix develop .#androidDev --command bash -c \"npm run tauri android dev\""
+    "start": "cd examples/end-user-happ && nix develop --command bash -c \"pnpm run tauri dev\"",
+    "android:start": "cd examples/end-user-happ && nix develop .#androidDev --command bash -c \"pnpm run tauri android dev\""
   },
   "devDependencies": {},
   "dependencies": {
