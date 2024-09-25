@@ -3,14 +3,6 @@ package com.plugin.holochainforegroundservice
 import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
 
-@Parcelize
-data class InstallAppRequestAidl(
-  val appId: String,
-  val appBundleBytes: ByteArray,
-  val membraneProofs: Map<String, ByteArray>,
-  val agent: ByteArray?,
-  val networkSeed: String?,
-): Parcelable
 
 @Parcelize
 data class AppInfoFfiAidl(

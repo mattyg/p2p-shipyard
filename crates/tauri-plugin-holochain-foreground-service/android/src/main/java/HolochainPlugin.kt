@@ -98,6 +98,30 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         invoke.resolve()
     }
 
+    /// Uninstall an installed app
+    @Command
+    fun uninstallApp(invoke: Invoke) {
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
+        this.mService?.uninstallApp(args.appId)
+        invoke.resolve()
+    }
+
+    /// Enable an installed app
+    @Command
+    fun enableApp(invoke: Invoke) {
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
+        this.mService?.enableApp(args.appId)
+        invoke.resolve()
+    }
+
+    /// Disable an installed app
+    @Command
+    fun disableApp(invoke: Invoke) {
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
+        this.mService?.disableApp(args.appId)
+        invoke.resolve()
+    }
+
     /// List installed happs in conductor
     @Command
     fun listInstalledApps(invoke: Invoke) {
@@ -110,7 +134,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     /// Get or create an app websocket with authentication token
     @Command
     fun appWebsocketAuth(invoke: Invoke) {
-        val args = invoke.parseArgs(AppWebsocketAuthRequestArgs::class.java)
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
         val res = this.mService?.appWebsocketAuth(args.appId)
 
         // Inject launcher env into web view

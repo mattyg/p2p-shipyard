@@ -16,7 +16,7 @@ class InstallAppRequestArgs {
 }
 
 @InvokeArg
-class AppWebsocketAuthRequestArgs {
+class AppIdRequestArgs {
     lateinit var appId: String
 }
 

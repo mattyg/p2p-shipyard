@@ -192,6 +192,51 @@ impl HolochainRuntime {
         Ok(app_info)
     }
 
+    /// Uninstall the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to uninstall
+    pub async fn uninstall_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.uninstall_app(app_id)
+            .await
+            .map_err(|e| Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Enable the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to enable
+    pub async fn enable_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.enable_app(app_id)
+            .await
+            .map_err(|e| Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Disable the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to disable
+    pub async fn disable_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.disable_app(app_id)
+            .await
+            .map_err(|e| Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
     /// Updates the coordinator zomes and UI for the given app with an updated `WebAppBundle`
     ///
     /// * `app_id` - the app to update

@@ -59,6 +59,33 @@ class HolochainService : Service() {
             }
         }
 
+        /// Uninstall an app
+        override fun uninstallApp(
+            appId: String
+        ) {
+            runBlocking {
+                runtime?.uninstallApp(appId)
+            }
+        }
+
+        /// Enable an installed app
+        override fun enableApp(
+            appId: String
+        ) {
+            runBlocking {
+                runtime?.enableApp(appId)
+            }
+        }
+
+        /// Disable an installed app
+        override fun disableApp(
+            appId: String
+        ) {
+            runBlocking {
+                runtime?.disableApp(appId)
+            }
+        }
+
         /// List installed apps
         override fun listInstalledApps(): List<AppInfoFfiAidl> {
             return runBlocking {

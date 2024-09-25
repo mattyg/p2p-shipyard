@@ -92,6 +92,39 @@ impl HolochainRuntimeFFI {
         Ok(())
     }
 
+    /// Uninstall an app
+    pub async fn uninstall_app(
+        &self,
+        app_id: String,
+    ) -> Result<(), HolochainRuntimeFFIError> {        
+        self.runtime.uninstall_app(app_id)
+           .await
+           .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(())
+    }
+
+    /// Enable an installed app
+    pub async fn enable_app(
+        &self,
+        app_id: String,
+    ) -> Result<(), HolochainRuntimeFFIError> {        
+        self.runtime.enable_app(app_id)
+            .await
+            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(())
+    }
+
+    /// Disable an installed app
+    pub async fn disable_app(
+        &self,
+        app_id: String,
+    ) -> Result<(), HolochainRuntimeFFIError> {        
+        self.runtime.disable_app(app_id)
+            .await
+            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
+        Ok(())
+    }
+    
     /// Get or create an app websocket with an authentication for the given app id
     pub async fn app_websocket_auth(&self, app_id: String) -> Result<AppWebsocketAuthFFI, HolochainRuntimeFFIError> {
         let app_websocket_auth = self.runtime.get_app_websocket_auth(&app_id, false, AllowedOrigins::Any)

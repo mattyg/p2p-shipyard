@@ -323,6 +323,34 @@
           ]
         },
         {
+          "description": "allow-disable-app -> Enables the disable_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-disable-app"
+          ]
+        },
+        {
+          "description": "deny-disable-app -> Denies the disable_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-disable-app"
+          ]
+        },
+        {
+          "description": "allow-enable-app -> Enables the enable_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-enable-app"
+          ]
+        },
+        {
+          "description": "deny-enable-app -> Denies the enable_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-enable-app"
+          ]
+        },
+        {
           "description": "allow-get-admin-port -> Enables the get_admin_port command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -432,6 +460,20 @@
           "type": "string",
           "enum": [
             "deny-stop"
+          ]
+        },
+        {
+          "description": "allow-uninstall-app -> Enables the uninstall_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-uninstall-app"
+          ]
+        },
+        {
+          "description": "deny-uninstall-app -> Denies the uninstall_app command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-uninstall-app"
           ]
         },
         {

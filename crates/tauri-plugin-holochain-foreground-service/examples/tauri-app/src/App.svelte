@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { launch, shutdown, getAdminPort, installApp, listInstalledApps, appWebsocketAuth } from "tauri-plugin-holochain-foreground-service-api";
+  import { launch, shutdown, getAdminPort, installApp, listInstalledApps, appWebsocketAuth, uninstallApp, enableApp, disableApp } from "tauri-plugin-holochain-foreground-service-api";
   import Labelled from './Labelled.svelte';
   import happUrl from "./forum.happ?url";
   import { AppWebsocket } from "@holochain/client";
@@ -128,7 +128,16 @@
       </div>
       <ul style="margin-top: 10px;">
           {#each installedApps as app}
-            <li>{app.installedAppId}</li>
+            <li>
+              <Labelled label="App Id">
+                {app.installedAppId}
+              </Labelled>
+              <Labelled label="Actions">
+                <button on:click={() => uninstallApp(app.installedAppId)}>Uninstall</button>
+                <button on:click={() => disableApp(app.installedAppId)}>Disable</button>
+                <button on:click={() => enableApp(app.installedAppId)}>Enable</button>
+              </Labelled>
+            </li>
           {/each}
       </ul>
       <Labelled label="Selected App">

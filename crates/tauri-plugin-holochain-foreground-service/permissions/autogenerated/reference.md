@@ -6,6 +6,9 @@ Default permissions for the plugin
 - `allow-shutdown`
 - `allow-get-admin-port`
 - `allow-install-app`
+- `allow-uninstall-app`
+- `allow-enable-app`
+- `allow-disable-app`
 - `allow-list-installed-apps`
 - `allow-app-websocket-auth`
 - `allow-sign-zome-call`
@@ -67,6 +70,58 @@ Enables the create_app_websocket command without any pre-configured scope.
 <td>
 
 Denies the create_app_websocket command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-disable-app`
+
+</td>
+<td>
+
+Enables the disable_app command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-disable-app`
+
+</td>
+<td>
+
+Denies the disable_app command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-enable-app`
+
+</td>
+<td>
+
+Enables the enable_app command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-enable-app`
+
+</td>
+<td>
+
+Denies the enable_app command without any pre-configured scope.
 
 </td>
 </tr>
@@ -275,6 +330,32 @@ Enables the stop command without any pre-configured scope.
 <td>
 
 Denies the stop command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-uninstall-app`
+
+</td>
+<td>
+
+Enables the uninstall_app command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-uninstall-app`
+
+</td>
+<td>
+
+Denies the uninstall_app command without any pre-configured scope.
 
 </td>
 </tr>
