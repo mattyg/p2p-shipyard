@@ -2,6 +2,39 @@
 
 import { invoke } from '@tauri-apps/api/core'
 
+export interface CellId {
+  agentPubKey: Uint8Array;
+  dnaHash: Uint8Array;
+}
+
+export interface Duration {
+  secs: number;
+  nanos: number;
+}
+
+export interface DnaModifiers {
+  networkSeed: string;
+  originTime: number;
+  properties: Uint8Array;
+  quantumTime: Duration;
+}
+
+export interface CellInfoV1 {
+  cellId: CellId;
+  dnaModifiers: DnaModifiers;
+  name: string;
+}
+
+export interface CellInfo {
+  v1: CellInfoV1;
+}
+
+export interface AppInfo {
+  agentPubKey: Uint8Array;
+  cellInfo: Map<string, CellInfo>;
+}
+
+
 export async function launch(): Promise<string | null> {
   return await invoke('plugin:holochain-foreground-service|launch');
 }
@@ -24,20 +57,20 @@ export async function installApp(request: {
   return await invoke('plugin:holochain-foreground-service|install_app', request);
 }
 
-export async function uninstallApp(appId: string): Promise<string | null> {
+export async function uninstallApp(appId: string): Promise<null> {
   return await invoke('plugin:holochain-foreground-service|uninstall_app', { appId });
 }
 
-export async function enableApp(appId: string): Promise<string | null> {
+export async function enableApp(appId: string): Promise<null> {
   return await invoke('plugin:holochain-foreground-service|enable_app', { appId });
 }
 
-export async function disableApp(appId: string): Promise<string | null> {
+export async function disableApp(appId: string): Promise<null> {
   return await invoke('plugin:holochain-foreground-service|disable_app', { appId });
 }
 
-export async function listInstalledApps(): Promise<{installedAppId: string}[]> {
-  return await invoke<{installedApps: {installedAppId: string}[]}>('plugin:holochain-foreground-service|list_installed_apps').then((r) => (r.installedApps ? r.installedApps : []));
+export async function listInstalledApps(): Promise<AppInfo[]> {
+  return await invoke<{installedApps: AppInfo[]}>('plugin:holochain-foreground-service|list_installed_apps').then((r) => (r.installedApps ? r.installedApps : []));
 }
 
 export async function appWebsocketAuth(appId: string): Promise<{appId: string, port: number, token: Uint8Array} | null> {

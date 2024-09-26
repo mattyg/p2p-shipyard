@@ -1192,6 +1192,40 @@ public object FfiConverterUShort : FfiConverter<UShort, Short> {
     }
 }
 
+public object FfiConverterUInt : FfiConverter<UInt, Int> {
+    override fun lift(value: Int): UInt = value.toUInt()
+
+    override fun read(buf: ByteBuffer): UInt = lift(buf.getInt())
+
+    override fun lower(value: UInt): Int = value.toInt()
+
+    override fun allocationSize(value: UInt) = 4UL
+
+    override fun write(
+        value: UInt,
+        buf: ByteBuffer,
+    ) {
+        buf.putInt(value.toInt())
+    }
+}
+
+public object FfiConverterULong : FfiConverter<ULong, Long> {
+    override fun lift(value: Long): ULong = value.toULong()
+
+    override fun read(buf: ByteBuffer): ULong = lift(buf.getLong())
+
+    override fun lower(value: ULong): Long = value.toLong()
+
+    override fun allocationSize(value: ULong) = 8UL
+
+    override fun write(
+        value: ULong,
+        buf: ByteBuffer,
+    ) {
+        buf.putLong(value.toLong())
+    }
+}
+
 public object FfiConverterLong : FfiConverter<Long, Long> {
     override fun lift(value: Long): Long = value
 
@@ -1206,6 +1240,23 @@ public object FfiConverterLong : FfiConverter<Long, Long> {
         buf: ByteBuffer,
     ) {
         buf.putLong(value)
+    }
+}
+
+public object FfiConverterBoolean : FfiConverter<Boolean, Byte> {
+    override fun lift(value: Byte): Boolean = value.toInt() != 0
+
+    override fun read(buf: ByteBuffer): Boolean = lift(buf.get())
+
+    override fun lower(value: Boolean): Byte = if (value) 1.toByte() else 0.toByte()
+
+    override fun allocationSize(value: Boolean) = 1UL
+
+    override fun write(
+        value: Boolean,
+        buf: ByteBuffer,
+    ) {
+        buf.put(lower(value))
     }
 }
 
@@ -1918,6 +1969,9 @@ data class AppInfoFfi(
      * The unique identifier for an installed app in this conductor
      */
     var `installedAppId`: kotlin.String,
+    var `cellInfo`: Map<kotlin.String, List<CellInfoFfi>>,
+    var `status`: AppInfoStatusFfi,
+    var `agentPubKey`: kotlin.ByteArray,
 ) {
     companion object
 }
@@ -1926,11 +1980,17 @@ public object FfiConverterTypeAppInfoFFI : FfiConverterRustBuffer<AppInfoFfi> {
     override fun read(buf: ByteBuffer): AppInfoFfi =
         AppInfoFfi(
             FfiConverterString.read(buf),
+            FfiConverterMapStringSequenceTypeCellInfoFFI.read(buf),
+            FfiConverterTypeAppInfoStatusFFI.read(buf),
+            FfiConverterByteArray.read(buf),
         )
 
     override fun allocationSize(value: AppInfoFfi) =
         (
-            FfiConverterString.allocationSize(value.`installedAppId`)
+            FfiConverterString.allocationSize(value.`installedAppId`) +
+                FfiConverterMapStringSequenceTypeCellInfoFFI.allocationSize(value.`cellInfo`) +
+                FfiConverterTypeAppInfoStatusFFI.allocationSize(value.`status`) +
+                FfiConverterByteArray.allocationSize(value.`agentPubKey`)
         )
 
     override fun write(
@@ -1938,6 +1998,9 @@ public object FfiConverterTypeAppInfoFFI : FfiConverterRustBuffer<AppInfoFfi> {
         buf: ByteBuffer,
     ) {
         FfiConverterString.write(value.`installedAppId`, buf)
+        FfiConverterMapStringSequenceTypeCellInfoFFI.write(value.`cellInfo`, buf)
+        FfiConverterTypeAppInfoStatusFFI.write(value.`status`, buf)
+        FfiConverterByteArray.write(value.`agentPubKey`, buf)
     }
 }
 
@@ -2003,6 +2066,117 @@ public object FfiConverterTypeCellIdFFI : FfiConverterRustBuffer<CellIdFfi> {
     }
 }
 
+data class ClonedCellFfi(
+    var `cellId`: CellIdFfi,
+    var `cloneId`: kotlin.String,
+    var `originalDnaHash`: kotlin.ByteArray,
+    var `dnaModifiers`: DnaModifiersFfi,
+    var `name`: kotlin.String,
+    var `enabled`: kotlin.Boolean,
+) {
+    companion object
+}
+
+public object FfiConverterTypeClonedCellFFI : FfiConverterRustBuffer<ClonedCellFfi> {
+    override fun read(buf: ByteBuffer): ClonedCellFfi =
+        ClonedCellFfi(
+            FfiConverterTypeCellIdFFI.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterTypeDnaModifiersFFI.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterBoolean.read(buf),
+        )
+
+    override fun allocationSize(value: ClonedCellFfi) =
+        (
+            FfiConverterTypeCellIdFFI.allocationSize(value.`cellId`) +
+                FfiConverterString.allocationSize(value.`cloneId`) +
+                FfiConverterByteArray.allocationSize(value.`originalDnaHash`) +
+                FfiConverterTypeDnaModifiersFFI.allocationSize(value.`dnaModifiers`) +
+                FfiConverterString.allocationSize(value.`name`) +
+                FfiConverterBoolean.allocationSize(value.`enabled`)
+        )
+
+    override fun write(
+        value: ClonedCellFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterTypeCellIdFFI.write(value.`cellId`, buf)
+        FfiConverterString.write(value.`cloneId`, buf)
+        FfiConverterByteArray.write(value.`originalDnaHash`, buf)
+        FfiConverterTypeDnaModifiersFFI.write(value.`dnaModifiers`, buf)
+        FfiConverterString.write(value.`name`, buf)
+        FfiConverterBoolean.write(value.`enabled`, buf)
+    }
+}
+
+data class DnaModifiersFfi(
+    var `networkSeed`: kotlin.String,
+    var `properties`: kotlin.ByteArray,
+    var `originTime`: kotlin.Long,
+    var `quantumTime`: DurationFfi,
+) {
+    companion object
+}
+
+public object FfiConverterTypeDnaModifiersFFI : FfiConverterRustBuffer<DnaModifiersFfi> {
+    override fun read(buf: ByteBuffer): DnaModifiersFfi =
+        DnaModifiersFfi(
+            FfiConverterString.read(buf),
+            FfiConverterByteArray.read(buf),
+            FfiConverterLong.read(buf),
+            FfiConverterTypeDurationFFI.read(buf),
+        )
+
+    override fun allocationSize(value: DnaModifiersFfi) =
+        (
+            FfiConverterString.allocationSize(value.`networkSeed`) +
+                FfiConverterByteArray.allocationSize(value.`properties`) +
+                FfiConverterLong.allocationSize(value.`originTime`) +
+                FfiConverterTypeDurationFFI.allocationSize(value.`quantumTime`)
+        )
+
+    override fun write(
+        value: DnaModifiersFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterString.write(value.`networkSeed`, buf)
+        FfiConverterByteArray.write(value.`properties`, buf)
+        FfiConverterLong.write(value.`originTime`, buf)
+        FfiConverterTypeDurationFFI.write(value.`quantumTime`, buf)
+    }
+}
+
+data class DurationFfi(
+    var `secs`: kotlin.ULong,
+    var `nanos`: kotlin.UInt,
+) {
+    companion object
+}
+
+public object FfiConverterTypeDurationFFI : FfiConverterRustBuffer<DurationFfi> {
+    override fun read(buf: ByteBuffer): DurationFfi =
+        DurationFfi(
+            FfiConverterULong.read(buf),
+            FfiConverterUInt.read(buf),
+        )
+
+    override fun allocationSize(value: DurationFfi) =
+        (
+            FfiConverterULong.allocationSize(value.`secs`) +
+                FfiConverterUInt.allocationSize(value.`nanos`)
+        )
+
+    override fun write(
+        value: DurationFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterULong.write(value.`secs`, buf)
+        FfiConverterUInt.write(value.`nanos`, buf)
+    }
+}
+
 data class HolochainRuntimeFfiConfig(
     /**
      * URL of bootstrap server
@@ -2042,6 +2216,72 @@ public object FfiConverterTypeHolochainRuntimeFFIConfig : FfiConverterRustBuffer
         FfiConverterString.write(value.`bootstrapUrl`, buf)
         FfiConverterString.write(value.`signalUrl`, buf)
         FfiConverterString.write(value.`holochainDir`, buf)
+    }
+}
+
+data class ProvisionedCellFfi(
+    var `cellId`: CellIdFfi,
+    var `dnaModifiers`: DnaModifiersFfi,
+    var `name`: kotlin.String,
+) {
+    companion object
+}
+
+public object FfiConverterTypeProvisionedCellFFI : FfiConverterRustBuffer<ProvisionedCellFfi> {
+    override fun read(buf: ByteBuffer): ProvisionedCellFfi =
+        ProvisionedCellFfi(
+            FfiConverterTypeCellIdFFI.read(buf),
+            FfiConverterTypeDnaModifiersFFI.read(buf),
+            FfiConverterString.read(buf),
+        )
+
+    override fun allocationSize(value: ProvisionedCellFfi) =
+        (
+            FfiConverterTypeCellIdFFI.allocationSize(value.`cellId`) +
+                FfiConverterTypeDnaModifiersFFI.allocationSize(value.`dnaModifiers`) +
+                FfiConverterString.allocationSize(value.`name`)
+        )
+
+    override fun write(
+        value: ProvisionedCellFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterTypeCellIdFFI.write(value.`cellId`, buf)
+        FfiConverterTypeDnaModifiersFFI.write(value.`dnaModifiers`, buf)
+        FfiConverterString.write(value.`name`, buf)
+    }
+}
+
+data class StemCellFfi(
+    var `originalDnaHash`: kotlin.ByteArray,
+    var `dnaModifiers`: DnaModifiersFfi,
+    var `name`: kotlin.String?,
+) {
+    companion object
+}
+
+public object FfiConverterTypeStemCellFFI : FfiConverterRustBuffer<StemCellFfi> {
+    override fun read(buf: ByteBuffer): StemCellFfi =
+        StemCellFfi(
+            FfiConverterByteArray.read(buf),
+            FfiConverterTypeDnaModifiersFFI.read(buf),
+            FfiConverterOptionalString.read(buf),
+        )
+
+    override fun allocationSize(value: StemCellFfi) =
+        (
+            FfiConverterByteArray.allocationSize(value.`originalDnaHash`) +
+                FfiConverterTypeDnaModifiersFFI.allocationSize(value.`dnaModifiers`) +
+                FfiConverterOptionalString.allocationSize(value.`name`)
+        )
+
+    override fun write(
+        value: StemCellFfi,
+        buf: ByteBuffer,
+    ) {
+        FfiConverterByteArray.write(value.`originalDnaHash`, buf)
+        FfiConverterTypeDnaModifiersFFI.write(value.`dnaModifiers`, buf)
+        FfiConverterOptionalString.write(value.`name`, buf)
     }
 }
 
@@ -2152,6 +2392,246 @@ public object FfiConverterTypeZomeCallUnsignedTauriFFI : FfiConverterRustBuffer<
         FfiConverterByteArray.write(value.`payload`, buf)
         FfiConverterByteArray.write(value.`nonce`, buf)
         FfiConverterLong.write(value.`expiresAt`, buf)
+    }
+}
+
+sealed class AppInfoStatusFfi {
+    data class Paused(
+        val `reason`: PausedAppReasonFfi,
+    ) : AppInfoStatusFfi() {
+        companion object
+    }
+
+    data class Disabled(
+        val `reason`: DisabledAppReasonFfi,
+    ) : AppInfoStatusFfi() {
+        companion object
+    }
+
+    object Running : AppInfoStatusFfi()
+
+    companion object
+}
+
+public object FfiConverterTypeAppInfoStatusFFI : FfiConverterRustBuffer<AppInfoStatusFfi> {
+    override fun read(buf: ByteBuffer): AppInfoStatusFfi =
+        when (buf.getInt()) {
+            1 ->
+                AppInfoStatusFfi.Paused(
+                    FfiConverterTypePausedAppReasonFFI.read(buf),
+                )
+            2 ->
+                AppInfoStatusFfi.Disabled(
+                    FfiConverterTypeDisabledAppReasonFFI.read(buf),
+                )
+            3 -> AppInfoStatusFfi.Running
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+
+    override fun allocationSize(value: AppInfoStatusFfi) =
+        when (value) {
+            is AppInfoStatusFfi.Paused -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterTypePausedAppReasonFFI.allocationSize(value.`reason`)
+                )
+            }
+            is AppInfoStatusFfi.Disabled -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterTypeDisabledAppReasonFFI.allocationSize(value.`reason`)
+                )
+            }
+            is AppInfoStatusFfi.Running -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL
+                )
+            }
+        }
+
+    override fun write(
+        value: AppInfoStatusFfi,
+        buf: ByteBuffer,
+    ) {
+        when (value) {
+            is AppInfoStatusFfi.Paused -> {
+                buf.putInt(1)
+                FfiConverterTypePausedAppReasonFFI.write(value.`reason`, buf)
+                Unit
+            }
+            is AppInfoStatusFfi.Disabled -> {
+                buf.putInt(2)
+                FfiConverterTypeDisabledAppReasonFFI.write(value.`reason`, buf)
+                Unit
+            }
+            is AppInfoStatusFfi.Running -> {
+                buf.putInt(3)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
+sealed class CellInfoFfi {
+    data class Provisioned(
+        val v1: ProvisionedCellFfi,
+    ) : CellInfoFfi() {
+        companion object
+    }
+
+    data class Cloned(
+        val v1: ClonedCellFfi,
+    ) : CellInfoFfi() {
+        companion object
+    }
+
+    data class Stem(
+        val v1: StemCellFfi,
+    ) : CellInfoFfi() {
+        companion object
+    }
+
+    companion object
+}
+
+public object FfiConverterTypeCellInfoFFI : FfiConverterRustBuffer<CellInfoFfi> {
+    override fun read(buf: ByteBuffer): CellInfoFfi =
+        when (buf.getInt()) {
+            1 ->
+                CellInfoFfi.Provisioned(
+                    FfiConverterTypeProvisionedCellFFI.read(buf),
+                )
+            2 ->
+                CellInfoFfi.Cloned(
+                    FfiConverterTypeClonedCellFFI.read(buf),
+                )
+            3 ->
+                CellInfoFfi.Stem(
+                    FfiConverterTypeStemCellFFI.read(buf),
+                )
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+
+    override fun allocationSize(value: CellInfoFfi) =
+        when (value) {
+            is CellInfoFfi.Provisioned -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterTypeProvisionedCellFFI.allocationSize(value.v1)
+                )
+            }
+            is CellInfoFfi.Cloned -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterTypeClonedCellFFI.allocationSize(value.v1)
+                )
+            }
+            is CellInfoFfi.Stem -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterTypeStemCellFFI.allocationSize(value.v1)
+                )
+            }
+        }
+
+    override fun write(
+        value: CellInfoFfi,
+        buf: ByteBuffer,
+    ) {
+        when (value) {
+            is CellInfoFfi.Provisioned -> {
+                buf.putInt(1)
+                FfiConverterTypeProvisionedCellFFI.write(value.v1, buf)
+                Unit
+            }
+            is CellInfoFfi.Cloned -> {
+                buf.putInt(2)
+                FfiConverterTypeClonedCellFFI.write(value.v1, buf)
+                Unit
+            }
+            is CellInfoFfi.Stem -> {
+                buf.putInt(3)
+                FfiConverterTypeStemCellFFI.write(value.v1, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
+sealed class DisabledAppReasonFfi {
+    object NeverStarted : DisabledAppReasonFfi()
+
+    object User : DisabledAppReasonFfi()
+
+    data class Error(
+        val v1: kotlin.String,
+    ) : DisabledAppReasonFfi() {
+        companion object
+    }
+
+    companion object
+}
+
+public object FfiConverterTypeDisabledAppReasonFFI : FfiConverterRustBuffer<DisabledAppReasonFfi> {
+    override fun read(buf: ByteBuffer): DisabledAppReasonFfi =
+        when (buf.getInt()) {
+            1 -> DisabledAppReasonFfi.NeverStarted
+            2 -> DisabledAppReasonFfi.User
+            3 ->
+                DisabledAppReasonFfi.Error(
+                    FfiConverterString.read(buf),
+                )
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+
+    override fun allocationSize(value: DisabledAppReasonFfi) =
+        when (value) {
+            is DisabledAppReasonFfi.NeverStarted -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL
+                )
+            }
+            is DisabledAppReasonFfi.User -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL
+                )
+            }
+            is DisabledAppReasonFfi.Error -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterString.allocationSize(value.v1)
+                )
+            }
+        }
+
+    override fun write(
+        value: DisabledAppReasonFfi,
+        buf: ByteBuffer,
+    ) {
+        when (value) {
+            is DisabledAppReasonFfi.NeverStarted -> {
+                buf.putInt(1)
+                Unit
+            }
+            is DisabledAppReasonFfi.User -> {
+                buf.putInt(2)
+                Unit
+            }
+            is DisabledAppReasonFfi.Error -> {
+                buf.putInt(3)
+                FfiConverterString.write(value.v1, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
     }
 }
 
@@ -2337,6 +2817,51 @@ public object FfiConverterTypeHolochainRuntimeFFIError : FfiConverterRustBuffer<
     }
 }
 
+sealed class PausedAppReasonFfi {
+    data class Error(
+        val v1: kotlin.String,
+    ) : PausedAppReasonFfi() {
+        companion object
+    }
+
+    companion object
+}
+
+public object FfiConverterTypePausedAppReasonFFI : FfiConverterRustBuffer<PausedAppReasonFfi> {
+    override fun read(buf: ByteBuffer): PausedAppReasonFfi =
+        when (buf.getInt()) {
+            1 ->
+                PausedAppReasonFfi.Error(
+                    FfiConverterString.read(buf),
+                )
+            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
+        }
+
+    override fun allocationSize(value: PausedAppReasonFfi) =
+        when (value) {
+            is PausedAppReasonFfi.Error -> {
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                (
+                    4UL +
+                        FfiConverterString.allocationSize(value.v1)
+                )
+            }
+        }
+
+    override fun write(
+        value: PausedAppReasonFfi,
+        buf: ByteBuffer,
+    ) {
+        when (value) {
+            is PausedAppReasonFfi.Error -> {
+                buf.putInt(1)
+                FfiConverterString.write(value.v1, buf)
+                Unit
+            }
+        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
+    }
+}
+
 public object FfiConverterOptionalString : FfiConverterRustBuffer<kotlin.String?> {
     override fun read(buf: ByteBuffer): kotlin.String? {
         if (buf.get().toInt() == 0) {
@@ -2420,6 +2945,31 @@ public object FfiConverterSequenceTypeAppInfoFFI : FfiConverterRustBuffer<List<A
     }
 }
 
+public object FfiConverterSequenceTypeCellInfoFFI : FfiConverterRustBuffer<List<CellInfoFfi>> {
+    override fun read(buf: ByteBuffer): List<CellInfoFfi> {
+        val len = buf.getInt()
+        return List<CellInfoFfi>(len) {
+            FfiConverterTypeCellInfoFFI.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<CellInfoFfi>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeCellInfoFFI.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(
+        value: List<CellInfoFfi>,
+        buf: ByteBuffer,
+    ) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeCellInfoFFI.write(it, buf)
+        }
+    }
+}
+
 public object FfiConverterMapStringByteArray : FfiConverterRustBuffer<Map<kotlin.String, kotlin.ByteArray>> {
     override fun read(buf: ByteBuffer): Map<kotlin.String, kotlin.ByteArray> {
         val len = buf.getInt()
@@ -2454,6 +3004,44 @@ public object FfiConverterMapStringByteArray : FfiConverterRustBuffer<Map<kotlin
         value.forEach { (k, v) ->
             FfiConverterString.write(k, buf)
             FfiConverterByteArray.write(v, buf)
+        }
+    }
+}
+
+public object FfiConverterMapStringSequenceTypeCellInfoFFI : FfiConverterRustBuffer<Map<kotlin.String, List<CellInfoFfi>>> {
+    override fun read(buf: ByteBuffer): Map<kotlin.String, List<CellInfoFfi>> {
+        val len = buf.getInt()
+        return buildMap<kotlin.String, List<CellInfoFfi>>(len) {
+            repeat(len) {
+                val k = FfiConverterString.read(buf)
+                val v = FfiConverterSequenceTypeCellInfoFFI.read(buf)
+                this[k] = v
+            }
+        }
+    }
+
+    override fun allocationSize(value: Map<kotlin.String, List<CellInfoFfi>>): ULong {
+        val spaceForMapSize = 4UL
+        val spaceForChildren =
+            value
+                .map { (k, v) ->
+                    FfiConverterString.allocationSize(k) +
+                        FfiConverterSequenceTypeCellInfoFFI.allocationSize(v)
+                }.sum()
+        return spaceForMapSize + spaceForChildren
+    }
+
+    override fun write(
+        value: Map<kotlin.String, List<CellInfoFfi>>,
+        buf: ByteBuffer,
+    ) {
+        buf.putInt(value.size)
+        // The parens on `(k, v)` here ensure we're calling the right method,
+        // which is important for compatibility with older android devices.
+        // Ref https://blog.danlew.net/2017/03/16/kotlin-puzzler-whose-line-is-it-anyways/
+        value.forEach { (k, v) ->
+            FfiConverterString.write(k, buf)
+            FfiConverterSequenceTypeCellInfoFFI.write(v, buf)
         }
     }
 }

@@ -89,7 +89,14 @@ class HolochainService : Service() {
         /// List installed apps
         override fun listInstalledApps(): List<AppInfoFfiAidl> {
             return runBlocking {
-                runtime?.listInstalledApps()?.map { AppInfoFfiAidl(it.installedAppId) } ?: emptyList<AppInfoFfiAidl>()
+                runtime?.listInstalledApps()?.map { 
+                    AppInfoFfiAidl(
+                        it.installedAppId, 
+                        it.cellInfo,
+                        AppInfoStatusFfiAidl(it.status::class.simpleName!!),
+                        it.agentPubKey
+                    ) 
+                } ?: emptyList<AppInfoFfiAidl>()
             }
         }
 

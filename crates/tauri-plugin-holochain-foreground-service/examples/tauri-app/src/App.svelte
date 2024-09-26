@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { launch, shutdown, getAdminPort, installApp, listInstalledApps, appWebsocketAuth, uninstallApp, enableApp, disableApp } from "tauri-plugin-holochain-foreground-service-api";
+  import { launch, shutdown, getAdminPort, installApp, listInstalledApps, appWebsocketAuth, uninstallApp, enableApp, disableApp, type AppInfo } from "tauri-plugin-holochain-foreground-service-api";
   import Labelled from './Labelled.svelte';
   import happUrl from "./forum.happ?url";
   import { AppWebsocket } from "@holochain/client";
@@ -8,7 +8,7 @@
   let adminPort;
   let appId = "forum";
   let networkSeed = "p2p-shipyard-dev-2024-09-16";
-  let installedApps = [];
+  let installedApps: AppInfo[] = [];
   let selectedAppId;
   let selectedAppWebsocketAuth;
   let newPost = {title: "", content: ""};
@@ -127,15 +127,57 @@
         <button on:click={loadInstalledApps}>Refresh</button>
       </div>
       <ul style="margin-top: 10px;">
-          {#each installedApps as app}
+          {#each installedApps as appInfo}
             <li>
               <Labelled label="App Id">
-                {app.installedAppId}
+                {appInfo.installedAppId}
+              </Labelled>
+              <Labelled label="Status">
+                {appInfo.status.type}
+              </Labelled>
+              <Labelled label="Agent Pub Key">
+                {appInfo.agentPubKey.slice(0, 5)}...
+              </Labelled>
+              <Labelled label="Cells">
+                <ul>
+                  {#each Object.entries(appInfo.cellInfo) as [baseRoleName, allCellInfos]}
+                    <li>
+                      <Labelled label="Role Name">
+                        {baseRoleName}
+                      </Labelled>
+                      {#each allCellInfos as cellInfo}
+                        <Labelled label="Cell Name">
+                          {cellInfo.v1.name}
+                        </Labelled>
+                        <Labelled label="Cell Id">
+                          {cellInfo.v1.cellId.agentPubKey.slice(0,5)}...
+                          {cellInfo.v1.cellId.dnaHash.slice(0,5)}...
+                        </Labelled>
+                        <Labelled label="DNA Modifiers">
+                          <div style="margin-left: 20px">
+                            <Labelled label="Network Seed">
+                              {cellInfo.v1.dnaModifiers.networkSeed}
+                            </Labelled>
+                            <Labelled label="Origin Time">
+                              {cellInfo.v1.dnaModifiers.originTime}
+                            </Labelled>
+                            <Labelled label="Properties">
+                              {cellInfo.v1.dnaModifiers.properties.slice(0,5)}...
+                            </Labelled>
+                            <Labelled label="Quantum Time">
+                              {cellInfo.v1.dnaModifiers.quantumTime.secs}secs, {cellInfo.v1.dnaModifiers.quantumTime.secs}nanos, 
+                            </Labelled>
+                          </div>
+                        </Labelled>
+                      {/each}
+                    </li>
+                  {/each}
+                </ul>
               </Labelled>
               <Labelled label="Actions">
-                <button on:click={() => uninstallApp(app.installedAppId)}>Uninstall</button>
-                <button on:click={() => disableApp(app.installedAppId)}>Disable</button>
-                <button on:click={() => enableApp(app.installedAppId)}>Enable</button>
+                <button on:click={() => uninstallApp(appInfo.installedAppId)}>Uninstall</button>
+                <button on:click={() => disableApp(appInfo.installedAppId)}>Disable</button>
+                <button on:click={() => enableApp(appInfo.installedAppId)}>Enable</button>
               </Labelled>
             </li>
           {/each}

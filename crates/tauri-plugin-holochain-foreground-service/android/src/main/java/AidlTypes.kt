@@ -1,7 +1,10 @@
 package com.plugin.holochainforegroundservice
 
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import android.os.Parcelable
+import uniffi.holochain_manager_uniffi.CellInfoFfi
+import uniffi.holochain_manager_uniffi.AppInfoStatusFfi
 
 @Parcelize
 data class InstallAppRequestAidl(
@@ -13,8 +16,17 @@ data class InstallAppRequestAidl(
 ): Parcelable
 
 @Parcelize
+data class AppInfoStatusFfiAidl(
+  val type: String,
+// val reason: String,
+): Parcelable
+
+@Parcelize
 data class AppInfoFfiAidl(
-  val installedAppId: String
+  val installedAppId: String,
+  val cellInfo: @RawValue Map<String, List<CellInfoFfi>>,
+  val status: @RawValue AppInfoStatusFfiAidl,
+  val agentPubKey: ByteArray,
 ): Parcelable
 
 @Parcelize
