@@ -1,7 +1,7 @@
 { inputs, self, ... }:
 
 {
-  perSystem = { inputs', pkgs, system, lib, ... }: {
+  perSystem = { inputs', self', pkgs, system, lib, ... }: {
     packages.hc-pilot = let
       craneLib = inputs.crane.mkLib pkgs;
 
@@ -15,17 +15,9 @@
         src =
           (self.lib.cleanTauriSource { inherit lib; }) (craneLib.path ../../.);
         doCheck = false;
-        buildInputs = inputs.hc-infra.outputs.lib.holochainDeps {
-          inherit lib;
-          pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
-        } ++ self.lib.tauriAppDeps.buildInputs {
-          inherit lib;
-          pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
-        };
-        nativeBuildInputs = (self.lib.tauriAppDeps.nativeBuildInputs {
-          inherit lib;
-          pkgs = inputs'.webkitgtknixpkgs.legacyPackages;
-        });
+
+        buildInputs = self'.dependencies.tauriHapp.buildInputs;
+        nativeBuildInputs = self'.dependencies.tauriHapp.nativeBuildInputs;
 
         # TODO: remove this if possible
         # Without this build fails on MacOs
@@ -46,10 +38,7 @@
         version = cargoToml.package.version;
         # inherit cargoArtifacts;
       });
-    in pkgs.runCommandLocal "wrap-${crate}" {
-      buildInputs = [ pkgs.makeWrapper ];
-
-    } ''
+    in pkgs.runCommandNoCC crate { buildInputs = [ pkgs.makeWrapper ]; } ''
       mkdir $out
       mkdir $out/bin
       # Because we create this ourself, by creating a wrapper
