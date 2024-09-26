@@ -461,6 +461,10 @@
           inputsFrom =
             [ devShells.tauriDev inputs'.hc-infra.devShells.holochainDev ];
           packages = [ packages.holochainTauriRust ];
+
+          shellHook = ''
+            export PS1='\[\033[1;34m\][p2p-shipyard:\w]\$\[\033[0m\] '
+          '';
         };
 
         devShells.holochainTauriAndroidDev = pkgs.mkShell {
@@ -469,6 +473,10 @@
             [ packages.androidTauriRust self'.packages.custom-go-wrapper ];
           buildInputs =
             inputs.hc-infra.outputs.dependencies.${system}.holochain.buildInputs;
+
+          shellHook = ''
+            export PS1='\[\033[1;34m\][p2p-shipyard-android:\w]\$\[\033[0m\] '
+          '';
         };
 
         devShells.default = pkgs.mkShell {
