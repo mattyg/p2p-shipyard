@@ -22,7 +22,8 @@
     "build:js:tauri-commands:esm": "tsc guest-js/tauri-commands/*.ts --outDir dist-js/tauri-commands/  --declaration --target es2021 --moduleResolution bundler --module esnext",
     "build:js:holochain-env": "tsc guest-js/holochain-env/*.ts --outDir dist-js-tmp/holochain-env/ --target es2021 --moduleResolution bundler --module esnext --skipLibCheck true",
     "prepublishOnly": "npm build",
-    "pretest": "npm build"
+    "pretest": "npm build",
+    "prepare": "npm build"
   },
   "dependencies": {
     "@holochain/client": "0.17.1",
