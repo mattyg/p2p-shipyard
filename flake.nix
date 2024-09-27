@@ -8,10 +8,8 @@
 
     holonix.url = "github:holochain/holonix";
     rust-overlay.follows = "holonix/rust-overlay";
-    android-nixpkgs = {
-      url = "github:tadfisher/android-nixpkgs/stable";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    android-nixpkgs.url =
+      "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
     hc-infra.url = "github:holochain-open-dev/infrastructure/next";
     crane.follows = "holonix/crane";
   };
