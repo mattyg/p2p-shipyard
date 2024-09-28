@@ -295,69 +295,95 @@
       "type": "string",
       "oneOf": [
         {
-          "description": "Enables the get_locales command without any pre-configured scope.",
+          "description": "allow-get-locales -> Enables the get_locales command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-locales"
+          "enum": [
+            "allow-get-locales"
+          ]
         },
         {
-          "description": "Denies the get_locales command without any pre-configured scope.",
+          "description": "deny-get-locales -> Denies the get_locales command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-locales"
+          "enum": [
+            "deny-get-locales"
+          ]
         },
         {
-          "description": "Enables the get_runtime_info command without any pre-configured scope.",
+          "description": "allow-get-runtime-info -> Enables the get_runtime_info command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-runtime-info"
+          "enum": [
+            "allow-get-runtime-info"
+          ]
         },
         {
-          "description": "Denies the get_runtime_info command without any pre-configured scope.",
+          "description": "deny-get-runtime-info -> Denies the get_runtime_info command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-runtime-info"
+          "enum": [
+            "deny-get-runtime-info"
+          ]
         },
         {
-          "description": "Enables the is_holochain_ready command without any pre-configured scope.",
+          "description": "allow-is-holochain-ready -> Enables the is_holochain_ready command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-is-holochain-ready"
+          "enum": [
+            "allow-is-holochain-ready"
+          ]
         },
         {
-          "description": "Denies the is_holochain_ready command without any pre-configured scope.",
+          "description": "deny-is-holochain-ready -> Denies the is_holochain_ready command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-is-holochain-ready"
+          "enum": [
+            "deny-is-holochain-ready"
+          ]
         },
         {
-          "description": "Enables the list_apps command without any pre-configured scope.",
+          "description": "allow-list-apps -> Enables the list_apps command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-list-apps"
+          "enum": [
+            "allow-list-apps"
+          ]
         },
         {
-          "description": "Denies the list_apps command without any pre-configured scope.",
+          "description": "deny-list-apps -> Denies the list_apps command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-list-apps"
+          "enum": [
+            "deny-list-apps"
+          ]
         },
         {
-          "description": "Enables the open_app command without any pre-configured scope.",
+          "description": "allow-open-app -> Enables the open_app command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-open-app"
+          "enum": [
+            "allow-open-app"
+          ]
         },
         {
-          "description": "Denies the open_app command without any pre-configured scope.",
+          "description": "deny-open-app -> Denies the open_app command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-open-app"
+          "enum": [
+            "deny-open-app"
+          ]
         },
         {
-          "description": "Enables the sign_zome_call command without any pre-configured scope.",
+          "description": "allow-sign-zome-call -> Enables the sign_zome_call command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-sign-zome-call"
+          "enum": [
+            "allow-sign-zome-call"
+          ]
         },
         {
-          "description": "Denies the sign_zome_call command without any pre-configured scope.",
+          "description": "deny-sign-zome-call -> Denies the sign_zome_call command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-sign-zome-call"
+          "enum": [
+            "deny-sign-zome-call"
+          ]
         },
         {
-          "description": "Default permissions for the plugin",
+          "description": "default -> Default permissions for the plugin",
           "type": "string",
-          "const": "default"
+          "enum": [
+            "default"
+          ]
         }
       ]
     }
