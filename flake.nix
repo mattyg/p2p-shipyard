@@ -239,13 +239,14 @@
           nativeBuildInputs = dependencies.tauriApp.nativeBuildInputs;
         };
 
-        packages.tauriHappCargoArtifacts =
-          let craneLib = inputs.crane.mkLib pkgs;
-          in craneLib.callPackage ./nix/holochain-tauri-happ-artifacts.nix {
-            inherit craneLib;
-            buildInputs = dependencies.tauriHapp.buildInputs;
-            nativeBuildInputs = dependencies.tauriHapp.nativeBuildInputs;
-          };
+        packages.tauriHappCargoArtifacts = let
+          rust = inputs.holonix.packages.${system}.rust;
+          craneLib = (inputs.crane.mkLib pkgs).overrideToolchain rust;
+        in craneLib.callPackage ./nix/holochain-tauri-happ-artifacts.nix {
+          inherit craneLib;
+          buildInputs = dependencies.tauriHapp.buildInputs;
+          nativeBuildInputs = dependencies.tauriHapp.nativeBuildInputs;
+        };
         checks.cargoArtifacts = packages.tauriHappCargoArtifacts;
 
         devShells.tauriDev = pkgs.mkShell {
