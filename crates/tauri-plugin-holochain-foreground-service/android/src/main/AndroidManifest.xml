@@ -7,7 +7,7 @@
     <service
         android:name=".HolochainService"
         android:foregroundServiceType="dataSync"
-        android:exported="false">
+        android:exported="true">
     </service>
   </application>
 </manifest>

@@ -19,6 +19,9 @@ import uniffi.holochain_manager_uniffi.AppInfoFfi
 import uniffi.holochain_manager_uniffi.CellIdFfi
 import uniffi.holochain_manager_uniffi.ZomeCallUnsignedTauriFfi
 import kotlinx.coroutines.runBlocking
+import java.io.IOException
+import android.os.SharedMemory
+import java.nio.ByteBuffer
 
 val NOTIFICATION_CHANNEl_ID: Int = 9823498
 
@@ -54,8 +57,13 @@ class HolochainService : Service() {
         override fun installApp(
             request: InstallAppRequestAidl
         ) {
+            // Read appBundle bytes from shared memory
+            val appBundleBuffer: ByteBuffer = request.appBundleSharedMemory.mapReadOnly()
+            val appBundleBytes: ByteArray = appBundleBuffer.toByteArray()
+            
+            // Call install app
             runBlocking {
-                runtime?.installApp(request.appId, request.appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
+                runtime?.installApp(request.appId, appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
             }
         }
 

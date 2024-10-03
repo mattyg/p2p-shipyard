@@ -21,6 +21,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.delay
 import com.plugin.holochainforegroundservice.toJSArray
 import java.io.File
+import android.net.Uri
+import android.os.SharedMemory
+import java.nio.ByteBuffer
 
 @TauriPlugin
 class HolochainPlugin(private val activity: Activity): Plugin(activity) {
@@ -88,13 +91,25 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun installApp(invoke: Invoke) {
         val args = invoke.parseArgs(InstallAppRequestArgs::class.java)
+
+        // Write appBundleBytes to shared memory
+        val appBundleSharedMemory = SharedMemory.create(args.appId, args.appBundleBytes.size)
+        val appBundleSharedMemoryBuffer: ByteBuffer = appBundleSharedMemory.mapReadWrite()
+        appBundleSharedMemoryBuffer.put(args.appBundleBytes)
+
+        // Call installApp on sevice
         this.mService?.installApp(InstallAppRequestAidl(
             args.appId,
-            args.appBundleBytes,
+            appBundleSharedMemory,
             args.membraneProofs,
             args.agent,
             args.networkSeed
         ))
+
+        // Clear the shared memory
+        SharedMemory.unmap(appBundleSharedMemoryBuffer)
+        appBundleSharedMemory.close()
+
         invoke.resolve()
     }
 
@@ -171,16 +186,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
             args.nonce,
             args.expiresAt,
         ))
-        invoke.resolve(res!!.toJSObject())
-        // Create app websocket
-        /*
-            TODO: return LauncherEnvironment
-            export interface LauncherEnvironment {
-                APP_INTERFACE_PORT?: number;
-                ADMIN_INTERFACE_PORT?: number;
-                INSTALLED_APP_ID?: InstalledAppId;
-                APP_INTERFACE_TOKEN?: AppAuthenticationToken;
-        } */        
+        invoke.resolve(res!!.toJSObject())    
     }
 
     /// Start service, which then starts the holochain conductor on initialization

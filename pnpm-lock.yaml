@@ -15,7 +15,7 @@ importers:
         specifier: ^2.1.0
         version: 2.6.3
 
-  crates/tauri-plugin-holochain-foreground-service/examples/tauri-app:
+  crates/tauri-plugin-holochain-foreground-service-consumer/examples/tauri-app:
     dependencies:
       '@holochain/client':
         specifier: 0.17.1
@@ -26,9 +26,12 @@ importers:
       '@tauri-apps/api':
         specifier: ^2.0.0-alpha.11
         version: 2.0.0-rc.0
-      tauri-plugin-holochain-foreground-service-api:
+      tauri-plugin-holochain-foreground-service-consumer-api:
         specifier: link:../../
         version: link:../..
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^1.0.1
@@ -1354,8 +1357,8 @@ packages:
     resolution: {integrity: sha512-LL9GEt3bkXp6Wa19SNR5MWcvHNMvuTFYg+eYBZN2OIFhSWN+pEJUQXEKu5BsOeABob3x9PDaLKW7w5iOJnsESQ==}
     engines: {node: '>=8.0.0'}
 
-  rollup@2.79.1:
-    resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
+  rollup@2.79.2:
+    resolution: {integrity: sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==}
     engines: {node: '>=10.0.0'}
     hasBin: true
 
@@ -1468,6 +1471,10 @@ packages:
   typescript@5.4.5:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
     engines: {node: '>=14.17'}
+    hasBin: true
+
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
 
   vite-plugin-singlefile@0.13.5:
@@ -2688,7 +2695,7 @@ snapshots:
 
   rollup-plugin-analyzer@4.0.0: {}
 
-  rollup@2.79.1:
+  rollup@2.79.2:
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -2800,6 +2807,8 @@ snapshots:
 
   typescript@5.4.5: {}
 
+  uuid@10.0.0: {}
+
   vite-plugin-singlefile@0.13.5(rollup@4.18.0)(vite@4.5.3(terser@5.31.1)):
     dependencies:
       micromatch: 4.0.7
@@ -2811,7 +2820,7 @@ snapshots:
       esbuild: 0.15.18
       postcss: 8.4.38
       resolve: 1.22.8
-      rollup: 2.79.1
+      rollup: 2.79.2
     optionalDependencies:
       fsevents: 2.3.3
       terser: 5.31.1
