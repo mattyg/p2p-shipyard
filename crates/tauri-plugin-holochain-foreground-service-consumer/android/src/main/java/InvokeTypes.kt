@@ -12,6 +12,11 @@ class InstallAppRequestArgs {
 }
 
 @InvokeArg
+class AppIdRequestArgs {
+    lateinit var appId: String
+}
+
+@InvokeArg
 class SignZomeCallRequestArgs {
     lateinit var provenance: ByteArray
     lateinit var cellIdDnaHash: ByteArray

@@ -295,139 +295,193 @@
       "type": "string",
       "oneOf": [
         {
-          "description": "Enables the app_websocket_auth command without any pre-configured scope.",
+          "description": "allow-app-websocket-auth -> Enables the app_websocket_auth command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-app-websocket-auth"
+          "enum": [
+            "allow-app-websocket-auth"
+          ]
         },
         {
-          "description": "Denies the app_websocket_auth command without any pre-configured scope.",
+          "description": "deny-app-websocket-auth -> Denies the app_websocket_auth command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-app-websocket-auth"
+          "enum": [
+            "deny-app-websocket-auth"
+          ]
         },
         {
-          "description": "Enables the create_app_websocket command without any pre-configured scope.",
+          "description": "allow-create-app-websocket -> Enables the create_app_websocket command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-create-app-websocket"
+          "enum": [
+            "allow-create-app-websocket"
+          ]
         },
         {
-          "description": "Denies the create_app_websocket command without any pre-configured scope.",
+          "description": "deny-create-app-websocket -> Denies the create_app_websocket command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-create-app-websocket"
+          "enum": [
+            "deny-create-app-websocket"
+          ]
         },
         {
-          "description": "Enables the disable_app command without any pre-configured scope.",
+          "description": "allow-disable-app -> Enables the disable_app command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-disable-app"
+          "enum": [
+            "allow-disable-app"
+          ]
         },
         {
-          "description": "Denies the disable_app command without any pre-configured scope.",
+          "description": "deny-disable-app -> Denies the disable_app command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-disable-app"
+          "enum": [
+            "deny-disable-app"
+          ]
         },
         {
-          "description": "Enables the enable_app command without any pre-configured scope.",
+          "description": "allow-enable-app -> Enables the enable_app command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-enable-app"
+          "enum": [
+            "allow-enable-app"
+          ]
         },
         {
-          "description": "Denies the enable_app command without any pre-configured scope.",
+          "description": "deny-enable-app -> Denies the enable_app command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-enable-app"
+          "enum": [
+            "deny-enable-app"
+          ]
         },
         {
-          "description": "Enables the get_admin_port command without any pre-configured scope.",
+          "description": "allow-get-admin-port -> Enables the get_admin_port command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-get-admin-port"
+          "enum": [
+            "allow-get-admin-port"
+          ]
         },
         {
-          "description": "Denies the get_admin_port command without any pre-configured scope.",
+          "description": "deny-get-admin-port -> Denies the get_admin_port command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-get-admin-port"
+          "enum": [
+            "deny-get-admin-port"
+          ]
         },
         {
-          "description": "Enables the install_app command without any pre-configured scope.",
+          "description": "allow-install-app -> Enables the install_app command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-install-app"
+          "enum": [
+            "allow-install-app"
+          ]
         },
         {
-          "description": "Denies the install_app command without any pre-configured scope.",
+          "description": "deny-install-app -> Denies the install_app command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-install-app"
+          "enum": [
+            "deny-install-app"
+          ]
         },
         {
-          "description": "Enables the launch command without any pre-configured scope.",
+          "description": "allow-launch -> Enables the launch command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-launch"
+          "enum": [
+            "allow-launch"
+          ]
         },
         {
-          "description": "Denies the launch command without any pre-configured scope.",
+          "description": "deny-launch -> Denies the launch command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-launch"
+          "enum": [
+            "deny-launch"
+          ]
         },
         {
-          "description": "Enables the list_installed_apps command without any pre-configured scope.",
+          "description": "allow-list-installed-apps -> Enables the list_installed_apps command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-list-installed-apps"
+          "enum": [
+            "allow-list-installed-apps"
+          ]
         },
         {
-          "description": "Denies the list_installed_apps command without any pre-configured scope.",
+          "description": "deny-list-installed-apps -> Denies the list_installed_apps command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-list-installed-apps"
+          "enum": [
+            "deny-list-installed-apps"
+          ]
         },
         {
-          "description": "Enables the shutdown command without any pre-configured scope.",
+          "description": "allow-shutdown -> Enables the shutdown command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-shutdown"
+          "enum": [
+            "allow-shutdown"
+          ]
         },
         {
-          "description": "Denies the shutdown command without any pre-configured scope.",
+          "description": "deny-shutdown -> Denies the shutdown command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-shutdown"
+          "enum": [
+            "deny-shutdown"
+          ]
         },
         {
-          "description": "Enables the sign_zome_call command without any pre-configured scope.",
+          "description": "allow-sign-zome-call -> Enables the sign_zome_call command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-sign-zome-call"
+          "enum": [
+            "allow-sign-zome-call"
+          ]
         },
         {
-          "description": "Denies the sign_zome_call command without any pre-configured scope.",
+          "description": "deny-sign-zome-call -> Denies the sign_zome_call command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-sign-zome-call"
+          "enum": [
+            "deny-sign-zome-call"
+          ]
         },
         {
-          "description": "Enables the start command without any pre-configured scope.",
+          "description": "allow-start -> Enables the start command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-start"
+          "enum": [
+            "allow-start"
+          ]
         },
         {
-          "description": "Denies the start command without any pre-configured scope.",
+          "description": "deny-start -> Denies the start command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-start"
+          "enum": [
+            "deny-start"
+          ]
         },
         {
-          "description": "Enables the stop command without any pre-configured scope.",
+          "description": "allow-stop -> Enables the stop command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-stop"
+          "enum": [
+            "allow-stop"
+          ]
         },
         {
-          "description": "Denies the stop command without any pre-configured scope.",
+          "description": "deny-stop -> Denies the stop command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-stop"
+          "enum": [
+            "deny-stop"
+          ]
         },
         {
-          "description": "Enables the uninstall_app command without any pre-configured scope.",
+          "description": "allow-uninstall-app -> Enables the uninstall_app command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-uninstall-app"
+          "enum": [
+            "allow-uninstall-app"
+          ]
         },
         {
-          "description": "Denies the uninstall_app command without any pre-configured scope.",
+          "description": "deny-uninstall-app -> Denies the uninstall_app command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-uninstall-app"
+          "enum": [
+            "deny-uninstall-app"
+          ]
         },
         {
-          "description": "Default permissions for the plugin",
+          "description": "default -> Default permissions for the plugin",
           "type": "string",
-          "const": "default"
+          "enum": [
+            "default"
+          ]
         }
       ]
     }

@@ -63,17 +63,14 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         bindInternal()
     }
 
-    /// Request that the foreground service: 
-    /// - install a happ into conductor
-    /// - create an app websocket with authentication token
+    /// Call the mobile-conductor-admin to install a happ into conductor
     @Command
-    fun requestInstallApp(invoke: Invoke) {
+    fun installApp(invoke: Invoke) {
+        val args = invoke.parseArgs(InstallAppRequestArgs::class.java)
+        
         // Bind to running service
         this.bindInternal();
-
-        // Install app
-        val args = invoke.parseArgs(InstallAppRequestArgs::class.java)
-
+        
         // Write appBundleBytes to shared memory
         // This is necessary because AIDL IPC calls have a 1MB limit
         val appBundleSharedMemory = SharedMemory.create(args.appId, args.appBundleBytes.size)
@@ -93,6 +90,18 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         SharedMemory.unmap(appBundleSharedMemoryBuffer)
         appBundleSharedMemory.close()
 
+        invoke.resolve();
+    }
+
+    // Call the mobile-conductor-admin to get an authorized app web socket,
+    //  then inject the magic config into the webview.
+    @Command
+    fun appWebsocketAuth(invoke: Invoke) {
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
+        
+        // Bind to running service
+        this.bindInternal();
+
         // Create app websocket with authentication token
         val res = this.mService?.appWebsocketAuth(args.appId)
 
@@ -100,8 +109,7 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         this.injectHolochainClientEnv(args.appId, res!!.port, res!!.token)      
 
         // Return app websocket auth data
-        val obj = JSObject();
-        obj.put("appWebsocketAuth", res!!.toJSObject())
+        val obj = res!!.toJSObject()
         invoke.resolve(obj)      
     }
 
@@ -118,6 +126,7 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         )
     }
 
+    /// Call the mobile-conductor-admin to sign a zome call
     @Command
     fun signZomeCall(invoke: Invoke) {
         val args = invoke.parseArgs(SignZomeCallRequestArgs::class.java)

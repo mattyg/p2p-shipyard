@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { requestInstallApp } from "tauri-plugin-holochain-foreground-service-consumer-api";
+  import { installApp, appWebsocketAuth } from "tauri-plugin-holochain-foreground-service-consumer-api";
   import Labelled from './Labelled.svelte';
   import happUrl from "./forum.happ?url";
   import { AppWebsocket } from "@holochain/client";
@@ -12,21 +12,27 @@
   let newPost = {title: "", content: ""};
   let allPosts = [];
   let appWs: AppWebsocket | undefined = undefined;
-  let appWebsocketAuth;
+  let appWsAuth;
 
   const loadHolochainClient = async () => {
     appWs = await AppWebsocket.connect();
   };
 
   const installForumApp = async () => {
-    appWebsocketAuth = await requestInstallApp({
+    await installApp({
       appId,
       appBundleBytes: new Uint8Array(await (await fetch(happUrl)).arrayBuffer()),
       membraneProofs: {},
       agent: null,
       networkSeed,
     });
+    console.log("app installed");
   };
+
+  const createAppWebsocketAuth = async () => {
+    appWsAuth = await appWebsocketAuth(appId);
+    console.log("app websocket auth", appWsAuth);
+  }
 
   const callZomeCreatePost = async () => {
     if(!appWs) throw Error("No AppWebsocket connected");
@@ -81,7 +87,7 @@
   <h1 style="line-height: 2.5rem;">tauri-plugin-holochain-foreground-service-consumer demo</h1>
 
   <div class="my-4 flex-center">
-    <h2>Request Install Forum App</h2>
+    <h2>Install Forum App</h2>
     <Labelled label="App Id">
       <input bind:value={appId} />
     </Labelled>
@@ -89,7 +95,23 @@
       <input bind:value={networkSeed} />
     </Labelled>
     <div>
-      <button on:click={installForumApp}>Request Install App</button>
+      <button on:click={installForumApp}>Install App</button>
+    </div>
+  </div>
+
+
+  <div class="my-4 flex-center">
+    <h2>Create App Websocket Auth</h2>
+    {#if appWsAuth}
+      <Labelled label="Port">
+        {appWsAuth.port}
+      </Labelled>
+      <Labelled label="Token">
+        <textarea disabled cols="40" rows="10">{appWsAuth.token}</textarea>
+      </Labelled>
+    {/if}
+    <div>
+      <button on:click={createAppWebsocketAuth}>Create App WS Auth</button>
     </div>
   </div>
 
