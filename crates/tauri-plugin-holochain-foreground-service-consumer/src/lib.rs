@@ -7,8 +7,10 @@ use tauri::{
 
 mod mobile;
 mod error;
+mod types;
 
 pub use error::{Error, Result};
+pub use types::*;
 
 use mobile::HolochainForegroundServiceConsumer;
 

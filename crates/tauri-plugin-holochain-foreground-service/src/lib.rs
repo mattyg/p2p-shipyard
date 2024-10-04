@@ -9,9 +9,10 @@ pub use models::*;
 
 mod mobile;
 mod error;
-mod models;
+mod types;
 
 pub use error::{Error, Result};
+pub use types::*;
 
 use mobile::HolochainForegroundService;
 

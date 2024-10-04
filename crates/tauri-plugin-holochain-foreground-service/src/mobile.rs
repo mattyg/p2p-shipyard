@@ -4,7 +4,7 @@ use tauri::{
   AppHandle, Runtime,
 };
 
-use crate::models::*;
+use crate::types::*;
 
 #[cfg(target_os = "android")]
 const PLUGIN_IDENTIFIER: &str = "com.plugin.holochainforegroundservice";
@@ -27,38 +27,39 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 /// Access to the holochain-foreground-service APIs.
 pub struct HolochainForegroundService<R: Runtime>(pub PluginHandle<R>);
 
+// TODO: replace Blank request & responses with actual types
 impl<R: Runtime> HolochainForegroundService<R> {
-  pub fn launch(&self, payload: HolochainRequest) -> crate::Result<HolochainResponse> {
+  pub fn launch(&self, payload: Blank) -> crate::Result<()> {
     self.0
       .run_mobile_plugin("launch", payload)
       .map_err(Into::into)
   }
   
-  pub fn shutdown(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+  pub fn shutdown(&self, payload: Blank)-> crate::Result<()> {
     self.0
       .run_mobile_plugin("shutdown", payload)
       .map_err(Into::into)
   }
 
-  pub fn get_admin_port(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+  pub fn get_admin_port(&self, payload: Blank)-> crate::Result<()> {
     self.0
       .run_mobile_plugin("getAdminPort", payload)
       .map_err(Into::into)
   }
 
-  pub fn install_app(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+  pub fn install_app(&self, payload: Blank)-> crate::Result<()> {
     self.0
       .run_mobile_plugin("installApp", payload)
       .map_err(Into::into)
   }
 
-  pub fn create_app_websocket(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+  pub fn create_app_websocket(&self, payload: Blank)-> crate::Result<()> {
     self.0
       .run_mobile_plugin("createAppWebsocket", payload)
       .map_err(Into::into)
   }
 
-  pub fn sign_zome_call(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+  pub fn sign_zome_call(&self, payload: Blank)-> crate::Result<()> {
     self.0
       .run_mobile_plugin("signZomeCall", payload)
       .map_err(Into::into)
