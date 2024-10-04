@@ -26,4 +26,21 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct HolochainForegroundServiceConsumer<R: Runtime>(pub PluginHandle<R>);
 
 impl<R: Runtime> HolochainForegroundServiceConsumer<R> {
+  pub fn install_app(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("installApp", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn create_app_websocket(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("createAppWebsocket", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn sign_zome_call(&self, payload: HolochainRequest)-> crate::Result<HolochainResponse> {
+    self.0
+      .run_mobile_plugin("signZomeCall", payload)
+      .map_err(Into::into)
+  }
 }
