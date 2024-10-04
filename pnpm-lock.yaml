@@ -15,6 +15,56 @@ importers:
         specifier: ^2.1.0
         version: 2.6.3
 
+  crates/tauri-plugin-holochain-foreground-service:
+    dependencies:
+      '@holochain/client':
+        specifier: 0.17.1
+        version: 0.17.1
+      '@tauri-apps/api':
+        specifier: '>=2.0.0-beta.6'
+        version: 2.0.0-rc.0
+    devDependencies:
+      '@rollup/plugin-node-resolve':
+        specifier: ^15.2.3
+        version: 15.2.3(rollup@4.18.0)
+      '@rollup/plugin-terser':
+        specifier: ^0.4.4
+        version: 0.4.4(rollup@4.18.0)
+      rollup:
+        specifier: ^4.9.6
+        version: 4.18.0
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
+  crates/tauri-plugin-holochain-foreground-service-consumer:
+    dependencies:
+      '@holochain/client':
+        specifier: 0.17.1
+        version: 0.17.1
+      '@tauri-apps/api':
+        specifier: '>=2.0.0-beta.6'
+        version: 2.0.0-rc.0
+    devDependencies:
+      '@rollup/plugin-node-resolve':
+        specifier: ^15.2.3
+        version: 15.2.3(rollup@4.18.0)
+      '@rollup/plugin-terser':
+        specifier: ^0.4.4
+        version: 0.4.4(rollup@4.18.0)
+      rollup:
+        specifier: ^4.9.6
+        version: 4.18.0
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
   crates/tauri-plugin-holochain-foreground-service-consumer/examples/tauri-app:
     dependencies:
       '@holochain/client':
@@ -35,7 +85,35 @@ importers:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^1.0.1
-        version: 1.4.0(svelte@3.59.2)(vite@3.2.11(terser@5.31.1))
+        version: 1.4.0(svelte@3.59.2)(vite@3.2.11(@types/node@22.7.4)(terser@5.31.1))
+      '@tauri-apps/cli':
+        specifier: 2.0.1
+        version: 2.0.1
+      svelte:
+        specifier: ^3.49.0
+        version: 3.59.2
+      vite:
+        specifier: ^3.0.2
+        version: 3.2.11(@types/node@22.7.4)(terser@5.31.1)
+
+  crates/tauri-plugin-holochain-foreground-service/examples/tauri-app:
+    dependencies:
+      '@holochain/client':
+        specifier: 0.17.1
+        version: 0.17.1
+      '@msgpack/msgpack':
+        specifier: 2.8.0
+        version: 2.8.0
+      '@tauri-apps/api':
+        specifier: ^2.0.0-alpha.11
+        version: 2.0.0-rc.0
+      tauri-plugin-holochain-foreground-service-api:
+        specifier: link:../../
+        version: link:../..
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^1.0.1
+        version: 1.4.0(svelte@3.59.2)(vite@3.2.11(@types/node@22.7.4)(terser@5.31.1))
       '@tauri-apps/cli':
         specifier: 2.0.0-rc.16
         version: 2.0.0-rc.16
@@ -44,13 +122,13 @@ importers:
         version: 3.59.2
       vite:
         specifier: ^3.0.2
-        version: 3.2.11(terser@5.31.1)
+        version: 3.2.11(@types/node@22.7.4)(terser@5.31.1)
 
   docs:
     devDependencies:
       vitepress:
         specifier: ^1.0.2
-        version: 1.2.3(@algolia/client-search@4.23.3)(postcss@8.4.38)(search-insights@2.14.0)(terser@5.31.1)(typescript@5.4.5)
+        version: 1.2.3(@algolia/client-search@4.23.3)(@types/node@22.7.4)(postcss@8.4.38)(search-insights@2.14.0)(terser@5.31.1)(typescript@5.4.5)
 
   packages/frame:
     dependencies:
@@ -78,10 +156,10 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^4.4.4
-        version: 4.5.3(terser@5.31.1)
+        version: 4.5.3(@types/node@22.7.4)(terser@5.31.1)
       vite-plugin-singlefile:
         specifier: ^0.13.5
-        version: 0.13.5(rollup@4.18.0)(vite@4.5.3(terser@5.31.1))
+        version: 0.13.5(rollup@4.18.0)(vite@4.5.3(@types/node@22.7.4)(terser@5.31.1))
 
   packages/signer:
     dependencies:
@@ -717,6 +795,12 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@tauri-apps/cli-darwin-arm64@2.0.1':
+    resolution: {integrity: sha512-oWjCZoFbm57V0eLEkIbc6aUmB4iW65QF7J8JVh5sNzH4xHGP9rzlQarbkg7LOn89z7mFSZpaLJAWlaaZwoV2Ug==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
   '@tauri-apps/cli-darwin-x64@2.0.0-rc.1':
     resolution: {integrity: sha512-dwrqLzNIFk8a1Vf2YI8axHm7uvLfo4M4TSWCw2ZkgeSGWWK6Y6CYVZbBEjOEGIOf+GFAa9rVOSZRuMwpiufNng==}
     engines: {node: '>= 10'}
@@ -725,6 +809,12 @@ packages:
 
   '@tauri-apps/cli-darwin-x64@2.0.0-rc.16':
     resolution: {integrity: sha512-D9uxPCxpyYcTSQulJGFX3POAKPOJd8WcWHFH8x6YVM1cIx6EWRXIE1sZnPUOjFr7qCg+bSdYdr8/BFHcZGcApQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@tauri-apps/cli-darwin-x64@2.0.1':
+    resolution: {integrity: sha512-bARd5yAnDGpG/FPhSh87+tzQ6D0TPyP2mZ5bg6cioeoXDmry68nT/FBzp87ySR1/KHvuhEQYWM/4RPrDjvI1Yg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -741,6 +831,12 @@ packages:
     cpu: [arm]
     os: [linux]
 
+  '@tauri-apps/cli-linux-arm-gnueabihf@2.0.1':
+    resolution: {integrity: sha512-OK3/RpxujoZAUbV7GHe4IPAUsIO6IuWEHT++jHXP+YW5Y7QezGGjQRc43IlWaQYej/yE8wfcrwrbqisc5wtiCw==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+
   '@tauri-apps/cli-linux-arm64-gnu@2.0.0-rc.1':
     resolution: {integrity: sha512-TGmadGW8BjTq864AYrv/u+vTnAodnOuzv1VCUOV23O8st35GZG6V47jwNsSjQjhrcO1XzmJiRAtrcVKuTZ/xUA==}
     engines: {node: '>= 10'}
@@ -749,6 +845,12 @@ packages:
 
   '@tauri-apps/cli-linux-arm64-gnu@2.0.0-rc.16':
     resolution: {integrity: sha512-2jpZDagNs6rrqposHJihHBayttgOl5aB2+bYiVEC6ye+haiFtmYmpdaPOaVIw+YVQs6lepf5PVrisCoU9DmYsg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@tauri-apps/cli-linux-arm64-gnu@2.0.1':
+    resolution: {integrity: sha512-MGSQJduiMEApspMK97mFt4kr6ig0OtxO5SUFpPDfYPw/XmY9utaRa9CEG6LcH8e0GN9xxYMhCv+FeU48spYPhA==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -765,6 +867,12 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@tauri-apps/cli-linux-arm64-musl@2.0.1':
+    resolution: {integrity: sha512-R6+vgxaPpxgGi4suMkQgGuhjMbZzMJfVyWfv2DOE/xxOzSK1BAOc54/HOjfOLxlnkA6uD6V69MwCwXgxW00A2g==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
   '@tauri-apps/cli-linux-x64-gnu@2.0.0-rc.1':
     resolution: {integrity: sha512-vjPrj2btS97IOp6cU42IrkI49SQZDSg8TPqwOwFqyQeAotCT1i0F38pLZWe1gLyPUowO8XdaaBdwYg6IRDKcZg==}
     engines: {node: '>= 10'}
@@ -773,6 +881,12 @@ packages:
 
   '@tauri-apps/cli-linux-x64-gnu@2.0.0-rc.16':
     resolution: {integrity: sha512-Zsq29MM1ooeH1+chQBa7ffDFnzAZebBBFdsvs4e05tS1H8gn4oKE+PSMn9p/okzVXykEk9ri2/n7BG1XFeifMA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@tauri-apps/cli-linux-x64-gnu@2.0.1':
+    resolution: {integrity: sha512-xrasYQnUZVhKJhBxHAeu4KxZbofaQlsG9KfZ9p1Bx+hmjs5BuujzwMnXsVD2a4l6GPW6gwblf2a6d600rySmWQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -789,6 +903,12 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@tauri-apps/cli-linux-x64-musl@2.0.1':
+    resolution: {integrity: sha512-SPk+EzRTlbvk46p5aURc7O4GihzxbqG80m74vstm0rolnmQ0FX3qqIh3as3cQpDiZWLod4j6EEmX0mTU3QpvXA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
   '@tauri-apps/cli-win32-arm64-msvc@2.0.0-rc.1':
     resolution: {integrity: sha512-SLulbiUjg8BGf/zX+U1PGjB+JpsN2nLRGuW07BYwSDW3s3mp2aagLuOwaTaOPBrDzfIMRYq8KT54A4jfRjEZlg==}
     engines: {node: '>= 10'}
@@ -797,6 +917,12 @@ packages:
 
   '@tauri-apps/cli-win32-arm64-msvc@2.0.0-rc.16':
     resolution: {integrity: sha512-PpPqdMTwJSDAK4KnNjvh77ShSkY+7pih1f6e50EtXar8bjC17e3XcEqFhDNne5mxEVTLYhibs6p1JLPad0ZjRA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@tauri-apps/cli-win32-arm64-msvc@2.0.1':
+    resolution: {integrity: sha512-LAELK01eOMyEt+JZLmx4EUOdRuPYr1a+mHjlxAxCnCaS3dpeg/c5/NMZfbRAJbAH4id+STRHIfPXTdCT2zUNAw==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -813,6 +939,12 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@tauri-apps/cli-win32-ia32-msvc@2.0.1':
+    resolution: {integrity: sha512-eMUgOS4mAusk5njU2TBxBjCUO1P4cV4uzY5CHihysoXSL2TVQdWrXT42VGeoahJh+yeQWkYFka2s4Bu0iWDMXg==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+
   '@tauri-apps/cli-win32-x64-msvc@2.0.0-rc.1':
     resolution: {integrity: sha512-aRO70dDbn4w3CbALMG+b7g460xmbSTuUiGmRh0r/MNVeoZk/YbqluBUyhXdWGxJb8OVubw/4RlczKYcPmJceMw==}
     engines: {node: '>= 10'}
@@ -825,6 +957,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@tauri-apps/cli-win32-x64-msvc@2.0.1':
+    resolution: {integrity: sha512-U9esAOcFIv80/slzlpwjkG31Wx1OqbfDgC5KjGT1Dd9iUOSuJZCwbiY7m3rYG2I6RWLfd9zhNu86CVohsKjBfA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
   '@tauri-apps/cli@2.0.0-rc.1':
     resolution: {integrity: sha512-9AzVrUMdb6EZ/Lwtdqt03XqqG6d/3gTJPOw2E9zmCHprJWEwqEp4JIVHYYfrqkkZyKclD3m5ggXwfYwclcYLdw==}
     engines: {node: '>= 10'}
@@ -832,6 +970,11 @@ packages:
 
   '@tauri-apps/cli@2.0.0-rc.16':
     resolution: {integrity: sha512-wdjZg/M3dcxiqgWG6VRnABpX0dYxRww93t0d1MYoZxFDrnyoUz5kYwFQ0v4J9u0qenEgskjoypvon7V/Nj9qrg==}
+    engines: {node: '>= 10'}
+    hasBin: true
+
+  '@tauri-apps/cli@2.0.1':
+    resolution: {integrity: sha512-fCheW0iWYWUtFV3ui3HlMhk3ZJpAQ5KJr7B7UmfhDzBSy1h5JBdrCtvDwy+3AcPN+Fg5Ey3JciF8zEP8eBx+vQ==}
     engines: {node: '>= 10'}
     hasBin: true
 
@@ -849,6 +992,9 @@ packages:
 
   '@types/mdurl@2.0.0':
     resolution: {integrity: sha512-RGdgjQUZba5p6QEFAVx2OGb8rQDL/cPRG7GiedRzMcJ1tYnUANBncjbSB1NRGwbvjcPeikRABz2nshyPk1bhWg==}
+
+  '@types/node@22.7.4':
+    resolution: {integrity: sha512-y+NPi1rFzDs1NdQHHToqeiX2TIS79SWEAw9GYhkkx8bD0ChpfqC+n2j5OXOCpzfojBEBt6DnEnnG9MY0zk1XLg==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -1473,6 +1619,9 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
@@ -2092,7 +2241,7 @@ snapshots:
     dependencies:
       shiki: 1.6.2
 
-  '@sveltejs/vite-plugin-svelte@1.4.0(svelte@3.59.2)(vite@3.2.11(terser@5.31.1))':
+  '@sveltejs/vite-plugin-svelte@1.4.0(svelte@3.59.2)(vite@3.2.11(@types/node@22.7.4)(terser@5.31.1))':
     dependencies:
       debug: 4.3.7
       deepmerge: 4.3.1
@@ -2100,8 +2249,8 @@ snapshots:
       magic-string: 0.26.7
       svelte: 3.59.2
       svelte-hmr: 0.15.3(svelte@3.59.2)
-      vite: 3.2.11(terser@5.31.1)
-      vitefu: 0.2.5(vite@3.2.11(terser@5.31.1))
+      vite: 3.2.11(@types/node@22.7.4)(terser@5.31.1)
+      vitefu: 0.2.5(vite@3.2.11(@types/node@22.7.4)(terser@5.31.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -2113,10 +2262,16 @@ snapshots:
   '@tauri-apps/cli-darwin-arm64@2.0.0-rc.16':
     optional: true
 
+  '@tauri-apps/cli-darwin-arm64@2.0.1':
+    optional: true
+
   '@tauri-apps/cli-darwin-x64@2.0.0-rc.1':
     optional: true
 
   '@tauri-apps/cli-darwin-x64@2.0.0-rc.16':
+    optional: true
+
+  '@tauri-apps/cli-darwin-x64@2.0.1':
     optional: true
 
   '@tauri-apps/cli-linux-arm-gnueabihf@2.0.0-rc.1':
@@ -2125,10 +2280,16 @@ snapshots:
   '@tauri-apps/cli-linux-arm-gnueabihf@2.0.0-rc.16':
     optional: true
 
+  '@tauri-apps/cli-linux-arm-gnueabihf@2.0.1':
+    optional: true
+
   '@tauri-apps/cli-linux-arm64-gnu@2.0.0-rc.1':
     optional: true
 
   '@tauri-apps/cli-linux-arm64-gnu@2.0.0-rc.16':
+    optional: true
+
+  '@tauri-apps/cli-linux-arm64-gnu@2.0.1':
     optional: true
 
   '@tauri-apps/cli-linux-arm64-musl@2.0.0-rc.1':
@@ -2137,10 +2298,16 @@ snapshots:
   '@tauri-apps/cli-linux-arm64-musl@2.0.0-rc.16':
     optional: true
 
+  '@tauri-apps/cli-linux-arm64-musl@2.0.1':
+    optional: true
+
   '@tauri-apps/cli-linux-x64-gnu@2.0.0-rc.1':
     optional: true
 
   '@tauri-apps/cli-linux-x64-gnu@2.0.0-rc.16':
+    optional: true
+
+  '@tauri-apps/cli-linux-x64-gnu@2.0.1':
     optional: true
 
   '@tauri-apps/cli-linux-x64-musl@2.0.0-rc.1':
@@ -2149,10 +2316,16 @@ snapshots:
   '@tauri-apps/cli-linux-x64-musl@2.0.0-rc.16':
     optional: true
 
+  '@tauri-apps/cli-linux-x64-musl@2.0.1':
+    optional: true
+
   '@tauri-apps/cli-win32-arm64-msvc@2.0.0-rc.1':
     optional: true
 
   '@tauri-apps/cli-win32-arm64-msvc@2.0.0-rc.16':
+    optional: true
+
+  '@tauri-apps/cli-win32-arm64-msvc@2.0.1':
     optional: true
 
   '@tauri-apps/cli-win32-ia32-msvc@2.0.0-rc.1':
@@ -2161,10 +2334,16 @@ snapshots:
   '@tauri-apps/cli-win32-ia32-msvc@2.0.0-rc.16':
     optional: true
 
+  '@tauri-apps/cli-win32-ia32-msvc@2.0.1':
+    optional: true
+
   '@tauri-apps/cli-win32-x64-msvc@2.0.0-rc.1':
     optional: true
 
   '@tauri-apps/cli-win32-x64-msvc@2.0.0-rc.16':
+    optional: true
+
+  '@tauri-apps/cli-win32-x64-msvc@2.0.1':
     optional: true
 
   '@tauri-apps/cli@2.0.0-rc.1':
@@ -2193,6 +2372,19 @@ snapshots:
       '@tauri-apps/cli-win32-ia32-msvc': 2.0.0-rc.16
       '@tauri-apps/cli-win32-x64-msvc': 2.0.0-rc.16
 
+  '@tauri-apps/cli@2.0.1':
+    optionalDependencies:
+      '@tauri-apps/cli-darwin-arm64': 2.0.1
+      '@tauri-apps/cli-darwin-x64': 2.0.1
+      '@tauri-apps/cli-linux-arm-gnueabihf': 2.0.1
+      '@tauri-apps/cli-linux-arm64-gnu': 2.0.1
+      '@tauri-apps/cli-linux-arm64-musl': 2.0.1
+      '@tauri-apps/cli-linux-x64-gnu': 2.0.1
+      '@tauri-apps/cli-linux-x64-musl': 2.0.1
+      '@tauri-apps/cli-win32-arm64-msvc': 2.0.1
+      '@tauri-apps/cli-win32-ia32-msvc': 2.0.1
+      '@tauri-apps/cli-win32-x64-msvc': 2.0.1
+
   '@tauri-apps/plugin-log@2.0.0-rc.0':
     dependencies:
       '@tauri-apps/api': 2.0.0-rc.0
@@ -2208,13 +2400,18 @@ snapshots:
 
   '@types/mdurl@2.0.0': {}
 
+  '@types/node@22.7.4':
+    dependencies:
+      undici-types: 6.19.8
+    optional: true
+
   '@types/resolve@1.20.2': {}
 
   '@types/web-bluetooth@0.0.20': {}
 
-  '@vitejs/plugin-vue@5.0.5(vite@5.2.12(terser@5.31.1))(vue@3.4.27(typescript@5.4.5))':
+  '@vitejs/plugin-vue@5.0.5(vite@5.2.12(@types/node@22.7.4)(terser@5.31.1))(vue@3.4.27(typescript@5.4.5))':
     dependencies:
-      vite: 5.2.12(terser@5.31.1)
+      vite: 5.2.12(@types/node@22.7.4)(terser@5.31.1)
       vue: 3.4.27(typescript@5.4.5)
 
   '@vue/compiler-core@3.4.27':
@@ -2807,54 +3004,60 @@ snapshots:
 
   typescript@5.4.5: {}
 
+  undici-types@6.19.8:
+    optional: true
+
   uuid@10.0.0: {}
 
-  vite-plugin-singlefile@0.13.5(rollup@4.18.0)(vite@4.5.3(terser@5.31.1)):
+  vite-plugin-singlefile@0.13.5(rollup@4.18.0)(vite@4.5.3(@types/node@22.7.4)(terser@5.31.1)):
     dependencies:
       micromatch: 4.0.7
       rollup: 4.18.0
-      vite: 4.5.3(terser@5.31.1)
+      vite: 4.5.3(@types/node@22.7.4)(terser@5.31.1)
 
-  vite@3.2.11(terser@5.31.1):
+  vite@3.2.11(@types/node@22.7.4)(terser@5.31.1):
     dependencies:
       esbuild: 0.15.18
       postcss: 8.4.38
       resolve: 1.22.8
       rollup: 2.79.2
     optionalDependencies:
+      '@types/node': 22.7.4
       fsevents: 2.3.3
       terser: 5.31.1
 
-  vite@4.5.3(terser@5.31.1):
+  vite@4.5.3(@types/node@22.7.4)(terser@5.31.1):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.38
       rollup: 3.29.4
     optionalDependencies:
+      '@types/node': 22.7.4
       fsevents: 2.3.3
       terser: 5.31.1
 
-  vite@5.2.12(terser@5.31.1):
+  vite@5.2.12(@types/node@22.7.4)(terser@5.31.1):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.18.0
     optionalDependencies:
+      '@types/node': 22.7.4
       fsevents: 2.3.3
       terser: 5.31.1
 
-  vitefu@0.2.5(vite@3.2.11(terser@5.31.1)):
+  vitefu@0.2.5(vite@3.2.11(@types/node@22.7.4)(terser@5.31.1)):
     optionalDependencies:
-      vite: 3.2.11(terser@5.31.1)
+      vite: 3.2.11(@types/node@22.7.4)(terser@5.31.1)
 
-  vitepress@1.2.3(@algolia/client-search@4.23.3)(postcss@8.4.38)(search-insights@2.14.0)(terser@5.31.1)(typescript@5.4.5):
+  vitepress@1.2.3(@algolia/client-search@4.23.3)(@types/node@22.7.4)(postcss@8.4.38)(search-insights@2.14.0)(terser@5.31.1)(typescript@5.4.5):
     dependencies:
       '@docsearch/css': 3.6.0
       '@docsearch/js': 3.6.0(@algolia/client-search@4.23.3)(search-insights@2.14.0)
       '@shikijs/core': 1.6.2
       '@shikijs/transformers': 1.6.2
       '@types/markdown-it': 14.1.1
-      '@vitejs/plugin-vue': 5.0.5(vite@5.2.12(terser@5.31.1))(vue@3.4.27(typescript@5.4.5))
+      '@vitejs/plugin-vue': 5.0.5(vite@5.2.12(@types/node@22.7.4)(terser@5.31.1))(vue@3.4.27(typescript@5.4.5))
       '@vue/devtools-api': 7.2.1(vue@3.4.27(typescript@5.4.5))
       '@vue/shared': 3.4.27
       '@vueuse/core': 10.10.0(vue@3.4.27(typescript@5.4.5))
@@ -2863,7 +3066,7 @@ snapshots:
       mark.js: 8.11.1
       minisearch: 6.3.0
       shiki: 1.6.2
-      vite: 5.2.12(terser@5.31.1)
+      vite: 5.2.12(@types/node@22.7.4)(terser@5.31.1)
       vue: 3.4.27(typescript@5.4.5)
     optionalDependencies:
       postcss: 8.4.38
