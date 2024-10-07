@@ -194,7 +194,8 @@ impl<R: Runtime> HolochainPlugin<R> {
 
             #[cfg(desktop)] // TODO: remove this check
             {
-                capability_builder = capability_builder.window(label);
+                // capability_builder = capability_builder.window(label);
+                capability_builder = capability_builder.windows(["*"]);
             }
             #[cfg(mobile)] // TODO: remove this check
             {
