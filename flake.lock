@@ -166,11 +166,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1727457906,
-        "narHash": "sha256-ra7otEhoGKFHAczX57nNAWqtggCKDoLIxre9X61X9QU=",
+        "lastModified": 1727780004,
+        "narHash": "sha256-QLgHmaSGg0+3YXvvne9ILPCEVHw04da/vvWxjG3Fq0o=",
         "owner": "holochain-open-dev",
         "repo": "infrastructure",
-        "rev": "2127d927530692298552d6bba4cf21e282b25dff",
+        "rev": "dd9e69c0a8363f0393b36428ceac1d05808043b9",
         "type": "github"
       },
       "original": {
@@ -268,16 +268,16 @@
     "holochain_2": {
       "flake": false,
       "locked": {
-        "lastModified": 1727364075,
-        "narHash": "sha256-VNgxDgeq2sX/L7D8J7F3QErqMVKdZTCX6SR3Cs5YKgM=",
+        "lastModified": 1727830716,
+        "narHash": "sha256-6PTQ3nbofxqiynVKj3X4tTvdW56Mow/SUs2V+2hiQhQ=",
         "owner": "holochain",
         "repo": "holochain",
-        "rev": "116f88d9baaf2b710c7cbbb7776a4b09e311b076",
+        "rev": "b09c4846ebf4653becceef3cde1833a935b391de",
         "type": "github"
       },
       "original": {
         "owner": "holochain",
-        "ref": "holochain-0.4.0-dev.27",
+        "ref": "holochain-0.4.0-dev.28",
         "repo": "holochain",
         "type": "github"
       }
@@ -319,11 +319,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1727451463,
-        "narHash": "sha256-RR34nP2jqczALL7H9ESWW7sVyyN73/tx3pOMAq8E3VE=",
+        "lastModified": 1727888510,
+        "narHash": "sha256-fYDFDsru7qct6csTB6NfhK8HLSubjeGEyH9vuvR7WeI=",
         "owner": "holochain",
         "repo": "holonix",
-        "rev": "447ac1e1e9bb323b94c05c06d224ee22211817dc",
+        "rev": "9832cd6b14f2aa5eb08cf87c83c8e68247221d91",
         "type": "github"
       },
       "original": {
@@ -440,11 +440,11 @@
     },
     "pnpmnixpkgs": {
       "locked": {
-        "lastModified": 1727264057,
-        "narHash": "sha256-KQPI8CTTnB9CrJ7LrmLC4VWbKZfljEPBXOFGZFRpxao=",
+        "lastModified": 1727540905,
+        "narHash": "sha256-40J9tW7Y794J7Uw4GwcAKlMxlX2xISBl6IBigo83ih8=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "759537f06e6999e141588ff1c9be7f3a5c060106",
+        "rev": "fbca5e745367ae7632731639de5c21f29c8744ed",
         "type": "github"
       },
       "original": {
