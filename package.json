@@ -4,7 +4,7 @@
   "author": "guillem@darksoil.studio",
   "description": "",
   "scripts": {
-    "build": "pnpm run build pnpm run build:holochain-manager-uniffi && pnpm run build:tauri-plugin-holochain-foreground-service && pnpm run build:tauri-plugin-holochain-foreground-service-consumer",
+    "build": "pnpm run build:tauri-plugin-holochain-foreground-service && pnpm run build:tauri-plugin-holochain-foreground-service-consumer",
     "build:tauri-plugin-holochain-foreground-service": "pnpm run build:holochain-manager-uniffi && cd crates/tauri-plugin-holochain-foreground-service && pnpm run build",
     "build:tauri-plugin-holochain-foreground-service-consumer": "cd crates/tauri-plugin-holochain-foreground-service-consumer && pnpm run build",
     "build:holochain-manager-uniffi": "cd crates/holochain-manager-uniffi && ./scripts/build.sh",
