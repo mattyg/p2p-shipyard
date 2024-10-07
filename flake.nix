@@ -8,10 +8,9 @@
 
     holonix.url = "github:holochain/holonix/main-0.3";
     rust-overlay.follows = "holonix/rust-overlay";
-    android-nixpkgs = {
-      url = "github:tadfisher/android-nixpkgs/stable";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    android-nixpkgs.url =
+      "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
+
     hc-infra.url = "github:holochain-open-dev/infrastructure";
     crane.follows = "holonix/crane";
   };
@@ -240,13 +239,14 @@
           nativeBuildInputs = dependencies.tauriApp.nativeBuildInputs;
         };
 
-        packages.tauriHappCargoArtifacts =
-          let craneLib = inputs.crane.mkLib pkgs;
-          in craneLib.callPackage ./nix/holochain-tauri-happ-artifacts.nix {
-            inherit craneLib;
-            buildInputs = dependencies.tauriHapp.buildInputs;
-            nativeBuildInputs = dependencies.tauriHapp.nativeBuildInputs;
-          };
+        packages.tauriHappCargoArtifacts = let
+          rust = inputs.holonix.packages.${system}.rust;
+          craneLib = (inputs.crane.mkLib pkgs).overrideToolchain rust;
+        in craneLib.callPackage ./nix/holochain-tauri-happ-artifacts.nix {
+          inherit craneLib;
+          buildInputs = dependencies.tauriHapp.buildInputs;
+          nativeBuildInputs = dependencies.tauriHapp.nativeBuildInputs;
+        };
         checks.cargoArtifacts = packages.tauriHappCargoArtifacts;
 
         devShells.tauriDev = pkgs.mkShell {
@@ -314,9 +314,7 @@
         };
 
         devShells.tauriAndroidDev = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
@@ -346,9 +344,7 @@
           ]);
 
         packages.tauriRust = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
           };
           linuxCargo = pkgs.writeShellApplication {
@@ -365,9 +361,7 @@
         in if pkgs.stdenv.isLinux then linuxRust else rust;
 
         packages.holochainTauriRust = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [ "wasm32-unknown-unknown" ];
           };
@@ -385,9 +379,7 @@
         in if pkgs.stdenv.isLinux then linuxRust else rust;
 
         packages.androidTauriRust = let
-          overlays = [ (import inputs.rust-overlay) ];
-          rustPkgs = import pkgs.path { inherit system overlays; };
-          rust = rustPkgs.rust-bin.stable."1.77.2".default.override {
+          rust = inputs.holonix.packages.${system}.rust.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"

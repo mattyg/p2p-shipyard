@@ -8,7 +8,7 @@ rust-version = "1.75"
 links = "tauri-plugin-holochain"
 
 [dependencies]
-tauri = { version = "2.0.0-rc", features = [
+tauri = { version = "2.0.0", features = [
   "devtools",
   "native-tls-vendored",
 ] }
@@ -65,7 +65,7 @@ anyhow = "1"
 async-trait = "0.1"
 
 [build-dependencies]
-tauri-plugin = { version = "2.0.0-rc", features = ["build"] }
+tauri-plugin = { version = "2.0.0", features = ["build"] }
 
 [features]
 default = ["gossip_arc_normal"]

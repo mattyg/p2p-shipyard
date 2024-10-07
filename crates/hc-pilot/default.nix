@@ -3,7 +3,8 @@
 {
   perSystem = { inputs', self', pkgs, system, lib, ... }: {
     packages.hc-pilot = let
-      craneLib = inputs.crane.mkLib pkgs;
+      rust = inputs'.holonix.packages.rust;
+      craneLib = (inputs.crane.mkLib pkgs).overrideToolchain rust;
 
       cratePath = ./.;
 
@@ -18,6 +19,11 @@
 
         buildInputs = self'.dependencies.tauriHapp.buildInputs;
         nativeBuildInputs = self'.dependencies.tauriHapp.nativeBuildInputs;
+
+        stdenv = if pkgs.stdenv.isDarwin then
+          pkgs.overrideSDK pkgs.stdenv "11.0"
+        else
+          pkgs.stdenv;
 
         # TODO: remove this if possible
         # Without this build fails on MacOs
