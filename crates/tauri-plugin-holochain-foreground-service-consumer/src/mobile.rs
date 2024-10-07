@@ -29,7 +29,7 @@ pub struct HolochainForegroundServiceConsumer<R: Runtime>(pub PluginHandle<R>);
 impl<R: Runtime> HolochainForegroundServiceConsumer<R> {
   pub fn is_app_installed(&self, app_id: &str)-> crate::Result<bool> {
     let res: IsAppInstalledResponse = self.0
-      .run_mobile_plugin("isAppInstalled", AppIdRequestArgs { appId: app_id.to_string() })?;
+      .run_mobile_plugin("isAppInstalled", AppIdRequestArgs { app_id: app_id.to_string() })?;
     Ok(res.installed)
   }
 
@@ -43,7 +43,7 @@ impl<R: Runtime> HolochainForegroundServiceConsumer<R> {
   pub fn app_websocket_auth(&self, app_id: &str)-> crate::Result<AppWebsocketAuthResponse> {
     Ok(
       self.0
-      .run_mobile_plugin("appWebsocketAuth", AppIdRequestArgs { appId: app_id.to_string() })?
+      .run_mobile_plugin("appWebsocketAuth", AppIdRequestArgs { app_id: app_id.to_string() })?
     )
   }
 

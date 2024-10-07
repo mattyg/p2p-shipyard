@@ -5,7 +5,6 @@ use tauri::{
 };
 
 use crate::types::*;
-use tracing::debug;
 
 #[cfg(target_os = "android")]
 const PLUGIN_IDENTIFIER: &str = "com.plugin.holochainforegroundservice";
