@@ -26,6 +26,11 @@ import com.plugin.holochainforegroundservice.InstallAppRequestAidl
 import com.plugin.holochainforegroundservice.SignZomeCallRequestAidl
 import android.os.SharedMemory
 import java.nio.ByteBuffer
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
 @TauriPlugin
 class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) {
@@ -163,4 +168,17 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         intent.setComponent(ComponentName("com.holochainapps.mobile_conductor_admin", "com.plugin.holochainforegroundservice.HolochainService"))
         activity.bindService(intent, this.mConnection, Context.BIND_ABOVE_CLIENT)
     }
+
+    //private suspend fun waitUntilBindComplete(timeout: Long = 60000L, interval: Long = 5000L) {
+    //    var total = 0L
+    //    while(mService == null) {
+    //        bindInternal()
+    //        delay(interval)
+    //
+    //        total += interval
+    //        if(total >= timeout) {
+    //            throw Exception("Failed to connect to mobile-conductor-admin. Is it running?")
+    //        }
+    //    }
+    //}
 }

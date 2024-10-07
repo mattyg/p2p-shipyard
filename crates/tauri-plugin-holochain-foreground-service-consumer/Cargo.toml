@@ -12,6 +12,7 @@ links = "tauri-plugin-holochain-foreground-service-consumer"
 tauri = { version = "2.0.0-rc.3" }
 serde = "1.0"
 thiserror = "1.0"
+tracing = "0.1"
 
 [build-dependencies]
 tauri-plugin = { version = "2.0.0-rc.3", features = ["build"] }

@@ -9169,6 +9169,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin",
  "thiserror",
+ "tracing",
 ]
 
 [[package]]
@@ -9180,6 +9181,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin",
  "thiserror",
+ "tracing",
 ]
 
 [[package]]
