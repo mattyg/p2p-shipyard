@@ -6,7 +6,7 @@ const BOOTSTRAP_URL: &str = "https://bootstrap.holo.host";
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_holochain_foreground_service_consumer::init())
+        .append_invoke_initialization_script(setup_app_script().as_str())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

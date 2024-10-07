@@ -21,6 +21,7 @@
     "build:js:tauri-commands:cjs": "tsc guest-js/tauri-commands/*.ts --outDir dist-js/tauri-commands/  --declaration --target es2021 --module commonjs && mv dist-js/tauri-commands/index.js dist-js/tauri-commands/indes.cjs",
     "build:js:tauri-commands:esm": "tsc guest-js/tauri-commands/*.ts --outDir dist-js/tauri-commands/  --declaration --target es2021 --moduleResolution bundler --module esnext",
     "build:js:holochain-env": "tsc guest-js/holochain-env/*.ts --outDir dist-js-tmp/holochain-env/ --target es2021 --moduleResolution bundler --module esnext --skipLibCheck true",
+    "build:js:app-setup": "tsc guest-js/app-setup/*.ts --outDir dist-js-tmp/app-setup/ --target es2021 --moduleResolution bundler --module esnext --skipLibCheck true",
     "prepublishOnly": "pnpm build",
     "pretest": "pnpm build",
     "prepare": "pnpm build"

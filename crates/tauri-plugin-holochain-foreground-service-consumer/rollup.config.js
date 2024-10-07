@@ -27,4 +27,18 @@ export default [
       nodeResolve(),
     ],
   },
+  {
+    input: 'dist-js-tmp/app-setup/index.js',
+    output: [
+      {
+        file: "dist-js/app-setup/index.min.js",
+        format: 'esm',
+      },
+    ],
+    plugins: [
+      terser(),      
+      // Include imported dependencies in the output bundle
+      nodeResolve(),
+    ],
+  },
 ]
