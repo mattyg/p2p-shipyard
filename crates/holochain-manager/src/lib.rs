@@ -192,6 +192,21 @@ impl HolochainRuntime {
         Ok(app_info)
     }
 
+    /// Is an app with a given app_id installed on the holochain conductor
+    /// 
+    /// * `app_id` - the app id to check
+    pub async fn is_app_installed(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<bool> {
+        let admin_ws = self.admin_websocket().await?;
+        let apps = admin_ws.list_apps(None).await
+            .map_err(|e| Error::ConductorApiError(e))?;
+        let matching_app = apps.into_iter().find(|app_info| app_info.installed_app_id == app_id);
+
+        Ok(matching_app.is_some())
+    }
+
     /// Uninstall the app with the given `app_id` from the holochain conductor
     ///
     /// * `app_id` - the app id of the app to uninstall

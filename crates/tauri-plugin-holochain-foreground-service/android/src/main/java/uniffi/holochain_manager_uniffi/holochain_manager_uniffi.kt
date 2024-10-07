@@ -795,6 +795,11 @@ internal interface UniffiLib : Library {
         `networkSeed`: RustBuffer.ByValue,
     ): Long
 
+    fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_is_app_installed(
+        `ptr`: Pointer,
+        `installedAppId`: RustBuffer.ByValue,
+    ): Long
+
     fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_list_installed_apps(`ptr`: Pointer): Long
 
     fun uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_shutdown(`ptr`: Pointer): Long
@@ -1035,6 +1040,8 @@ internal interface UniffiLib : Library {
 
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_install_app(): Short
 
+    fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_is_app_installed(): Short
+
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps(): Short
 
     fun uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_shutdown(): Short
@@ -1073,6 +1080,9 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_install_app() != 24051.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_is_app_installed() != 12812.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_holochain_manager_uniffi_checksum_method_holochainruntimeffi_list_installed_apps() != 12726.toShort()) {
@@ -1537,6 +1547,11 @@ public interface HolochainRuntimeFfiInterface {
     )
 
     /**
+     * Is an app with the given installed_app_id installed on the conductor
+     */
+    suspend fun `isAppInstalled`(`installedAppId`: kotlin.String): kotlin.Boolean
+
+    /**
      * List apps installed on the conductor
      */
     suspend fun `listInstalledApps`(): List<AppInfoFfi>
@@ -1783,6 +1798,34 @@ open class HolochainRuntimeFfi :
         // Error FFI converter
         HolochainRuntimeFfiException.ErrorHandler,
     )
+
+    /**
+     * Is an app with the given installed_app_id installed on the conductor
+     */
+    @Throws(HolochainRuntimeFfiException::class)
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `isAppInstalled`(`installedAppId`: kotlin.String): kotlin.Boolean =
+        uniffiRustCallAsync(
+            callWithPointer { thisPtr ->
+                UniffiLib.INSTANCE.uniffi_holochain_manager_uniffi_fn_method_holochainruntimeffi_is_app_installed(
+                    thisPtr,
+                    FfiConverterString.lower(`installedAppId`),
+                )
+            },
+            {
+                    future,
+                    callback,
+                    continuation,
+                ->
+                UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_poll_i8(future, callback, continuation)
+            },
+            { future, continuation -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_complete_i8(future, continuation) },
+            { future -> UniffiLib.INSTANCE.ffi_holochain_manager_uniffi_rust_future_free_i8(future) },
+            // lift function
+            { FfiConverterBoolean.lift(it) },
+            // Error FFI converter
+            HolochainRuntimeFfiException.ErrorHandler,
+        )
 
     /**
      * List apps installed on the conductor

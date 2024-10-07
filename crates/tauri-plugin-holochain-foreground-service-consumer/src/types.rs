@@ -1,6 +1,8 @@
 use serde::{Serialize, Deserialize};
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct InstallAppRequestArgs {
   pub app_id: String,
   pub app_bundle_bytes: Vec<u8>,
@@ -10,11 +12,13 @@ pub struct InstallAppRequestArgs {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct AppIdRequestArgs {
   pub app_id: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct AppWebsocketAuthResponse {
   pub app_id: String,
   pub port: u16,
@@ -22,6 +26,7 @@ pub struct AppWebsocketAuthResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct SignZomeCallRequestArgs {
   pub provenance: Vec<u8>,
   pub cell_id_dna_hash: Vec<u8>,
@@ -36,7 +41,8 @@ pub struct SignZomeCallRequestArgs {
 
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct SignZomeCallResponseArgs {
+#[serde(rename_all = "camelCase")]
+pub struct SignZomeCallResponse {
   pub provenance: Vec<u8>,
   pub cell_id_dna_hash: Vec<u8>,
   pub cell_id_agent_pub_key: Vec<u8>,
@@ -47,4 +53,10 @@ pub struct SignZomeCallResponseArgs {
   pub nonce: Vec<u8>,
   pub expires_at: u64,
   pub signature: Vec<u8>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct IsAppInstalledResponse {
+  pub installed: bool
 }

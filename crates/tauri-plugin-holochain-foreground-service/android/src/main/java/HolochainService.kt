@@ -108,6 +108,17 @@ class HolochainService : Service() {
             }
         }
 
+        /// Is app installed
+        override fun isAppInstalled(appId: String): Boolean {
+            Log.d("IHolochainService", "isAppInstalled")
+            return runBlocking {
+                Log.d(LOG_TAG, "isAppInstalled 2")
+                val res = runtime?.isAppInstalled(appId)!!
+                Log.d(LOG_TAG, "isAppInstalled 3 " + res)
+                res
+            }
+        }
+
         /// Get or create an app websocket with an authenticated token
         override fun appWebsocketAuth(appId: String): AppWebsocketAuthFfiAidl {
             return runBlocking {

@@ -113,6 +113,17 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         invoke.resolve()
     }
 
+    /// Is an app with the given app_id installed
+    @Command
+    fun isAppInstalled(invoke: Invoke) {
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
+        val res = this.mService?.isAppInstalled(args.appId)
+
+        val obj = JSObject()
+        obj.put("installed", res)
+        invoke.resolve(obj)
+    }
+
     /// Uninstall an installed app
     @Command
     fun uninstallApp(invoke: Invoke) {

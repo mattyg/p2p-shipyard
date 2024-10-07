@@ -379,6 +379,20 @@
           ]
         },
         {
+          "description": "allow-is-app-installed -> Enables the is_app_installed command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-is-app-installed"
+          ]
+        },
+        {
+          "description": "deny-is-app-installed -> Denies the is_app_installed command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-is-app-installed"
+          ]
+        },
+        {
           "description": "allow-launch -> Enables the launch command without any pre-configured scope.",
           "type": "string",
           "enum": [

@@ -73,6 +73,10 @@ export async function listInstalledApps(): Promise<AppInfo[]> {
   return await invoke<{installedApps: AppInfo[]}>('plugin:holochain-foreground-service|list_installed_apps').then((r) => (r.installedApps ? r.installedApps : []));
 }
 
+export async function isAppInstalled(appId: string): Promise<boolean> {
+  return await invoke<{installed: boolean}>('plugin:holochain-foreground-service|is_app_installed').then((r) => (r.installed));
+}
+
 export async function appWebsocketAuth(appId: string): Promise<{appId: string, port: number, token: Uint8Array} | null> {
   return await invoke<{appWebsocketAuth: {appId: string, port: number, token: Uint8Array}}>('plugin:holochain-foreground-service|app_websocket_auth', { appId }).then((r) => (r.appWebsocketAuth ? r.appWebsocketAuth : null));
 }

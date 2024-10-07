@@ -10,6 +10,7 @@ Default permissions for the plugin
 - `allow-enable-app`
 - `allow-disable-app`
 - `allow-list-installed-apps`
+- `allow-is-app-installed`
 - `allow-app-websocket-auth`
 - `allow-sign-zome-call`
 
@@ -174,6 +175,32 @@ Enables the install_app command without any pre-configured scope.
 <td>
 
 Denies the install_app command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:allow-is-app-installed`
+
+</td>
+<td>
+
+Enables the is_app_installed command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`holochain-foreground-service:deny-is-app-installed`
+
+</td>
+<td>
+
+Denies the is_app_installed command without any pre-configured scope.
 
 </td>
 </tr>

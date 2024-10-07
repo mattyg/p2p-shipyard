@@ -1,5 +1,5 @@
 const COMMANDS: &[&str] = &[
-  "install_app", "app_websocket_auth", "sign_zome_call"
+  "install_app", "is_app_installed", "app_websocket_auth", "sign_zome_call"
 ];
 
 fn main() {

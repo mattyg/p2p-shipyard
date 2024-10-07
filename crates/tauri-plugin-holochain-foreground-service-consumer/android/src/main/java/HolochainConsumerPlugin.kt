@@ -63,6 +63,19 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         bindInternal()
     }
 
+    /// Is an app with the given app_id installed
+    @Command
+    fun isAppInstalled(invoke: Invoke) {
+        bindInternal();
+
+        val args = invoke.parseArgs(AppIdRequestArgs::class.java)
+        val res = this.mService!!.isAppInstalled(args.appId)
+
+        val obj = JSObject()
+        obj.put("installed", res)
+        invoke.resolve(obj)
+    }
+
     /// Call the mobile-conductor-admin to install a happ into conductor
     @Command
     fun installApp(invoke: Invoke) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { installApp, appWebsocketAuth } from "tauri-plugin-holochain-foreground-service-consumer-api";
+  import { installApp, appWebsocketAuth, isAppInstalled } from "tauri-plugin-holochain-foreground-service-consumer-api";
   import Labelled from './Labelled.svelte';
   import happUrl from "./forum.happ?url";
   import { AppWebsocket } from "@holochain/client";
@@ -13,10 +13,20 @@
   let allPosts = [];
   let appWs: AppWebsocket | undefined = undefined;
   let appWsAuth;
+  let isInstalled;
 
   const loadHolochainClient = async () => {
     appWs = await AppWebsocket.connect();
   };
+
+  const setupApp = async () => {
+    isInstalled = await isAppInstalled(appId);
+    if (!isInstalled) {
+      await installForumApp();
+      isInstalled = true;
+    }
+    await createAppWebsocketAuth();
+  }
 
   const installForumApp = async () => {
     await installApp({
@@ -32,6 +42,11 @@
   const createAppWebsocketAuth = async () => {
     appWsAuth = await appWebsocketAuth(appId);
     console.log("app websocket auth", appWsAuth);
+  }
+
+  const loadIsAppInstalled = async () => {
+    isInstalled = await isAppInstalled(appId);
+    console.log("isAppInstalled", isInstalled);
   }
 
   const callZomeCreatePost = async () => {
@@ -81,6 +96,8 @@
       clearInterval(interval);
     }
   }, 500);
+
+  setupApp();
 </script>
 
 <main class="container">
@@ -112,6 +129,17 @@
     {/if}
     <div>
       <button on:click={createAppWebsocketAuth}>Create App WS Auth</button>
+    </div>
+  </div>
+
+
+  <div class="my-4 flex-center">
+    <h2>Is App Installed?</h2>
+    {#if isInstalled !== null && isInstalled !== undefined}
+      <b>{isInstalled ? "Yes" : "No"}</b><br/>
+    {/if}
+    <div>
+      <button on:click={loadIsAppInstalled}>Check if app is installed</button>
     </div>
   </div>
 

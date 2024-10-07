@@ -3,7 +3,7 @@ use tauri::{
   plugin::{PluginApi, PluginHandle},
   AppHandle, Runtime,
 };
-use crate::types::{InstallAppRequestArgs, AppIdRequestArgs, SignZomeCallRequestArgs};
+use crate::types::*;
 
 #[cfg(target_os = "android")]
 const PLUGIN_IDENTIFIER: &str = "com.plugin.holochainforegroundserviceconsumer";
@@ -27,22 +27,30 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct HolochainForegroundServiceConsumer<R: Runtime>(pub PluginHandle<R>);
 
 impl<R: Runtime> HolochainForegroundServiceConsumer<R> {
+  pub fn is_app_installed(&self, app_id: &str)-> crate::Result<bool> {
+    let res: IsAppInstalledResponse = self.0
+      .run_mobile_plugin("isAppInstalled", AppIdRequestArgs { appId: app_id.to_string() })?;
+    Ok(res.installed)
+  }
+
   pub fn install_app(&self, payload: InstallAppRequestArgs)-> crate::Result<()> {
-    let _ = self.0
-      .run_mobile_plugin("installApp", payload)
-      .map_err(Into::into)?;
-    Ok(())
+    Ok(
+      self.0
+      .run_mobile_plugin("installApp", payload)?
+    )
   }
 
-  pub fn create_app_websocket(&self, app_id: String)-> crate::Result<AppWebsocketAuthResponse> {
-    self.0
-      .run_mobile_plugin("createAppWebsocket", AppIdRequestArgs({ app_id }))
-      .map_err(Into::into)
+  pub fn app_websocket_auth(&self, app_id: &str)-> crate::Result<AppWebsocketAuthResponse> {
+    Ok(
+      self.0
+      .run_mobile_plugin("appWebsocketAuth", AppIdRequestArgs { appId: app_id.to_string() })?
+    )
   }
 
-  pub fn sign_zome_call(&self, payload: SignZomeCallRequestArgs)-> crate::Result<SignZomeCallResponseArgs> {
-    self.0
-      .run_mobile_plugin("signZomeCall", payload)
-      .map_err(Into::into)
+  pub fn sign_zome_call(&self, payload: SignZomeCallRequestArgs)-> crate::Result<SignZomeCallResponse> {
+    Ok(
+      self.0
+      .run_mobile_plugin("signZomeCall", payload)?
+    )
   }
 }

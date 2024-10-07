@@ -12,6 +12,10 @@ export async function installApp(request: {
   return await invoke<null>('plugin:holochain-foreground-service-consumer|install_app', request);
 }
 
+export async function isAppInstalled(appId: string): Promise<boolean> {
+  return await invoke<{installed: boolean}>('plugin:holochain-foreground-service-consumer|is_app_installed', { appId }).then((r) => (r.installed));
+}
+
 export async function appWebsocketAuth(appId: string): Promise<{appId: string, port: number, token: Uint8Array} | null> {
   return await invoke<{appId: string, port: number, token: Uint8Array}>('plugin:holochain-foreground-service-consumer|app_websocket_auth', { appId });
 }

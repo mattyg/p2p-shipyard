@@ -5,8 +5,6 @@ use tauri::{
   Manager, Runtime,
 };
 
-pub use models::*;
-
 mod mobile;
 mod error;
 mod types;

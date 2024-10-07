@@ -5,6 +5,7 @@ use tauri::{
 };
 
 use crate::types::*;
+use tracing::debug;
 
 #[cfg(target_os = "android")]
 const PLUGIN_IDENTIFIER: &str = "com.plugin.holochainforegroundservice";
@@ -29,39 +30,52 @@ pub struct HolochainForegroundService<R: Runtime>(pub PluginHandle<R>);
 
 // TODO: replace Blank request & responses with actual types
 impl<R: Runtime> HolochainForegroundService<R> {
-  pub fn launch(&self, payload: Blank) -> crate::Result<()> {
-    self.0
-      .run_mobile_plugin("launch", payload)
-      .map_err(Into::into)
+  pub fn launch(&self) -> crate::Result<()> {
+    Ok(
+      self.0
+      .run_mobile_plugin("launch", Blank {})?
+    )
   }
   
-  pub fn shutdown(&self, payload: Blank)-> crate::Result<()> {
-    self.0
-      .run_mobile_plugin("shutdown", payload)
-      .map_err(Into::into)
+  pub fn shutdown(&self)-> crate::Result<()> {
+    Ok(
+      self.0
+      .run_mobile_plugin("shutdown", Blank {})?
+    )
   }
 
-  pub fn get_admin_port(&self, payload: Blank)-> crate::Result<()> {
-    self.0
-      .run_mobile_plugin("getAdminPort", payload)
-      .map_err(Into::into)
+  pub fn get_admin_port(&self)-> crate::Result<()> {
+    Ok(
+      self.0
+      .run_mobile_plugin("getAdminPort", Blank {})?
+    )
   }
 
-  pub fn install_app(&self, payload: Blank)-> crate::Result<()> {
-    self.0
-      .run_mobile_plugin("installApp", payload)
-      .map_err(Into::into)
+  pub fn is_app_installed(&self, app_id: &str)-> crate::Result<bool> {
+    let res: IsAppInstalledResponse = self.0
+      .run_mobile_plugin("isAppInstalled", AppIdRequestArgs { app_id: app_id.to_string() })?;
+
+      Ok(res.installed)
   }
 
-  pub fn create_app_websocket(&self, payload: Blank)-> crate::Result<()> {
-    self.0
-      .run_mobile_plugin("createAppWebsocket", payload)
-      .map_err(Into::into)
+  pub fn install_app(&self, payload: InstallAppRequestArgs)-> crate::Result<()> {
+    Ok(
+      self.0
+        .run_mobile_plugin("installApp", payload)?
+    )
   }
 
-  pub fn sign_zome_call(&self, payload: Blank)-> crate::Result<()> {
-    self.0
-      .run_mobile_plugin("signZomeCall", payload)
-      .map_err(Into::into)
+  pub fn app_websocket_auth(&self, app_id: String)-> crate::Result<AppWebsocketAuthResponse> {
+    Ok(
+      self.0
+      .run_mobile_plugin("appWebsocketAuth", AppIdRequestArgs { app_id })?
+    )
+  }
+
+  pub fn sign_zome_call(&self, payload: SignZomeCallRequestArgs)-> crate::Result<SignZomeCallResponse> {
+    Ok(
+      self.0
+      .run_mobile_plugin("signZomeCall", payload)?
+    )
   }
 }

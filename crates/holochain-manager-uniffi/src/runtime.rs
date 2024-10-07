@@ -65,6 +65,12 @@ impl HolochainRuntimeFFI {
         Ok(apps)
     }
 
+    /// Is an app with the given installed_app_id installed on the conductor
+    pub async fn is_app_installed(&self, installed_app_id: String) -> Result<bool, HolochainRuntimeFFIError> {
+        self.runtime.is_app_installed(installed_app_id).await
+            .map_err(|e| HolochainRuntimeFFIError::HolochainError(format!("{:?}", e)))
+    }
+
     /// Install an app
     pub async fn install_app(
         &self,
