@@ -33,7 +33,6 @@ class HolochainService : Service() {
     public var runtimeAdminWebsocketPort: UShort? = null
 
     private val LOG_TAG = "HolochainService"
-    private val isAboveOrEqualAndroid10 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     
     /// The IPC receiver that other activities can call into
     private val binder = object : IHolochainService.Stub() {
@@ -50,6 +49,7 @@ class HolochainService : Service() {
 
         /// Stop the service
         override fun shutdown() {
+            Log.d("IHolochainService", "shutdown")
             var x = stopForeground()
         }
         
@@ -57,6 +57,7 @@ class HolochainService : Service() {
         override fun installApp(
             request: InstallAppRequestAidl
         ) {
+            Log.d("IHolochainService", "installApp")
             // Read appBundle bytes from shared memory
             val appBundleBuffer: ByteBuffer = request.appBundleSharedMemory.mapReadOnly()
             val appBundleBytes: ByteArray = appBundleBuffer.toByteArray()
@@ -71,6 +72,7 @@ class HolochainService : Service() {
         override fun uninstallApp(
             appId: String
         ) {
+            Log.d("IHolochainService", "uninstallApp")
             runBlocking {
                 runtime?.uninstallApp(appId)
             }
@@ -80,6 +82,7 @@ class HolochainService : Service() {
         override fun enableApp(
             appId: String
         ) {
+            Log.d("IHolochainService", "enableApp")
             runBlocking {
                 runtime?.enableApp(appId)
             }
@@ -89,6 +92,7 @@ class HolochainService : Service() {
         override fun disableApp(
             appId: String
         ) {
+            Log.d("IHolochainService", "disableApp")
             runBlocking {
                 runtime?.disableApp(appId)
             }
@@ -96,6 +100,7 @@ class HolochainService : Service() {
 
         /// List installed apps
         override fun listInstalledApps(): List<AppInfoFfiAidl> {
+            Log.d("IHolochainService", "listInstalledApps")
             return runBlocking {
                 runtime?.listInstalledApps()?.map { 
                     AppInfoFfiAidl(
@@ -121,6 +126,7 @@ class HolochainService : Service() {
 
         /// Get or create an app websocket with an authenticated token
         override fun appWebsocketAuth(appId: String): AppWebsocketAuthFfiAidl {
+            Log.d("IHolochainService", "appWebsocketAuth")
             return runBlocking {
                 val res = runtime?.appWebsocketAuth(appId)!!
                 AppWebsocketAuthFfiAidl(res.appId, res.port.toInt(), res.token.toUByteArray())
@@ -129,6 +135,7 @@ class HolochainService : Service() {
 
         /// Sign a zome call
         override fun signZomeCall(request: SignZomeCallRequestAidl): ZomeCallSignedFfiAidl {
+            Log.d("IHolochainService", "signZomeCall")
             return runBlocking {
                 val res = runtime?.signZomeCall(ZomeCallUnsignedTauriFfi(
                     request.provenance,

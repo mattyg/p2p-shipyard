@@ -33,20 +33,17 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
     private lateinit var webView: WebView
     private lateinit var injectHolochainClientEnvJavascript: String
     private val LOG_TAG = "HolochainConsumerPlugin"
-    private var isBinding = false
 
     // IPC Connection to HolochainService using AIDL
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             mService = IHolochainService.Stub.asInterface(service)
             Log.d(LOG_TAG, "IHolochainService connected")
-            isBinding = false
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
             mService = null
             Log.d(LOG_TAG, "IHolochainService disconnected")
-            isBinding = false
         }
     }
 
@@ -66,7 +63,8 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
     /// Is an app with the given app_id installed
     @Command
     fun isAppInstalled(invoke: Invoke) {
-        bindInternal();
+        // Bind to running service
+        this.bindInternal();
 
         val args = invoke.parseArgs(AppIdRequestArgs::class.java)
         val res = this.mService!!.isAppInstalled(args.appId)
@@ -159,12 +157,10 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
 
     /// Connect to already running service
     private fun bindInternal() {
-        if(this.mService == null && this.isBinding == false) {
-            this.isBinding = true
+        if(this.mService != null) return;
 
-            val intent = Intent()
-            intent.setComponent(ComponentName("com.holochainapps.mobile_conductor_admin", "com.plugin.holochainforegroundservice.HolochainService"))
-            activity.bindService(intent, this.mConnection, 8)
-        }
+        val intent = Intent()
+        intent.setComponent(ComponentName("com.holochainapps.mobile_conductor_admin", "com.plugin.holochainforegroundservice.HolochainService"))
+        activity.bindService(intent, this.mConnection, Context.BIND_ABOVE_CLIENT)
     }
 }

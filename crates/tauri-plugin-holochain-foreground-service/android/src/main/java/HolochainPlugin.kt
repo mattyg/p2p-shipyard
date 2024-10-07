@@ -152,7 +152,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun listInstalledApps(invoke: Invoke) {
         val res = this.mService?.listInstalledApps()
-        val obj = JSObject();
+        val obj = JSObject() 
         obj.put("installedApps", res!!.toJSArray())
         invoke.resolve(obj)
     }
@@ -166,7 +166,7 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         // Inject launcher env into web view
         this.injectHolochainClientEnv(args.appId, res!!.port, res!!.token)      
         
-        val obj = JSObject();
+        val obj = JSObject() 
         obj.put("appWebsocketAuth", res!!.toJSObject())
         invoke.resolve(obj)       
     }
@@ -176,9 +176,9 @@ class HolochainPlugin(private val activity: Activity): Plugin(activity) {
         this.webView.evaluateJavascript(this.injectHolochainClientEnvJavascript, null)
 
         // Inject holochain client env
-        val tokenJsArray = appWebsocketToken.toMutableList().toJSArray();
+        val tokenJsArray = appWebsocketToken.toMutableList().toJSArray() 
         this.webView.evaluateJavascript(
-            """injectHolochainClientEnv("${appId}", ${appWebsocketPort}, ${tokenJsArray});""", 
+            """injectHolochainClientEnv("${appId}", ${appWebsocketPort}, ${tokenJsArray}) """, 
             null
         )
     }

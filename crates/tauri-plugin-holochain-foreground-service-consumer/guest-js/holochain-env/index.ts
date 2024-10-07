@@ -4,7 +4,7 @@
 import { encode } from '@msgpack/msgpack';
 import { type CallZomeRequest, type CallZomeRequestSigned } from '@holochain/client';
 
-function injectHolochainClientEnv(appId: String, appWebsocketPort: number, appToken: Uint8Array) {
+function injectHolochainClientEnv(appId: string, appWebsocketPort: number, appToken: Uint8Array) {
   (window as any).__HC_LAUNCHER_ENV__ = {
     APP_INTERFACE_PORT: appWebsocketPort,
     INSTALLED_APP_ID: appId,
