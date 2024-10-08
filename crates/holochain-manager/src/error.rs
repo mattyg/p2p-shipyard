@@ -69,6 +69,9 @@ pub enum Error {
 
     #[error(transparent)]
     UpdateAppError(#[from] UpdateAppError),
+
+    #[error("Error shutting down holochain: {0}")]
+    HolochainShutdownError(String),
 }
 
 impl Serialize for Error {

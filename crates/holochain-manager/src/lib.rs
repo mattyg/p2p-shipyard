@@ -7,10 +7,9 @@ use std::{
 use async_std::sync::Mutex;
 use lair_signer::LairAgentSignerWithProvenance;
 use holochain::{
-    conductor::ConductorHandle,
-    prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName},
+    conductor::ConductorHandle, core::ZomeCallUnsigned, prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName}
 };
-use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId};
+use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, ZomeCall};
 use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
 use tx5_signal_srv::SrvHnd;
 use url2::Url2;
@@ -23,8 +22,9 @@ pub mod filesystem;
 pub mod http_server;
 pub mod lair_signer;
 pub mod launch;
+pub mod utils;
 
-use commands::{install_app, install_web_app, update_app, UpdateAppError};
+use commands::{install_app, install_web_app, sign_zome_call_with_client, update_app, UpdateAppError, ZomeCallUnsignedTauri};
 pub use error::{Error, Result};
 use filesystem::{AppBundleStore, BundleStore, FileSystem};
 
@@ -192,6 +192,66 @@ impl HolochainRuntime {
         Ok(app_info)
     }
 
+    /// Is an app with a given app_id installed on the holochain conductor
+    /// 
+    /// * `app_id` - the app id to check
+    pub async fn is_app_installed(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<bool> {
+        let admin_ws = self.admin_websocket().await?;
+        let apps = admin_ws.list_apps(None).await
+            .map_err(|e| Error::ConductorApiError(e))?;
+        let matching_app = apps.into_iter().find(|app_info| app_info.installed_app_id == app_id);
+
+        Ok(matching_app.is_some())
+    }
+
+    /// Uninstall the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to uninstall
+    pub async fn uninstall_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.uninstall_app(app_id)
+            .await
+            .map_err(|e| Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Enable the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to enable
+    pub async fn enable_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.enable_app(app_id)
+            .await
+            .map_err(|e| Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Disable the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to disable
+    pub async fn disable_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.disable_app(app_id)
+            .await
+            .map_err(|e| Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
     /// Updates the coordinator zomes and UI for the given app with an updated `WebAppBundle`
     ///
     /// * `app_id` - the app to update
@@ -298,6 +358,35 @@ impl HolochainRuntime {
         }
 
         Ok(())
+    }
+
+    /// Shutdown the running conductor
+    pub async fn shutdown(&self) -> crate::Result<()> {
+        self.conductor_handle
+            .shutdown()
+            .await
+            .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?
+            .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?;
+        Ok(())
+    }
+
+    /// Sign Zome Call
+    pub async fn sign_zome_call(
+        &self,
+        zome_call_unsigned: ZomeCallUnsignedTauri,
+    ) -> crate::Result<ZomeCall> {
+        let zome_call_unsigned_converted: ZomeCallUnsigned = zome_call_unsigned.into();
+
+        let signed_zome_call = sign_zome_call_with_client(
+            zome_call_unsigned_converted,
+            &self
+                .conductor_handle
+                .keystore()
+                .lair_client()
+        )
+        .await?;
+
+        Ok(signed_zome_call)
     }
 }
 
