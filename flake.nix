@@ -138,8 +138,8 @@
         ./crates/hc-pilot/default.nix
         ./nix/modules/custom-go-compiler.nix
         ./nix/modules/tauri-cli.nix
-        # inputs.hc-infra.outputs.flakeModules.builders
-        inputs.hc-infra.outputs.flakeModules.dependencies
+        # inputs.hc-infra.outputs.flake.flakeModules.builders
+        inputs.hc-infra.outputs.flake.flakeModules.dependencies
       ];
 
       systems = builtins.attrNames inputs.holonix.devShells;
