@@ -20,7 +20,7 @@ impl HolochainRuntimeFFI {
     #[uniffi::constructor]
     pub async fn launch(passphrase: Vec<u8>, config: HolochainRuntimeFFIConfig) -> Result<Self, HolochainRuntimeFFIError> {
         android_logger::init_once(
-            Config::default().with_max_level(LevelFilter::Trace),
+            Config::default().with_max_level(LevelFilter::Warn),
         );
         debug!("HolochainRuntimeFFI 1");
         
