@@ -240,7 +240,9 @@
         };
 
         packages.tauriHappCargoArtifacts = let
-          rust = inputs.holonix.packages.${system}.rust;
+          overlays = [ (import inputs.rust-overlay) ];
+          rustPkgs = import pkgs.path { inherit system overlays; };
+          rust = rustPkgs.rust-bin.stable."1.78.0".default;
           craneLib = (inputs.crane.mkLib pkgs).overrideToolchain rust;
         in craneLib.callPackage ./nix/holochain-tauri-happ-artifacts.nix {
           inherit craneLib;
@@ -314,7 +316,9 @@
         };
 
         devShells.tauriAndroidDev = let
-          rust = inputs.holonix.packages.${system}.rust.override {
+          overlays = [ (import inputs.rust-overlay) ];
+          rustPkgs = import pkgs.path { inherit system overlays; };
+          rust = rustPkgs.rust-bin.stable."1.78.0".default.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
@@ -344,7 +348,9 @@
           ]);
 
         packages.tauriRust = let
-          rust = inputs.holonix.packages.${system}.rust.override {
+          overlays = [ (import inputs.rust-overlay) ];
+          rustPkgs = import pkgs.path { inherit system overlays; };
+          rust = rustPkgs.rust-bin.stable."1.78.0".default.override {
             extensions = [ "rust-src" ];
           };
           linuxCargo = pkgs.writeShellApplication {
@@ -361,7 +367,9 @@
         in if pkgs.stdenv.isLinux then linuxRust else rust;
 
         packages.holochainTauriRust = let
-          rust = inputs.holonix.packages.${system}.rust.override {
+          overlays = [ (import inputs.rust-overlay) ];
+          rustPkgs = import pkgs.path { inherit system overlays; };
+          rust = rustPkgs.rust-bin.stable."1.78.0".default.override {
             extensions = [ "rust-src" ];
             targets = [ "wasm32-unknown-unknown" ];
           };
@@ -379,7 +387,9 @@
         in if pkgs.stdenv.isLinux then linuxRust else rust;
 
         packages.androidTauriRust = let
-          rust = inputs.holonix.packages.${system}.rust.override {
+          overlays = [ (import inputs.rust-overlay) ];
+          rustPkgs = import pkgs.path { inherit system overlays; };
+          rust = rustPkgs.rust-bin.stable."1.78.0".default.override {
             extensions = [ "rust-src" ];
             targets = [
               "armv7-linux-androideabi"
