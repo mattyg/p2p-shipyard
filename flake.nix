@@ -483,7 +483,7 @@
 
         devShells.default = pkgs.mkShell {
           inputsFrom = [
-            inputs'.hc-infra.devShells.synchronized-pnpm
+            # inputs'.hc-infra.devShells.synchronized-pnpm
             devShells.holochainTauriDev
           ];
         };
