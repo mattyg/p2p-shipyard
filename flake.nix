@@ -11,7 +11,8 @@
     android-nixpkgs.url =
       "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
 
-    hc-infra.url = "github:holochain-open-dev/infrastructure";
+    #hc-infra.url = "github:holochain-open-dev/infrastructure";
+    hc-infra.url = "github:holochain-open-dev/infrastructure?ref=fix/aarch64-darwin-does-not-exist";
     crane.follows = "holonix/crane";
   };
 

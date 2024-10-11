@@ -166,15 +166,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1728573856,
-        "narHash": "sha256-XlnTbS45DKtlHjhc3KT2lqlEn86dxEMcmcHobDn69Zc=",
+        "lastModified": 1728680157,
+        "narHash": "sha256-4rfZbfkRv0/9gnC6flPPA60r8fuXL92l7xA3y3kCBNo=",
         "owner": "holochain-open-dev",
         "repo": "infrastructure",
-        "rev": "e342ffa8d1304205a0f5a339d00923243a2bd309",
+        "rev": "2f79c1526ee43c689927c4ecee59b6ee2155421d",
         "type": "github"
       },
       "original": {
         "owner": "holochain-open-dev",
+        "ref": "fix/aarch64-darwin-does-not-exist",
         "repo": "infrastructure",
         "type": "github"
       }
