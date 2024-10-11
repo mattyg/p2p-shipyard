@@ -145,7 +145,7 @@
 
       #systems = builtins.attrNames inputs.holonix.devShells;
       
-      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" ];
+      systems = [ "x86_64-linux" ];
 
       perSystem = { inputs', config, self', pkgs, system, lib, ... }: rec {
         dependencies.tauriApp = let
