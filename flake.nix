@@ -152,7 +152,7 @@
 
           # TODO: remove this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
           # and this other bug as well: https://github.com/tauri-apps/tauri/issues/9304
-          pkgs = import inputs.webkitgtknixpkgs { inherit system; };
+          # pkgs = import inputs.webkitgtknixpkgs { inherit system; };
 
           customGlib =
             pkgs.runCommandLocal "custom-glib" { src = pkgs.glib.dev; } ''
