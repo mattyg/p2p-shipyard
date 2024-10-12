@@ -140,19 +140,16 @@
         ./nix/modules/custom-go-compiler.nix
         ./nix/modules/tauri-cli.nix
         # inputs.hc-infra.outputs.builders
-        inputs.hc-infra.outputs.dependencies
+        # inputs.hc-infra.outputs.dependencies
       ];
 
-      #systems = builtins.attrNames inputs.holonix.devShells;
-      
-      systems = [ "x86_64-linux" ];
-
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem = { inputs', config, self', pkgs, system, lib, ... }: rec {
         dependencies.tauriApp = let
 
           # TODO: remove this line when this bug is fixed: https://github.com/tauri-apps/tauri/issues/10626
           # and this other bug as well: https://github.com/tauri-apps/tauri/issues/9304
-          # pkgs = import inputs.webkitgtknixpkgs { inherit system; };
+          pkgs = import inputs.webkitgtknixpkgs { inherit system; };
 
           customGlib =
             pkgs.runCommandLocal "custom-glib" { src = pkgs.glib.dev; } ''
