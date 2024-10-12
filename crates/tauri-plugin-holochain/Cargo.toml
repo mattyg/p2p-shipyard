@@ -14,16 +14,16 @@ tauri = { version = "2", features = [
 ] }
 
 # Holochain dependencies
-mr_bundle = "0.3.2"
-holochain = "0.3.2"
-holochain_types = "0.3.2"
-holochain_keystore = "0.3.2"
-holochain_conductor_api = "0.3.2"
+mr_bundle = "0.3.3"
+holochain = "0.3.3"
+holochain_types = "0.3.3"
+holochain_keystore = "0.3.3"
+holochain_conductor_api = "0.3.3"
 
 sqlformat = "=0.2.3"
 
-kitsune_p2p_mdns = "0.3.2"
-kitsune_p2p_types = "0.3.2"
+kitsune_p2p_mdns = "0.3.3"
+kitsune_p2p_types = "0.3.3"
 
 tx5-signal-srv = "0.0.14-alpha"
 tx5-signal = "0.0.14-alpha"

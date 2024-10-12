@@ -10,7 +10,7 @@ tauri = "2"
 tauri-plugin-log = "2"
 
 tauri-plugin-holochain = { path = "../tauri-plugin-holochain" }
-holochain_types = "0.3.2"
+holochain_types = "0.3.3"
 holochain_client = "0.5.1"
 
 clap = { version = "4.5.4", features = ["derive"] }

@@ -496,8 +496,8 @@ members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*", "src-tauri"
 resolver = "2"
 
 [workspace.dependencies]
-hdi = "0.4.2"
-hdk = "0.3.2"
+hdi = "0.4.3"
+hdk = "0.3.3"
 serde = "1.0"
 
 [workspace.dependencies.posts]
@@ -520,8 +520,8 @@ resolver = "2"
 members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*"]
 
 [workspace.dependencies]
-hdi = "0.4.2"
-hdk = "0.3.2"
+hdi = "0.4.3"
+hdk = "0.3.3"
 serde = "1.0"
 
 [workspace.dependencies.posts]
