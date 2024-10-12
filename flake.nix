@@ -140,7 +140,7 @@
         ./nix/modules/custom-go-compiler.nix
         ./nix/modules/tauri-cli.nix
         # inputs.hc-infra.outputs.builders
-        # inputs.hc-infra.outputs.dependencies
+        inputs.hc-infra.outputs.dependencies
       ];
 
       systems = builtins.attrNames inputs.holonix.devShells;
