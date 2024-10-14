@@ -10,10 +10,7 @@ use http_server::{pong_iframe, read_asset};
 use lair_signer::LairAgentSignerWithProvenance;
 use launch::launch_holochain_runtime;
 use tauri::{
-    http::response,
-    ipc::CapabilityBuilder,
-    plugin::{Builder, TauriPlugin},
-    AppHandle, Emitter, Manager, Runtime, WebviewUrl, WebviewWindowBuilder,
+    http::response, ipc::CapabilityBuilder, plugin::{Builder, TauriPlugin}, AppHandle, Emitter, Manager, RunEvent, Runtime, WebviewUrl, WebviewWindowBuilder
 };
 
 use holochain::{
@@ -33,10 +30,12 @@ mod filesystem;
 mod http_server;
 mod lair_signer;
 mod launch;
+mod hc_live_file;
 
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
 use filesystem::{AppBundleStore, BundleStore, FileSystem};
+use hc_live_file::*;
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
 
@@ -632,6 +631,20 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
                 r
             })
         })
+    .on_event(|app, event| {
+        match event {
+            RunEvent::Exit => {
+                if tauri::is_dev() {
+                    if let Ok(h) = app.holochain() {
+                        if let Err(err) = delete_hc_live_file(h.holochain_runtime.admin_port) {
+                            log::error!("Failed to delete hc live file: {err:?}");
+                        }
+                    }
+                }
+            }
+            _ =>{ }
+        }
+    })
 }
 
 /// Initializes the plugin, waiting for holochain to launch before finishing the app's setup.
@@ -683,6 +696,17 @@ async fn launch_and_setup_holochain<R: Runtime>(
     // log::info!("Starting http server at port {http_server_port:?}");
 
     let holochain_runtime = launch_holochain_runtime(passphrase, config).await?;
+
+    if tauri::is_dev() {
+        create_hc_live_file(holochain_runtime.admin_port)?;
+
+        ctrlc::set_handler(move || {
+            if let Err(err) = delete_hc_live_file(holochain_runtime.admin_port) {
+                log::error!("Failed to delete hc live file: {err:?}");
+            }
+            std::process::exit(0);
+        })?;
+    }    
 
     let p = HolochainPlugin::<R> {
         app_handle: app_handle.clone(),
