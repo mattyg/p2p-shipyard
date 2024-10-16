@@ -3,7 +3,7 @@ set -e
 
 DIR=$(pwd)
 
-nix shell --refresh github:holochain/scaffolding/develop-0.3#hc-scaffold --command bash -c "
+nix shell --refresh github:holochain/holonix/main-0.3#hc-scaffold --command bash -c "
 cd /tmp
 rm -rf forum-scaffold-tauri-happ
 
