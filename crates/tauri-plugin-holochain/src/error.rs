@@ -35,6 +35,9 @@ pub enum Error {
     #[error(transparent)]
     FileSystemError(#[from] FileSystemError),
 
+    #[error(transparent)]
+    CtrclError(#[from] ctrlc::Error),
+
     #[error("JSON serialization error: {0}")]
     SerdeJsonError(#[from] serde_json::Error),
 

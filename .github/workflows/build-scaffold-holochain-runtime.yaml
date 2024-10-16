@@ -11,7 +11,7 @@ jobs:
   build-scaffold-holochain-runtime:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-13]
 
     runs-on: ${{ matrix.os }}
 
@@ -23,23 +23,25 @@ jobs:
         uses: ./.github/actions/extend-space
 
       - name: Install nix
-        uses: cachix/install-nix-action@v25
+        uses: cachix/install-nix-action@v27
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-24.05
 
-      - uses: cachix/cachix-action@v14
+      - uses: cachix/cachix-action@v15
         with:
           name: holochain-ci
 
-      - uses: cachix/cachix-action@v14
+      - uses: cachix/cachix-action@v15
         with:
           name: holochain-open-dev
 
-      - uses: cachix/cachix-action@v14
+      - uses: cachix/cachix-action@v15
         with:
           name: darksoil-studio
 
       - name: Test scaffold-holochain-runtime
+        if: ${{ matrix.os == 'ubuntu-latest' }} # in macos-latest, this fails with "no space left on device" error 
         run: |
           cargo test -p scaffold-holochain-runtime
           sh ./crates/scaffold-holochain-runtime/run_test.sh
@@ -49,8 +51,8 @@ jobs:
         env:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
-          cachix watch-exec darksoil-studio -- nix build --accept-flake-config -L .#scaffold-holochain-runtime
-          cachix push darksoil-studio $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
+          cachix watch-exec darksoil-studio -- nix build --no-update-lock-file --accept-flake-config -L .#scaffold-holochain-runtime
+          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#scaffold-holochain-runtime | nix run nixpkgs#jq -- -r 'keys[0]')
 
       - name: Pin scaffold-holochain-runtime
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
@@ -58,6 +60,6 @@ jobs:
           CACHIX_AUTH_TOKEN: "${{ secrets.DARKSOIL_CACHIX_AUTH_TOKEN }}"
         run: |
           cachix watch-exec darksoil-studio -- nix build --accept-flake-config -L .#scaffold-holochain-runtime
-          cachix push darksoil-studio $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
-          cachix pin darksoil-studio scaffold-holochain-runtime $(nix path-info --accept-flake-config .#scaffold-holochain-runtime)
+          cachix push darksoil-studio $(nix path-info --json --accept-flake-config --no-warn-dirty .#scaffold-holochain-runtime | nix run nixpkgs#jq -- -r 'keys[0]')
+          cachix pin darksoil-studio scaffold-holochain-runtime $(nix path-info --json --accept-flake-config --no-warn-dirty .#scaffold-holochain-runtime | nix run nixpkgs#jq -- -r 'keys[0]')
 

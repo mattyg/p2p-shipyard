@@ -150,7 +150,7 @@ pub fn scaffold_tauri_happ(
             let package_json_content = add_npm_dev_dependency_to_package(
                 &(root_package_json_path.clone(), package_json_content),
                 &String::from("@tauri-apps/cli"),
-                &String::from("^2.0.0-beta.20"),
+                &String::from("^2.0.0-rc"),
             )?;
             let package_json_content = add_npm_dev_dependency_to_package(
                 &(root_package_json_path.clone(), package_json_content),
@@ -235,15 +235,10 @@ pub fn scaffold_tauri_happ(
         &mut file_tree,
         PathBuf::from("ui/package.json").as_path(),
         |ui_package_json| {
-            let ui_package_json = add_npm_script_to_package(
+            add_npm_script_to_package(
                 &(root_package_json_path.clone(), ui_package_json),
                 &String::from("start"),
                 &String::from("vite --clearScreen false"),
-            )?;
-            add_npm_dev_dependency_to_package(
-                &(root_package_json_path.clone(), ui_package_json),
-                &String::from("internal-ip"),
-                &String::from("^7.0.0"),
             )
     })?;
 
@@ -252,6 +247,8 @@ pub fn scaffold_tauri_happ(
         &mut file_tree,
         PathBuf::from("flake.nix").as_path(),
         |flake_nix_content| {
+            let flake_nix_content = 
+                flake_nix_content.replace("            rust # For Rust development, with the WASM target included for zome builds","" );
 
             // - Add the `p2p-shipyard` as input to the flake
             let flake_nix_content = add_flake_input_to_flake_file(
@@ -279,12 +276,14 @@ pub fn scaffold_tauri_happ(
             let android_dev_shell = flake_nix_content[open..close]
                 .to_string()
                 .clone()
+                .replace("holonix.devShells.default", "holonix.devShells.def2ault")
                 .replace("default", "androidDev")
                 .replace(
                     "inputsFrom = [",
                     r#"inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev"#,
-                );
+                )
+                .replace("holonix.devShells.def2ault", "holonix.devShells.default");
 
             // - Add the holochainTauriDev to the default devShell
             let default_dev_shell = flake_nix_content[open..close].to_string().replace(
@@ -357,6 +356,7 @@ pub fn get_scope_open_and_close_char_indexes(
 
 #[cfg(test)]
 mod tests {
+    use pretty_assertions::assert_eq;
     use super::*;
     use build_fs_tree::{dir, file};
     use file_tree_utils::file_content;
@@ -395,7 +395,7 @@ mod tests {
     "tauri": "tauri"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.0.0-beta.20",
+    "@tauri-apps/cli": "^2.0.0-rc",
     "concurrently": "^8.2.2",
     "concurrently-repeat": "^0.0.1",
     "internal-ip-cli": "^2.0.0",
@@ -411,19 +411,13 @@ mod tests {
   
   inputs = {
     p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
-    nixpkgs.follows = "holochain/nixpkgs";
-
-    versions.url = "github:holochain/holochain?dir=versions/weekly";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
+    holonix.url = "github:holochain/holonix/main-0.3";
+    nixpkgs.follows = "holonix/nixpkgs";
     hc-infra.url = "github:holochain-open-dev/utils";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
       specialArgs = {
@@ -432,7 +426,7 @@ mod tests {
     }
     {
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
         , config
@@ -446,14 +440,14 @@ mod tests {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriDev 
               inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.holonix.devShells.default
             ];
           };
           devShells.androidDev = pkgs.mkShell {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev 
               inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.holonix.devShells.default
             ];
           };
         };
@@ -468,21 +462,22 @@ mod tests {
 
         assert_eq!(
             file_content(&repo, PathBuf::from("ui/vite.config.ts").as_path()).unwrap(),
-            r#"import { internalIpV4Sync } from "internal-ip";
-import { defineConfig } from "vite";
+            r#"import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: "0.0.0.0",
     port: 1420,
     strictPort: true,
-    hmr: {
-      protocol: "ws",
-      host: internalIpV4Sync(),
-      port: 1421,
-    }
+    host: process.env.TAURI_DEV_HOST || false,
+    hmr: process.env.TAURI_DEV_HOST
+      ? {
+          protocol: "ws",
+          host: process.env.TAURI_DEV_HOST,
+          port: 1430,
+        }
+      : undefined,
   },
   plugins: [svelte()],
 });
@@ -501,8 +496,8 @@ members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*", "src-tauri"
 resolver = "2"
 
 [workspace.dependencies]
-hdi = "0.4.1"
-hdk = "0.3.1"
+hdi = "0.4.2"
+hdk = "0.3.2"
 serde = "1.0"
 
 [workspace.dependencies.posts]
@@ -525,8 +520,8 @@ resolver = "2"
 members = ["dnas/*/zomes/coordinator/*", "dnas/*/zomes/integrity/*"]
 
 [workspace.dependencies]
-hdi = "0.4.1"
-hdk = "0.3.1"
+hdi = "0.4.2"
+hdk = "0.3.2"
 serde = "1.0"
 
 [workspace.dependencies.posts]
@@ -593,19 +588,13 @@ roles:
   description = "Template for Holochain app development";
   
   inputs = {
-    nixpkgs.follows = "holochain/nixpkgs";
-
-    versions.url = "github:holochain/holochain?dir=versions/weekly";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
+    holonix.url = "github:holochain/holonix/main-0.3";
+    nixpkgs.follows = "holonix/nixpkgs";
     hc-infra.url = "github:holochain-open-dev/utils";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
       specialArgs = {
@@ -614,7 +603,7 @@ roles:
     }
     {
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
         , config
@@ -627,7 +616,7 @@ roles:
           devShells.default = pkgs.mkShell {
             inputsFrom = [ 
               inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.holonix.devShells.default
             ];
           };
         };

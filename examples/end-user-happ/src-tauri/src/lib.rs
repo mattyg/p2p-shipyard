@@ -2,8 +2,7 @@ use holochain_types::prelude::AppBundle;
 use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
-use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig};
-use url2::Url2;
+use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConfig};
 use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
@@ -30,33 +29,15 @@ pub fn vec_to_locked(mut pass_tmp: Vec<u8>) -> std::io::Result<BufRead> {
     }
 }
 
-fn internal_ip() -> String {
-    std::option_env!("INTERNAL_IP")
-        .expect("Environment variable INTERNAL_IP was not set")
-        .to_string()
-}
-
-fn bootstrap_url() -> Url2 {
+fn wan_network_config() -> Option<WANNetworkConfig> {
     // Resolved at compile time to be able to point to local services
     if tauri::is_dev() {
-        let internal_ip = internal_ip();
-        let port = std::option_env!("BOOTSTRAP_PORT")
-            .expect("Environment variable BOOTSTRAP_PORT was not set");
-        url2::url2!("http://{internal_ip}:{port}")
+        None
     } else {
-        url2::url2!("https://bootstrap.holo.host")
-    }
-}
-
-fn signal_url() -> Url2 {
-    // Resolved at compile time to be able to point to local services
-    if tauri::is_dev() {
-        let internal_ip = internal_ip();
-        let signal_port =
-            std::option_env!("SIGNAL_PORT").expect("Environment variable INTERNAL_IP was not set");
-        url2::url2!("ws://{internal_ip}:{signal_port}")
-    } else {
-        url2::url2!("wss://signal.holo.host")
+        Some(WANNetworkConfig {
+            signal_url: url2::url2!("wss://signal.holo.host"),
+            bootstrap_url: url2::url2!("https://bootstrap.holo.host")
+        })
     }
 }
 
@@ -75,7 +56,7 @@ fn holochain_dir() -> PathBuf {
         #[cfg(not(target_os = "android"))]
         {
             let tmp_dir =
-                tempdir::TempDir::new("example-forum").expect("Could not create temporary directory");
+                tempdir::TempDir::new("forum").expect("Could not create temporary directory");
 
             // Convert `tmp_dir` into a `Path`, destroying the `TempDir`
             // without deleting the directory.
@@ -97,12 +78,6 @@ fn holochain_dir() -> PathBuf {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let mut context = tauri::generate_context!();
-    if tauri::is_dev() {
-        let identifier = context.config().identifier.clone();
-        context.config_mut().identifier = format!("{}{}", identifier, uuid::Uuid::new_v4());
-    }
-    
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -111,15 +86,11 @@ pub fn run() {
         )
         .plugin(tauri_plugin_holochain::async_init(
             vec_to_locked(vec![]).expect("Can't build passphrase"),
-            HolochainPluginConfig {
-                signal_url: signal_url(),
-                bootstrap_url: bootstrap_url(),
-                holochain_dir: holochain_dir(),
-            },
+            HolochainPluginConfig::new(holochain_dir(), wan_network_config())
         ))
         .setup(|app| {
             let handle = app.handle().clone();
-            app.handle().listen("holochain-setup-completed", move |_event| {
+            app.handle().listen("holochain://setup-completed", move |_event| {
                 let handle = handle.clone();
                 tauri::async_runtime::spawn(async move {
                     setup(handle.clone()).await.expect("Failed to setup");
@@ -136,7 +107,7 @@ pub fn run() {
 
             Ok(())
         })
-        .run(context)
+        .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 

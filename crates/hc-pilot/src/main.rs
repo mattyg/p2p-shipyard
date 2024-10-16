@@ -9,7 +9,7 @@ use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tauri::{AppHandle, Context, Wry};
-use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig};
+use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConfig};
 use url2::url2;
 
 #[derive(Parser, Debug)]
@@ -26,6 +26,10 @@ struct Args {
     #[clap(long)]
     pub ui_port: String,
 
+    /// The admin port to bind the admin interface to
+    #[clap(long)]
+    pub admin_port: Option<u16>,
+
     /// The bundle identifier for the Tauri app
     #[clap(long)]
     pub agent_key: Option<String>,
@@ -36,11 +40,11 @@ struct Args {
 
     /// The bundle identifier for the Tauri app
     #[clap(long)]
-    pub signal_url: String,
+    pub signal_url: Option<String>,
 
     /// The bundle identifier for the Tauri app
     #[clap(long)]
-    pub bootstrap_url: String,
+    pub bootstrap_url: Option<String>,
 
     /// The bundle identifier for the Tauri app
     #[clap(long)]
@@ -83,6 +87,20 @@ fn main() {
     let mut context: Context<Wry> = tauri::generate_context!();
     context.config_mut().build.dev_url = Some(dev_url.into());
 
+    let wan_network_config = match (args.signal_url, args.bootstrap_url) {
+        (Some(signal_url), Some(bootstrap_url)) => Some(WANNetworkConfig {
+            signal_url: url2!("{}", signal_url),
+            bootstrap_url: url2!("{}", bootstrap_url),
+        }),
+        (None, None) => None,
+        (Some(_), None) => {
+            panic!("Invalid arguments: --signal-url was provided without --bootstrap-url")
+        }
+        (None, Some(_)) => {
+            panic!("Invalid arguments: --bootstrap-url was provided without --signal-url")
+        }
+    };
+
     tauri::Builder::default()
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -92,9 +110,9 @@ fn main() {
         .plugin(tauri_plugin_holochain::init(
             vec_to_locked(password.as_bytes().to_vec()).expect("Can't build passphrase"),
             HolochainPluginConfig {
-                signal_url: url2!("{}", args.signal_url),
-                bootstrap_url: url2!("{}", args.bootstrap_url),
+                wan_network_config,
                 holochain_dir: conductor_dir,
+                admin_port: args.admin_port,
             },
         ))
         .setup(|app| {

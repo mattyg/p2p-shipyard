@@ -1,5 +1,9 @@
+## Default Permission
 
-### Permission Table 
+Default permissions for the plugin
+
+
+## Permission Table
 
 <table>
 <tr>

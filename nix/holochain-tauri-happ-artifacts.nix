@@ -1,15 +1,15 @@
-{ craneLib, buildInputs, nativeBuildInputs, debug ? false }:
+{ craneLib, buildInputs, nativeBuildInputs }:
 let
-  src = craneLib.cleanCargoSource (craneLib.path ./reference-tauri-happ);
+  src = craneLib.cleanCargoSource (craneLib.path ./..);
   commonArgs = {
     inherit src buildInputs nativeBuildInputs;
     CARGO_PROFILE = "release";
 
     doCheck = false;
-    cargoExtraArgs = "--workspace --tests";
+    cargoExtraArgs = "--tests -p reference-tauri-happ";
   };
   cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
     pname = "tauri-happ";
-    version = "for-holochain-0.3.1";
+    version = "for-holochain-0.3.2";
   });
 in cargoArtifacts

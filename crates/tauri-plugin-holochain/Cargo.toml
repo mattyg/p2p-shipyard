@@ -8,31 +8,34 @@ rust-version = "1.75"
 links = "tauri-plugin-holochain"
 
 [dependencies]
-tauri = { version = "2.0.0-beta.22", features = [
+tauri = { version = "2.0.0", features = [
   "devtools",
   "native-tls-vendored",
 ] }
 
 # Holochain dependencies
-mr_bundle = "0.3.1"
-holochain = "0.3.1"
-holochain_types = "0.3.1"
-holochain_keystore = "0.3.1"
-holochain_conductor_api = "0.3.1"
+mr_bundle = "0.3.2"
+holochain = "0.3.2"
+holochain_types = "0.3.2"
+holochain_keystore = "0.3.2"
+holochain_conductor_api = "0.3.2"
 
-kitsune_p2p_mdns = "0.3.1"
-kitsune_p2p_types = "0.3.1"
+sqlformat = "=0.2.3"
 
-tx5-signal-srv = "0.0.9-alpha"
-tx5-signal = "0.0.9-alpha"
+kitsune_p2p_mdns = "0.3.2"
+kitsune_p2p_types = "0.3.2"
+
+tx5-signal-srv = "0.0.14-alpha"
+tx5-signal = "0.0.14-alpha"
 
 # Lair dependencies
 hc_seed_bundle = "0.2"
-lair_keystore = "0.4.0"
-lair_keystore_api = "0.4.0"
+
+lair_keystore = "0.4.5"
+lair_keystore_api = "0.4.5"
 
 # Holochain client
-holochain_client = "0.5"
+holochain_client = "0.5.1"
 
 local-ip-address = "0.6"
 serde_json = "1"
@@ -60,6 +63,14 @@ one_err = "0"
 base64 = "0.22"
 anyhow = "1"
 async-trait = "0.1"
+ctrlc = "3.4"
 
 [build-dependencies]
-tauri-plugin = { version = "2.0.0-beta", features = ["build"] }
+tauri-plugin = { version = "2.0.0", features = ["build"] }
+
+[features]
+default = ["gossip_arc_normal"]
+
+gossip_arc_empty = []
+gossip_arc_full = []
+gossip_arc_normal = []

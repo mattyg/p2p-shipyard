@@ -1,4 +1,4 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/*", "nix/reference-tauri-happ"]
 resolver = "2"
-exclude = ["examples/end-user-happ", "examples/holochain-runtime", "nix/reference-tauri-happ"]
+exclude = [ "examples/end-user-happ", "examples/holochain-runtime" ]

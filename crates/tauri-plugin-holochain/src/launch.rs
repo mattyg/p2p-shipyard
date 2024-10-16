@@ -18,12 +18,19 @@ mod mdns;
 mod signal;
 use mdns::spawn_mdns_bootstrap;
 
+#[cfg(feature = "gossip_arc_empty")]
 fn override_gossip_arc_clamping() -> Option<String> {
-    if cfg!(mobile) {
-        Some(String::from("empty"))
-    } else {
-        None
-    }
+    Some(String::from("empty"))
+}
+
+#[cfg(feature = "gossip_arc_full")]
+fn override_gossip_arc_clamping() -> Option<String> {
+    Some(String::from("full"))
+}
+
+#[cfg(feature = "gossip_arc_normal")]
+fn override_gossip_arc_clamping() -> Option<String> {
+    None
 }
 
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);
@@ -40,26 +47,41 @@ pub async fn launch_holochain_runtime(
     // }
 
     let filesystem = FileSystem::new(config.holochain_dir).await?;
-    let admin_port = portpicker::pick_unused_port().expect("No ports free");
+    let admin_port = if let Some(admin_port) = config.admin_port {
+        admin_port 
+    } else { 
+        portpicker::pick_unused_port().expect("No ports free")
+    };
 
-    let mut signal_urls = vec![config.signal_url.clone()];
+    let mut signal_urls = vec![];
+    let run_local_signal_server = if let Some(network_config) = &config.wan_network_config {
+        signal_urls.push(network_config.signal_url.clone());
+        if let Err(err) = can_connect_to_signal_server(network_config.signal_url.clone()).await {
+            log::warn!("Error connecting with the WAN signal server: {err:?}");
+            true
+        } else {
+            false
+        }
+    } else {
+        true
+    };
     let mut signal_handle: Option<SrvHnd> = None;
 
-    if let Err(_) = can_connect_to_signal_server(config.signal_url.clone()).await {
+    if run_local_signal_server {
         let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
         let port = portpicker::pick_unused_port().expect("No ports free");
         signal_handle = Some(run_local_signal_service(my_local_ip.to_string(), port).await?);
 
         let local_signal_url = url2!("ws://{my_local_ip}:{port}");
 
-        signal_urls = vec![local_signal_url.clone(), config.signal_url];
+        signal_urls.insert(0, local_signal_url.clone());
     }
 
     let config = crate::config::conductor_config(
         &filesystem,
         admin_port,
         filesystem.keystore_dir().into(),
-        config.bootstrap_url,
+        config.wan_network_config.map(|n| n.bootstrap_url),
         signal_urls,
         override_gossip_arc_clamping(),
     );
@@ -209,3 +231,4 @@ pub async fn wait_until_admin_ws_is_available(admin_port: u16) -> crate::Result<
 
 //     Ok(Arc::new(config))
 // }
+
