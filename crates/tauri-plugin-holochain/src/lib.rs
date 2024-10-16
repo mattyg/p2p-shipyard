@@ -697,6 +697,7 @@ async fn launch_and_setup_holochain<R: Runtime>(
 
     let holochain_runtime = launch_holochain_runtime(passphrase, config).await?;
 
+    #[cfg(desktop)]
     if tauri::is_dev() {
         create_hc_live_file(holochain_runtime.admin_port)?;
 
