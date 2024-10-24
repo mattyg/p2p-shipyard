@@ -382,7 +382,7 @@ mod tests {
     "start": "AGENTS=2 npm run network",
     "network": "npm run build:happ && concurrently -k \"UI_PORT=1420 npm run -w package1 start\" \"npm run launch\"",
     "network:android": "npm run build:happ && concurrently -k \"UI_PORT=1420 npm run -w package1 start\" \"npm run tauri dev\" \"npm run tauri android dev\"",
-    "build:zomes": "CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude myhapp",
+    "build:zomes": "CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude myhapp-tauri",
     "launch": "concurrently-repeat \"npm run tauri dev --no-watch\" $AGENTS",
     "tauri": "tauri"
   },
