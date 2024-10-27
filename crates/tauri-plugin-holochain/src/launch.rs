@@ -10,7 +10,7 @@ use holochain_client::AdminWebsocket;
 
 use crate::{
     filesystem::FileSystem,
-    launch::signal::{can_connect_to_signal_server, run_local_signal_service},
+    launch::signal::run_local_signal_service,
     HolochainPluginConfig, HolochainRuntime,
 };
 
