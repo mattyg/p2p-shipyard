@@ -59,17 +59,6 @@ pub async fn launch_holochain_runtime(
         portpicker::pick_unused_port().expect("No ports free")
     };
 
-    let wan_network_config = if let Some(network_config) = config.wan_network_config {
-        if let Err(err) = can_connect_to_signal_server(network_config.signal_url.clone()).await {
-            log::error!("Error connecting to the WAN signal server: {err:?}");
-            None
-        } else {
-            Some(network_config)
-        }
-    } else {
-        None
-    };
-
     // Run local signal server
     let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
     let port = portpicker::pick_unused_port().expect("No ports free");
@@ -81,7 +70,7 @@ pub async fn launch_holochain_runtime(
         &filesystem,
         admin_port,
         filesystem.keystore_dir().into(),
-        wan_network_config,
+        config.wan_network_config,
         local_signal_url,
         override_gossip_arc_clamping(),
     );
