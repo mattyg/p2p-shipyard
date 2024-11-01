@@ -521,7 +521,7 @@ pub struct WANNetworkConfig {
 
 pub enum GossipArcClamp {
     Full,
-    Empty
+    Empty,
 }
 
 pub struct HolochainPluginConfig {
@@ -534,17 +534,21 @@ pub struct HolochainPluginConfig {
     pub admin_port: Option<u16>,
     /// Force the conductor to always have a "full", or "empty" Gossip Arc for all DNAs.
     /// The Gossip Arc is the subsection of the DHT that you aim to store and serve to others.
-    /// 
+    ///
     /// A Full Gossip Arc means that your peer will always try to hold the full DHT state,
     /// and serve it to others.
     ///
     /// An Empty Gossip Arc means that your peer will always go to the network to fetch DHT data,
     /// unless they authored it.
-    pub gossip_arc_clamp: Option<GossipArcClamp>
+    pub gossip_arc_clamp: Option<GossipArcClamp>,
 }
 
 impl HolochainPluginConfig {
-    pub fn new(holochain_dir: PathBuf, wan_network_config: Option<WANNetworkConfig>, gossip_arc_clamp: Option<GossipArcClamp>) -> Self {
+    pub fn new(
+        holochain_dir: PathBuf,
+        wan_network_config: Option<WANNetworkConfig>,
+        gossip_arc_clamp: Option<GossipArcClamp>,
+    ) -> Self {
         HolochainPluginConfig {
             holochain_dir,
             wan_network_config,

@@ -11,7 +11,7 @@ use holochain_client::AdminWebsocket;
 use crate::{
     filesystem::FileSystem,
     launch::signal::{can_connect_to_signal_server, run_local_signal_service},
-    HolochainPluginConfig, HolochainRuntime, GossipArcClamp
+    GossipArcClamp, HolochainPluginConfig, HolochainRuntime,
 };
 
 mod mdns;
@@ -19,7 +19,6 @@ mod signal;
 use mdns::spawn_mdns_bootstrap;
 
 pub const DEVICE_SEED_LAIR_KEYSTORE_TAG: &'static str = "DEVICE_SEED";
-
 
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);
 
@@ -67,8 +66,8 @@ pub async fn launch_holochain_runtime(
         local_signal_url,
         config.gossip_arc_clamp.map(|n| match n {
             GossipArcClamp::Full => "full".to_string(),
-            GossipArcClamp::Empty => "empty".to_string()
-        })
+            GossipArcClamp::Empty => "empty".to_string(),
+        }),
     );
 
     let keystore =
