@@ -11,27 +11,12 @@ use holochain_client::AdminWebsocket;
 use crate::{
     filesystem::FileSystem,
     launch::signal::{can_connect_to_signal_server, run_local_signal_service},
-    HolochainPluginConfig, HolochainRuntime,
+    HolochainPluginConfig, HolochainRuntime, GossipArcClamp
 };
 
 mod mdns;
 mod signal;
 use mdns::spawn_mdns_bootstrap;
-
-#[cfg(feature = "gossip_arc_empty")]
-fn override_gossip_arc_clamping() -> Option<String> {
-    Some(String::from("empty"))
-}
-
-#[cfg(feature = "gossip_arc_full")]
-fn override_gossip_arc_clamping() -> Option<String> {
-    Some(String::from("full"))
-}
-
-#[cfg(feature = "gossip_arc_normal")]
-fn override_gossip_arc_clamping() -> Option<String> {
-    None
-}
 
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);
 
@@ -83,7 +68,10 @@ pub async fn launch_holochain_runtime(
         filesystem.keystore_dir().into(),
         config.wan_network_config.map(|n| n.bootstrap_url),
         signal_urls,
-        override_gossip_arc_clamping(),
+        config.gossip_arc_clamp.map(|n| match n {
+            GossipArcClamp::Full => "full".to_string(),
+            GossipArcClamp::Empty => "empty".to_string()
+        })
     );
 
     let conductor_handle = Conductor::builder()
