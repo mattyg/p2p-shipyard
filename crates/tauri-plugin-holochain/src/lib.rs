@@ -29,7 +29,6 @@ use url2::Url2;
 mod commands;
 mod config;
 mod error;
-mod features;
 mod filesystem;
 mod http_server;
 mod lair_signer;
@@ -520,6 +519,11 @@ pub struct WANNetworkConfig {
     pub ice_servers_urls: Vec<Url2>,
 }
 
+pub enum GossipArcClamp {
+    Full,
+    Empty
+}
+
 pub struct HolochainPluginConfig {
     /// The directory where the holochain files and databases will be stored in
     pub holochain_dir: PathBuf,
@@ -528,14 +532,24 @@ pub struct HolochainPluginConfig {
     pub wan_network_config: Option<WANNetworkConfig>,
     /// Force the conductor to run at this admin port
     pub admin_port: Option<u16>,
+    /// Force the conductor to always have a "full", or "empty" Gossip Arc for all DNAs.
+    /// The Gossip Arc is the subsection of the DHT that you aim to store and serve to others.
+    /// 
+    /// A Full Gossip Arc means that your peer will always try to hold the full DHT state,
+    /// and serve it to others.
+    ///
+    /// An Empty Gossip Arc means that your peer will always go to the network to fetch DHT data,
+    /// unless they authored it.
+    pub gossip_arc_clamp: Option<GossipArcClamp>
 }
 
 impl HolochainPluginConfig {
-    pub fn new(holochain_dir: PathBuf, wan_network_config: Option<WANNetworkConfig>) -> Self {
+    pub fn new(holochain_dir: PathBuf, wan_network_config: Option<WANNetworkConfig>, gossip_arc_clamp: Option<GossipArcClamp>) -> Self {
         HolochainPluginConfig {
             holochain_dir,
             wan_network_config,
             admin_port: None,
+            gossip_arc_clamp,
         }
     }
 
