@@ -11,7 +11,7 @@ use holochain_client::AdminWebsocket;
 use crate::{
     filesystem::FileSystem,
     launch::signal::{can_connect_to_signal_server, run_local_signal_service},
-    HolochainPluginConfig, HolochainRuntime, GossipArcClamp
+    GossipArcClamp, HolochainPluginConfig, HolochainRuntime,
 };
 
 mod mdns;
@@ -33,8 +33,8 @@ pub async fn launch_holochain_runtime(
 
     let filesystem = FileSystem::new(config.holochain_dir).await?;
     let admin_port = if let Some(admin_port) = config.admin_port {
-        admin_port 
-    } else { 
+        admin_port
+    } else {
         portpicker::pick_unused_port().expect("No ports free")
     };
 
@@ -70,8 +70,8 @@ pub async fn launch_holochain_runtime(
         signal_urls,
         config.gossip_arc_clamp.map(|n| match n {
             GossipArcClamp::Full => "full".to_string(),
-            GossipArcClamp::Empty => "empty".to_string()
-        })
+            GossipArcClamp::Empty => "empty".to_string(),
+        }),
     );
 
     let conductor_handle = Conductor::builder()
@@ -219,4 +219,3 @@ pub async fn wait_until_admin_ws_is_available(admin_port: u16) -> crate::Result<
 
 //     Ok(Arc::new(config))
 // }
-
