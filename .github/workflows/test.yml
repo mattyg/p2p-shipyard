@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - next
+      - main-0.4
   pull_request:
     branches:
       - main
