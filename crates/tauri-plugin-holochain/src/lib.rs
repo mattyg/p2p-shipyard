@@ -10,7 +10,10 @@ use http_server::{pong_iframe, read_asset};
 use lair_signer::LairAgentSignerWithProvenance;
 use launch::launch_holochain_runtime;
 use tauri::{
-    http::response, ipc::CapabilityBuilder, plugin::{Builder, TauriPlugin}, AppHandle, Emitter, Manager, RunEvent, Runtime, WebviewUrl, WebviewWindowBuilder
+    http::response,
+    ipc::CapabilityBuilder,
+    plugin::{Builder, TauriPlugin},
+    AppHandle, Emitter, Manager, RunEvent, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
 
 use holochain::{
@@ -25,12 +28,11 @@ use url2::Url2;
 mod commands;
 mod config;
 mod error;
-mod features;
 mod filesystem;
+mod hc_live_file;
 mod http_server;
 mod lair_signer;
 mod launch;
-mod hc_live_file;
 
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
@@ -507,6 +509,11 @@ pub struct WANNetworkConfig {
     pub signal_url: Url2,
 }
 
+pub enum GossipArcClamp {
+    Full,
+    Empty,
+}
+
 pub struct HolochainPluginConfig {
     /// The directory where the holochain files and databases will be stored in
     pub holochain_dir: PathBuf,
@@ -515,19 +522,45 @@ pub struct HolochainPluginConfig {
     pub wan_network_config: Option<WANNetworkConfig>,
     /// Force the conductor to run at this admin port
     pub admin_port: Option<u16>,
+    /// Force the conductor to always have a "full", or "empty" Gossip Arc for all DNAs.
+    /// The Gossip Arc is the subsection of the DHT that you aim to store and serve to others.
+    ///
+    /// A Full Gossip Arc means that your peer will always try to hold the full DHT state,
+    /// and serve it to others.
+    ///
+    /// An Empty Gossip Arc means that your peer will always go to the network to fetch DHT data,
+    /// unless they authored it.
+    pub gossip_arc_clamp: Option<GossipArcClamp>,
+}
+
+fn default_gossip_arc_clamp() -> Option<GossipArcClamp> {
+    if cfg!(mobile) {
+        Some(GossipArcClamp::Empty)
+    } else {
+        None
+    }
 }
 
 impl HolochainPluginConfig {
-    pub fn new(holochain_dir: PathBuf, wan_network_config: Option<WANNetworkConfig>) -> Self {
+    pub fn new(
+        holochain_dir: PathBuf,
+        wan_network_config: Option<WANNetworkConfig>,
+    ) -> Self {
         HolochainPluginConfig {
             holochain_dir,
             wan_network_config,
             admin_port: None,
+            gossip_arc_clamp: default_gossip_arc_clamp(),
         }
     }
 
     pub fn admin_port(mut self, admin_port: u16) -> Self {
         self.admin_port = Some(admin_port);
+        self
+    }
+
+    pub fn gossip_arc_clamp(mut self, gossip_arc_clamp: GossipArcClamp) -> Self {
+        self.gossip_arc_clamp = Some(gossip_arc_clamp);
         self
     }
 }
@@ -631,8 +664,7 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
                 r
             })
         })
-    .on_event(|app, event| {
-        match event {
+        .on_event(|app, event| match event {
             RunEvent::Exit => {
                 if tauri::is_dev() {
                     if let Ok(h) = app.holochain() {
@@ -642,9 +674,8 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
                     }
                 }
             }
-            _ =>{ }
-        }
-    })
+            _ => {}
+        })
 }
 
 /// Initializes the plugin, waiting for holochain to launch before finishing the app's setup.
@@ -707,7 +738,7 @@ async fn launch_and_setup_holochain<R: Runtime>(
             }
             std::process::exit(0);
         })?;
-    }    
+    }
 
     let p = HolochainPlugin::<R> {
         app_handle: app_handle.clone(),
