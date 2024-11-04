@@ -33,10 +33,16 @@ impl HolochainRuntime {
     
     /// Builds an `AdminWebsocket` ready to use
     pub async fn admin_websocket(&self) -> crate::Result<AdminWebsocket> {
-        let admin_ws =
-            AdminWebsocket::connect(format!("localhost:{}", self.admin_port))
-                .await
-                .map_err(|err| crate::Error::WebsocketConnectionError(format!("{err:?}")))?;
+        let mut config = WebsocketConfig::CLIENT_DEFAULT;
+        config.default_request_timeout = std::time::Duration::new(60 * 5, 0);
+
+        let admin_ws = AdminWebsocket::connect_with_config(
+            format!("localhost:{}", self.holochain_runtime.admin_port),
+            Arc::new(config),
+        )
+        .await
+        .map_err(|err| crate::Error::WebsocketConnectionError(format!("{err:?}")))?;
+
         Ok(admin_ws)
     }
 
@@ -119,7 +125,8 @@ impl HolochainRuntime {
         &self,
         app_id: InstalledAppId,
         web_app_bundle: WebAppBundle,
-        membrane_proofs: HashMap<RoleName, MembraneProof>,
+        existing_cells: ExistingCellsMap,
+        membrane_proofs: Option<HashMap<RoleName, MembraneProof>>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -134,6 +141,7 @@ impl HolochainRuntime {
             &admin_ws,
             app_id.clone(),
             web_app_bundle,
+            existing_cells,
             membrane_proofs,
             agent,
             network_seed,
@@ -154,7 +162,8 @@ impl HolochainRuntime {
         &self,
         app_id: InstalledAppId,
         app_bundle: AppBundle,
-        membrane_proofs: HashMap<RoleName, MembraneProof>,
+        existing_cells: ExistingCellsMap,
+        membrane_proofs: Option<HashMap<RoleName, MembraneProof>>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -169,6 +178,7 @@ impl HolochainRuntime {
             &admin_ws,
             app_id.clone(),
             app_bundle,
+            existing_cells,
             membrane_proofs,
             agent,
             network_seed,
