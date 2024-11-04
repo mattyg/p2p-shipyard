@@ -3561,6 +3561,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "holochain_runtime"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-std",
+ "async-trait",
+ "base64 0.22.1",
+ "hc_seed_bundle",
+ "holochain",
+ "holochain_client",
+ "holochain_conductor_api",
+ "holochain_keystore",
+ "holochain_types",
+ "kitsune_p2p_mdns",
+ "kitsune_p2p_types",
+ "lair_keystore",
+ "lair_keystore_api",
+ "local-ip-address",
+ "log",
+ "mr_bundle",
+ "one_err",
+ "portpicker",
+ "serde",
+ "serde_json",
+ "sha256",
+ "thiserror",
+ "tokio",
+ "tx5-signal",
+ "tx5-signal-srv",
+ "url2",
+ "zip 0.6.6",
+]
+
+[[package]]
 name = "holochain_scaffolding_utils"
 version = "0.1.0"
 source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#370fd3fcf5892030f63b87f8c6b3a0d2b7ff6f8d"
@@ -8849,48 +8883,29 @@ name = "tauri-plugin-holochain"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "async-std",
- "async-trait",
- "base64 0.22.1",
  "bzip2",
  "ctrlc",
  "either",
  "futures",
  "hc_seed_bundle",
- "holochain",
  "holochain_client",
- "holochain_conductor_api",
- "holochain_keystore",
+ "holochain_runtime",
  "holochain_types",
  "http-body-util",
  "hyper 1.4.1",
  "hyper-util",
- "kitsune_p2p_mdns",
- "kitsune_p2p_types",
- "lair_keystore",
  "lair_keystore_api",
- "local-ip-address",
  "log",
  "mime_guess",
- "mr_bundle",
  "nanoid",
- "one_err",
- "portpicker",
  "serde",
- "serde_json",
- "sha256",
- "sqlformat",
  "symlink",
  "tauri",
  "tauri-plugin",
  "thiserror",
  "tls-listener",
- "tokio",
- "tx5-signal",
- "tx5-signal-srv",
  "url",
  "url2",
- "zip 0.6.6",
 ]
 
 [[package]]
