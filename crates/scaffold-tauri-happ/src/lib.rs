@@ -412,9 +412,6 @@ mod tests {
     inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
-      specialArgs = {
-        rootPath = ./.;
-      };
     }
     {
 
@@ -589,9 +586,6 @@ roles:
     inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
-      specialArgs = {
-        rootPath = ./.;
-      };
     }
     {
 
