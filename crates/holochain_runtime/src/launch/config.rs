@@ -13,14 +13,14 @@ use holochain_keystore::paths::KeystorePath;
 use holochain_types::websocket::AllowedOrigins;
 use url2::Url2;
 
-use crate::filesystem::FileSystem;
+use crate::{filesystem::FileSystem, WANNetworkConfig};
 
 pub fn conductor_config(
     fs: &FileSystem,
     admin_port: u16,
     lair_root: KeystorePath,
-    bootstrap_url: Option<Url2>,
-    signal_urls: Vec<Url2>,
+    wan_network_config: Option<WANNetworkConfig>,
+    local_signal_url: Option<Url2>,
     override_gossip_arc_clamping: Option<String>,
 ) -> ConductorConfig {
     let mut config = ConductorConfig::default();
@@ -39,14 +39,18 @@ pub fn conductor_config(
 
     network_config.tuning_params = Arc::new(tuning_params);
 
-    if let Some(bootstrap_url) = bootstrap_url {
-        network_config.bootstrap_service = Some(bootstrap_url);
+    if let Some(wan_network_config) = wan_network_config {
+        network_config.bootstrap_service = Some(wan_network_config.bootstrap_url);
+        // WAN
+        network_config.transport_pool.push(TransportConfig::WebRTC {
+            signal_url: wan_network_config.signal_url.to_string(),
+        });
     }
 
-    // tx5
-    for signal_url in signal_urls {
-        network_config.transport_pool.push(TransportConfig::WebRTC {
-            signal_url: signal_url.to_string(),
+    // LAN
+    if let Some(local_signal_url) = local_signal_url {
+        network_config.transport_pool.insert(0, TransportConfig::WebRTC {
+            signal_url: local_signal_url.to_string(),
         });
     }
     config.network = network_config;
