@@ -15,12 +15,10 @@ holochain_types = "0.4.0-rc"
 
 # Lair dependencies
 hc_seed_bundle = "0.2"
-
-# lair_keystore = "0.4.5"
 lair_keystore_api = "0.5"
 
 # Holochain client
-holochain_client = "0.6.0-dev.10"
+holochain_client = "0.6.0-rc.0"
 
 holochain_runtime = { path = "../holochain_runtime" }
 
