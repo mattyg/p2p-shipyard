@@ -1,95 +1,28 @@
 use std::{
-    collections::{BTreeMap, HashMap},
+    collections::BTreeMap,
     path::PathBuf,
 };
 
 use holochain::prelude::{
-    AppBundle, AppBundleError, AppBundleSource, AppManifest, CoordinatorBundle,
-    CoordinatorManifest, DnaBundle, DnaError, DnaFile, DnaHash, MembraneProof, NetworkSeed,
+    AppBundle, AppBundleError,  AppManifest, CoordinatorBundle,
+    CoordinatorManifest, DnaBundle, DnaError, DnaFile, DnaHash, 
     RoleName, UpdateCoordinatorsPayload, ZomeDependency, ZomeError, ZomeLocation, ZomeManifest,
 };
 use holochain_client::{
-    AdminWebsocket, AgentPubKey, AppInfo, ConductorApiError, InstallAppPayload, InstalledAppId,
+    AdminWebsocket,  ConductorApiError,  InstalledAppId,
 };
 use holochain_conductor_api::{AppInfoStatus, CellInfo};
-use holochain_types::web_app::WebAppBundle;
 use mr_bundle::{error::MrBundleError, Bundle, ResourceBytes};
 
 use crate::filesystem::FileSystemError;
 
-pub async fn install_web_app(
-    admin_ws: &AdminWebsocket,
-    app_id: String,
-    bundle: WebAppBundle,
-    membrane_proofs: HashMap<RoleName, MembraneProof>,
-    agent: Option<AgentPubKey>,
-    network_seed: Option<NetworkSeed>,
-) -> crate::Result<AppInfo> {
-    let app_info = install_app(
-        admin_ws,
-        app_id.clone(),
-        bundle.happ_bundle().await?,
-        membrane_proofs,
-        agent,
-        network_seed,
-    )
-    .await?;
-
-    log::info!("Installed web-app's ui {app_id:?}");
-
-    Ok(app_info)
-}
-
-pub async fn install_app(
-    admin_ws: &AdminWebsocket,
-    app_id: String,
-    bundle: AppBundle,
-    membrane_proofs: HashMap<RoleName, MembraneProof>,
-    agent: Option<AgentPubKey>,
-    network_seed: Option<NetworkSeed>,
-) -> crate::Result<AppInfo> {
-    log::info!("Installing app {}", app_id);
-
-    let agent_key = match agent {
-        Some(agent) => agent,
-        None => admin_ws
-            .generate_agent_pub_key()
-            .await
-            .map_err(|err| crate::Error::ConductorApiError(err))?,
-    };
-
-    let app_info = admin_ws
-        .install_app(InstallAppPayload {
-            agent_key,
-            membrane_proofs,
-            network_seed,
-            source: AppBundleSource::Bundle(bundle),
-            installed_app_id: Some(app_id.clone()),
-        })
-        .await
-        .map_err(|err| crate::Error::ConductorApiError(err))?;
-    log::info!("Installed app {app_info:?}");
-
-    let response = admin_ws
-        .enable_app(app_id.clone())
-        .await
-        .map_err(|err| crate::Error::ConductorApiError(err))?;
-
-    log::info!("Enabled app {app_id:?}");
-
-    Ok(response.app)
-}
-
 #[derive(Debug, thiserror::Error)]
-pub enum UpdateAppError {
+pub enum UpdateHappError {
     #[error(transparent)]
     AppBundleError(#[from] AppBundleError),
 
     #[error(transparent)]
     ZomeError(#[from] ZomeError),
-
-    #[error(transparent)]
-    TauriError(#[from] tauri::Error),
 
     #[error(transparent)]
     MrBundleError(#[from] MrBundleError),
@@ -117,7 +50,7 @@ pub async fn update_app(
     admin_ws: &AdminWebsocket,
     app_id: String,
     bundle: AppBundle,
-) -> Result<(), UpdateAppError> {
+) -> Result<(), UpdateHappError> {
     log::info!(
         "Checking whether the coordinator zomes for app {} need to be updated",
         app_id
@@ -127,12 +60,12 @@ pub async fn update_app(
     let apps = admin_ws
         .list_apps(None)
         .await
-        .map_err(|err| UpdateAppError::ConductorApiError(err))?;
+        .map_err(|err| UpdateHappError::ConductorApiError(err))?;
 
     let mut app = apps
         .into_iter()
         .find(|app| app.installed_app_id.eq(&app_id))
-        .ok_or(UpdateAppError::AppNotFound(app_id.clone()))?;
+        .ok_or(UpdateHappError::AppNotFound(app_id.clone()))?;
 
     let new_dna_files = resolve_dna_files(bundle).await?;
 
@@ -142,7 +75,7 @@ pub async fn update_app(
         let cells = app
             .cell_info
             .remove(&role_name)
-            .ok_or(UpdateAppError::RoleNotFound(
+            .ok_or(UpdateHappError::RoleNotFound(
                 role_name.clone(),
                 app.installed_app_id.clone(),
             ))?;
@@ -159,7 +92,7 @@ pub async fn update_app(
             let old_dna_def = admin_ws
                 .get_dna_definition(dna_hash.clone())
                 .await
-                .map_err(|err| UpdateAppError::ConductorApiError(err))?;
+                .map_err(|err| UpdateHappError::ConductorApiError(err))?;
 
             for (zome_name, coordinator_zome) in new_dna_file.dna_def().coordinator_zomes.iter() {
                 let deps = coordinator_zome
@@ -221,7 +154,7 @@ pub async fn update_app(
                 admin_ws
                     .update_coordinators(req)
                     .await
-                    .map_err(|err| UpdateAppError::ConductorApiError(err))?;
+                    .map_err(|err| UpdateHappError::ConductorApiError(err))?;
                 updated = true;
             }
         }
@@ -232,11 +165,11 @@ pub async fn update_app(
             admin_ws
                 .disable_app(app_id.clone())
                 .await
-                .map_err(|err| UpdateAppError::ConductorApiError(err))?;
+                .map_err(|err| UpdateHappError::ConductorApiError(err))?;
             admin_ws
                 .enable_app(app_id.clone())
                 .await
-                .map_err(|err| UpdateAppError::ConductorApiError(err))?;
+                .map_err(|err| UpdateHappError::ConductorApiError(err))?;
         }
         log::info!("Updated app {app_id:?}");
     }
@@ -246,7 +179,7 @@ pub async fn update_app(
 
 async fn resolve_dna_files(
     app_bundle: AppBundle,
-) -> Result<BTreeMap<RoleName, DnaFile>, UpdateAppError> {
+) -> Result<BTreeMap<RoleName, DnaFile>, UpdateHappError> {
     let mut dna_files: BTreeMap<RoleName, DnaFile> = BTreeMap::new();
 
     let bundle = app_bundle.into_inner();
@@ -265,7 +198,7 @@ async fn resolve_dna_files(
 async fn resolve_location(
     app_bundle: &Bundle<AppManifest>,
     location: &mr_bundle::Location,
-) -> Result<(DnaFile, DnaHash), UpdateAppError> {
+) -> Result<(DnaFile, DnaHash), UpdateHappError> {
     let bytes = app_bundle.resolve(location).await?;
     let dna_bundle: DnaBundle = mr_bundle::Bundle::decode(&bytes)?.into();
     let (dna_file, original_hash) = dna_bundle.into_dna_file(Default::default()).await?;

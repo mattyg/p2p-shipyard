@@ -1,0 +1,44 @@
+[package]
+name = "holochain_runtime"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Holochain dependencies
+mr_bundle = "0.3.2"
+holochain = "0.3.2"
+holochain_types = "0.3.2"
+holochain_keystore = "0.3.2"
+holochain_conductor_api = "0.3.2"
+
+kitsune_p2p_mdns = "0.3.2"
+kitsune_p2p_types = "0.3.2"
+
+tx5-signal-srv = "0.0.14-alpha"
+tx5-signal = "0.0.14-alpha"
+
+# Lair dependencies
+hc_seed_bundle = "0.2"
+
+lair_keystore = "0.4.5"
+lair_keystore_api = "0.4.5"
+
+# Holochain client
+holochain_client = "0.5.1"
+
+# Other dependencies
+url2 = "0.0.6"
+thiserror = "1.0"
+one_err = "0"
+serde = "1.0.193"
+portpicker = "0.1"
+log = "0.4"
+async-std = "1.12"
+local-ip-address = "0.6"
+async-trait = "0.1"
+sha256 = "1"
+zip = { version = "0.6" }
+serde_json = "1"
+base64 = "0.22"
+tokio = "1"
+anyhow = "1"
