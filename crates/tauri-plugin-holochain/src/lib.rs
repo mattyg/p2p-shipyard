@@ -9,7 +9,7 @@ use tauri::{
     http::response,
     ipc::CapabilityBuilder,
     plugin::{Builder, TauriPlugin},
-    AppHandle, Emitter, Manager, Runtime, WebviewUrl, WebviewWindowBuilder,
+    AppHandle, Emitter, Manager, RunEvent, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
 
 use holochain::{
@@ -29,8 +29,8 @@ use url2::Url2;
 mod commands;
 mod config;
 mod error;
-mod features;
 mod filesystem;
+mod hc_live_file;
 mod http_server;
 mod lair_signer;
 mod launch;
@@ -38,6 +38,7 @@ mod launch;
 use commands::install_web_app::{install_app, install_web_app, update_app, UpdateAppError};
 pub use error::{Error, Result};
 use filesystem::{AppBundleStore, BundleStore, FileSystem};
+use hc_live_file::*;
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
 
@@ -520,6 +521,11 @@ pub struct WANNetworkConfig {
     pub ice_servers_urls: Vec<Url2>,
 }
 
+pub enum GossipArcClamp {
+    Full,
+    Empty,
+}
+
 pub struct HolochainPluginConfig {
     /// The directory where the holochain files and databases will be stored in
     pub holochain_dir: PathBuf,
@@ -528,19 +534,45 @@ pub struct HolochainPluginConfig {
     pub wan_network_config: Option<WANNetworkConfig>,
     /// Force the conductor to run at this admin port
     pub admin_port: Option<u16>,
+    /// Force the conductor to always have a "full", or "empty" Gossip Arc for all DNAs.
+    /// The Gossip Arc is the subsection of the DHT that you aim to store and serve to others.
+    ///
+    /// A Full Gossip Arc means that your peer will always try to hold the full DHT state,
+    /// and serve it to others.
+    ///
+    /// An Empty Gossip Arc means that your peer will always go to the network to fetch DHT data,
+    /// unless they authored it.
+    pub gossip_arc_clamp: Option<GossipArcClamp>,
+}
+
+fn default_gossip_arc_clamp() -> Option<GossipArcClamp> {
+    if cfg!(mobile) {
+        Some(GossipArcClamp::Empty)
+    } else {
+        None
+    }
 }
 
 impl HolochainPluginConfig {
-    pub fn new(holochain_dir: PathBuf, wan_network_config: Option<WANNetworkConfig>) -> Self {
+    pub fn new(
+        holochain_dir: PathBuf,
+        wan_network_config: Option<WANNetworkConfig>,
+    ) -> Self {
         HolochainPluginConfig {
             holochain_dir,
             wan_network_config,
             admin_port: None,
+            gossip_arc_clamp: default_gossip_arc_clamp(),
         }
     }
 
     pub fn admin_port(mut self, admin_port: u16) -> Self {
         self.admin_port = Some(admin_port);
+        self
+    }
+
+    pub fn gossip_arc_clamp(mut self, gossip_arc_clamp: GossipArcClamp) -> Self {
+        self.gossip_arc_clamp = Some(gossip_arc_clamp);
         self
     }
 }
@@ -644,6 +676,18 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
                 r
             })
         })
+        .on_event(|app, event| match event {
+            RunEvent::Exit => {
+                if tauri::is_dev() {
+                    if let Ok(h) = app.holochain() {
+                        if let Err(err) = delete_hc_live_file(h.holochain_runtime.admin_port) {
+                            log::error!("Failed to delete hc live file: {err:?}");
+                        }
+                    }
+                }
+            }
+            _ => {}
+        })
 }
 
 /// Initializes the plugin, waiting for holochain to launch before finishing the app's setup.
@@ -695,6 +739,18 @@ async fn launch_and_setup_holochain<R: Runtime>(
     // log::info!("Starting http server at port {http_server_port:?}");
 
     let holochain_runtime = launch_holochain_runtime(passphrase, config).await?;
+
+    #[cfg(desktop)]
+    if tauri::is_dev() {
+        create_hc_live_file(holochain_runtime.admin_port)?;
+
+        ctrlc::set_handler(move || {
+            if let Err(err) = delete_hc_live_file(holochain_runtime.admin_port) {
+                log::error!("Failed to delete hc live file: {err:?}");
+            }
+            std::process::exit(0);
+        })?;
+    }
 
     let p = HolochainPlugin::<R> {
         app_handle: app_handle.clone(),

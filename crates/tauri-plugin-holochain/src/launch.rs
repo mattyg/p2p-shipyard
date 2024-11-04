@@ -11,7 +11,7 @@ use holochain_client::AdminWebsocket;
 use crate::{
     filesystem::FileSystem,
     launch::signal::{can_connect_to_signal_server, run_local_signal_service},
-    HolochainPluginConfig, HolochainRuntime,
+    GossipArcClamp, HolochainPluginConfig, HolochainRuntime,
 };
 
 mod mdns;
@@ -19,25 +19,6 @@ mod signal;
 use mdns::spawn_mdns_bootstrap;
 
 pub const DEVICE_SEED_LAIR_KEYSTORE_TAG: &'static str = "DEVICE_SEED";
-
-#[cfg(feature = "gossip_arc_empty")]
-fn override_gossip_arc_clamping() -> Option<String> {
-    Some(String::from("empty"))
-}
-
-#[cfg(feature = "gossip_arc_full")]
-fn override_gossip_arc_clamping() -> Option<String> {
-    Some(String::from("full"))
-}
-
-#[cfg(feature = "gossip_arc_normal")]
-fn override_gossip_arc_clamping() -> Option<String> {
-    if cfg!(mobile) {
-        Some(String::from("empty"))
-    } else {
-        None
-    }
-}
 
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);
 
@@ -83,7 +64,10 @@ pub async fn launch_holochain_runtime(
         filesystem.keystore_dir().into(),
         wan_network_config,
         local_signal_url,
-        override_gossip_arc_clamping(),
+        config.gossip_arc_clamp.map(|n| match n {
+            GossipArcClamp::Full => "full".to_string(),
+            GossipArcClamp::Empty => "empty".to_string(),
+        }),
     );
 
     let keystore =
