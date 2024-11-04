@@ -533,22 +533,34 @@ pub struct HolochainPluginConfig {
     pub gossip_arc_clamp: Option<GossipArcClamp>,
 }
 
+fn default_gossip_arc_clamp() -> Option<GossipArcClamp> {
+    if cfg!(mobile) {
+        Some(GossipArcClamp::Empty)
+    } else {
+        None
+    }
+}
+
 impl HolochainPluginConfig {
     pub fn new(
         holochain_dir: PathBuf,
         wan_network_config: Option<WANNetworkConfig>,
-        gossip_arc_clamp: Option<GossipArcClamp>,
     ) -> Self {
         HolochainPluginConfig {
             holochain_dir,
             wan_network_config,
             admin_port: None,
-            gossip_arc_clamp,
+            gossip_arc_clamp: default_gossip_arc_clamp(),
         }
     }
 
     pub fn admin_port(mut self, admin_port: u16) -> Self {
         self.admin_port = Some(admin_port);
+        self
+    }
+
+    pub fn gossip_arc_clamp(mut self, gossip_arc_clamp: GossipArcClamp) -> Self {
+        self.gossip_arc_clamp = Some(gossip_arc_clamp);
         self
     }
 }
