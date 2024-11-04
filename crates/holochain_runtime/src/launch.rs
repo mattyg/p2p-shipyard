@@ -9,13 +9,12 @@ use holochain::conductor::Conductor;
 use holochain_client::AdminWebsocket;
 
 use crate::{
-    filesystem::FileSystem,
-    launch::signal::{can_connect_to_signal_server, run_local_signal_service},
-    GossipArcClamp, HolochainPluginConfig, HolochainRuntime,
+    filesystem::FileSystem, launch::signal::{can_connect_to_signal_server, run_local_signal_service}, GossipArcClamp, HolochainRuntime, HolochainRuntimeConfig
 };
 
 mod mdns;
 mod signal;
+mod config;
 use mdns::spawn_mdns_bootstrap;
 
 pub const DEVICE_SEED_LAIR_KEYSTORE_TAG: &'static str = "DEVICE_SEED";
@@ -23,10 +22,10 @@ pub const DEVICE_SEED_LAIR_KEYSTORE_TAG: &'static str = "DEVICE_SEED";
 // pub static RUNNING_HOLOCHAIN: RwLock<Option<RunningHolochainInfo>> = RwLock::const_new(None);
 
 /// Launch the holochain conductor in the background
-pub async fn launch_holochain_runtime(
+pub(crate) async fn launch_holochain_runtime(
     passphrase: BufRead,
-    config: HolochainPluginConfig,
-) -> crate::Result<HolochainRuntime> {
+    config: HolochainRuntimeConfig,
+) -> crate::error::Result<HolochainRuntime> {
     // let mut lock = RUNNING_HOLOCHAIN.write().await;
 
     // if let Some(info) = lock.to_owned() {
@@ -58,7 +57,7 @@ pub async fn launch_holochain_runtime(
 
     let local_signal_url = url2!("ws://{my_local_ip}:{port}");
 
-    let config = crate::config::conductor_config(
+    let config = config::conductor_config(
         &filesystem,
         admin_port,
         filesystem.keystore_dir().into(),
@@ -135,32 +134,6 @@ pub async fn wait_until_admin_ws_is_available(admin_port: u16) -> crate::Result<
     }
     Ok(())
 }
-
-// pub async fn wait_until_app_ws_is_available(app_port: u16) -> crate::Result<()> {
-//     let mut retry_count = 0;
-//     let _admin_ws = loop {
-//         if let Ok(ws) = AppWebsocket::connect(format!("localhost:{}", app_port))
-//             .await
-//             .map_err(|err| {
-//                 crate::Error::AdminWebsocketError(format!(
-//                     "Could not connect to the app interface: {}",
-//                     err
-//                 ))
-//             })
-//         {
-//             break ws;
-//         }
-//         async_std::task::sleep(Duration::from_millis(200)).await;
-
-//         retry_count += 1;
-//         if retry_count == 200 {
-//             return Err(crate::Error::AdminWebsocketError(
-//                 "Can't connect to holochain".to_string(),
-//             ));
-//         }
-//     };
-//     Ok(())
-// }
 
 // fn read_config(config_path: &std::path::Path) -> crate::Result<LairServerConfig> {
 //     let bytes = std::fs::read(config_path)?;
