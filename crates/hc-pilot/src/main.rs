@@ -114,6 +114,7 @@ fn main() {
                 holochain_dir: conductor_dir,
                 admin_port: args.admin_port,
                 gossip_arc_clamp: None,
+                fallback_to_lan_only: true
             },
         ))
         .setup(|app| {
