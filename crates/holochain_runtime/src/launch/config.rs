@@ -18,7 +18,7 @@ pub fn conductor_config(
     admin_port: u16,
     lair_root: KeystorePath,
     wan_network_config: Option<WANNetworkConfig>,
-    local_signal_url: Url2,
+    local_signal_url: Option<Url2>,
     override_gossip_arc_clamping: Option<String>,
 ) -> ConductorConfig {
     let mut config = ConductorConfig::default();
@@ -55,10 +55,13 @@ pub fn conductor_config(
     }
 
     // LAN
-    network_config.transport_pool.push(TransportConfig::WebRTC {
+    if let Some(local_signal_url) = local_signal_url {
+        network_config.transport_pool.insert(0, TransportConfig::WebRTC {
         webrtc_config: None,
-        signal_url: local_signal_url.to_string(),
-    });
+            signal_url: local_signal_url.to_string(),
+        });
+    }
+
     config.network = network_config;
 
     // TODO: uncomment when we can set a custom origin for holochain-client-rust

@@ -39,30 +39,35 @@ pub(crate) async fn launch_holochain_runtime(
         portpicker::pick_unused_port().expect("No ports free")
     };
 
-    let wan_network_config = if let Some(network_config) = config.wan_network_config {
+    let mut maybe_local_signal_server: Option<(url2::Url2, sbd_server::SbdServer)> = None;
+
+    let run_local_signal_server = if let Some(network_config) = &config.wan_network_config {
         if let Err(err) = can_connect_to_signal_server(network_config.signal_url.clone()).await {
-            log::error!("Error connecting to the WAN signal server: {err:?}");
-            None
+            log::warn!("Error connecting with the WAN signal server: {err:?}");
+            config.fallback_to_lan_only
         } else {
-            Some(network_config)
+            false
         }
     } else {
-        None
+        true
     };
 
-    // Run local signal server
-    let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
-    let port = portpicker::pick_unused_port().expect("No ports free");
-    let sbd_server = run_local_signal_service(my_local_ip.to_string(), port).await?;
+    if run_local_signal_server {
+        let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
+        let port = portpicker::pick_unused_port().expect("No ports free");
+        let signal_handle = run_local_signal_service(my_local_ip.to_string(), port).await?;
 
-    let local_signal_url = url2!("ws://{my_local_ip}:{port}");
+        let local_signal_url = url2!("ws://{my_local_ip}:{port}");
+
+        maybe_local_signal_server = Some((local_signal_url.clone(), signal_handle));
+    }
 
     let config = config::conductor_config(
         &filesystem,
         admin_port,
         filesystem.keystore_dir().into(),
-        wan_network_config,
-        local_signal_url,
+        config.wan_network_config,
+        maybe_local_signal_server.as_ref().map(|s| s.0.clone()),
         config.gossip_arc_clamp.map(|n| match n {
             GossipArcClamp::Full => "full".to_string(),
             GossipArcClamp::Empty => "empty".to_string(),
@@ -111,7 +116,7 @@ pub(crate) async fn launch_holochain_runtime(
         apps_websockets_auths: Arc::new(Mutex::new(Vec::new())),
         admin_port,
         conductor_handle,
-        _local_sbd_server: Some(sbd_server),
+        _local_sbd_server: maybe_local_signal_server.map(|s| s.1),
     })
 }
 
@@ -134,6 +139,7 @@ pub async fn wait_until_admin_ws_is_available(admin_port: u16) -> crate::Result<
     }
     Ok(())
 }
+
 
 // fn read_config(config_path: &std::path::Path) -> crate::Result<LairServerConfig> {
 //     let bytes = std::fs::read(config_path)?;

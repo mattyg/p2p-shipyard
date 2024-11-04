@@ -26,6 +26,8 @@ lair_keystore = { version = "0.5" }
 holochain_client = "0.6.0-rc.0"
 
 # Other dependencies
+arbitrary = "=1.3.2"
+derive_arbitrary = "=1.3.2"
 url2 = "0.0.6"
 thiserror = "1.0"
 one_err = "0"

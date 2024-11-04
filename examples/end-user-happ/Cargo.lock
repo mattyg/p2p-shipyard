@@ -8764,6 +8764,7 @@ dependencies = [
  "mime_guess",
  "nanoid",
  "serde",
+ "sqlformat",
  "symlink",
  "tauri",
  "tauri-plugin",
