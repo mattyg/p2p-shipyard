@@ -402,7 +402,7 @@ mod tests {
   description = "Template for Holochain app development";
   
   inputs = {
-    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
+    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard/main-0.3";
     holonix.url = "github:holochain/holonix/main-0.3";
     nixpkgs.follows = "holonix/nixpkgs";
     hc-infra.url = "github:holochain-open-dev/utils";
