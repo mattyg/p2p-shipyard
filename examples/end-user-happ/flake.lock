@@ -271,11 +271,11 @@
     "hc-scaffold": {
       "flake": false,
       "locked": {
-        "lastModified": 1727375207,
-        "narHash": "sha256-wGS+cOhvakLWscqPI0LaBZVZ3ryORV3YDvL+bfhI+WA=",
+        "lastModified": 1729842397,
+        "narHash": "sha256-RGojwMWA5MXAsK/vy78Gb2JYoKrD+zzY0rl3KLt1LK4=",
         "owner": "holochain",
         "repo": "scaffolding",
-        "rev": "b218f253a124b6e7b5be0600c3aab7a57344f0f2",
+        "rev": "27715e5fdf56e03720f22f77068c1f16c33f0881",
         "type": "github"
       },
       "original": {
@@ -322,16 +322,16 @@
     "holochain": {
       "flake": false,
       "locked": {
-        "lastModified": 1728079169,
-        "narHash": "sha256-sbQiTsh5dhI8ioQIfYkdNsCQCCT+vef+RhXumvYiVQQ=",
+        "lastModified": 1730250209,
+        "narHash": "sha256-U1TVtxcZDwKuLiHhnQbkHFSNUuE22yiTrFQZ4ftWJeg=",
         "owner": "holochain",
         "repo": "holochain",
-        "rev": "d2868417b921850206247595f0e00d6eaf1b84f2",
+        "rev": "37736e8f1a79b4aa52cdb1e497e9001e2b001053",
         "type": "github"
       },
       "original": {
         "owner": "holochain",
-        "ref": "holochain-0.4.0-rc.0",
+        "ref": "holochain-0.5.0-dev.3",
         "repo": "holochain",
         "type": "github"
       }
@@ -382,11 +382,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1728341535,
-        "narHash": "sha256-pv1mNKxRa/VfoZkSJnuzxEfoNO8ZNmCUixzOdNmLSEU=",
+        "lastModified": 1730728267,
+        "narHash": "sha256-bAzk4rUeWmZWd8iBq1Bk57725/KGKneGGPCmVqq8nHQ=",
         "owner": "holochain",
         "repo": "holonix",
-        "rev": "fe2671131a926d0b1d55a45bb82a9c68db492993",
+        "rev": "f0837b512b11c931058e7ffa469caad7b7119c88",
         "type": "github"
       },
       "original": {
@@ -620,7 +620,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-m45ITCLt9xlqXOpOZe2XDiATk6Ft/8Dapky6HcBesX8=",
+        "narHash": "sha256-+7amwaOilqUcW7uGk3+n1c4WXbR+gxBpA+NaetNbbcc=",
         "path": "../..",
         "type": "path"
       },

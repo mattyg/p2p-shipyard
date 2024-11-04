@@ -32,7 +32,7 @@ pub struct HolochainRuntimeConfig {
 }
 
 fn default_gossip_arc_clamp() -> Option<GossipArcClamp> {
-    if cfg!(mobile) {
+    if cfg!(any(target_os = "android", target_os = "ios")) {
         Some(GossipArcClamp::Empty)
     } else {
         None

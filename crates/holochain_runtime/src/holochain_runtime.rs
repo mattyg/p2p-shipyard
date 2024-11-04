@@ -2,10 +2,10 @@ use std::{collections::HashMap, sync::Arc};
 
 use async_std::sync::Mutex;
 use holochain::{conductor::ConductorHandle, prelude::{MembraneProof, NetworkSeed, RoleName, ZomeCallUnsigned} };
-use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, ZomeCall};
-use holochain_types::{app::AppBundle, web_app::WebAppBundle, websocket::AllowedOrigins};
-use tx5_signal::deps::sodoken::BufRead;
-use tx5_signal_srv::SrvHnd;
+use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, WebsocketConfig, ZomeCall};
+use holochain_types::{app::{AppBundle, ExistingCellsMap}, web_app::WebAppBundle, websocket::AllowedOrigins};
+use lair_keystore::dependencies::sodoken::BufRead;
+use sbd_server::SbdServer;
 
 use crate::{filesystem::{AppBundleStore, BundleStore, FileSystem}, happs::{install::{install_app, install_web_app}, update::{update_app, UpdateHappError}}, lair_signer::LairAgentSignerWithProvenance, launch::launch_holochain_runtime, sign_zome_call_with_client, HolochainRuntimeConfig};
 
@@ -22,7 +22,7 @@ pub struct HolochainRuntime {
     pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
     pub conductor_handle: ConductorHandle,
-    pub(crate) _signal_handle: Option<SrvHnd>,
+    pub(crate) _local_sbd_server: Option<SbdServer>,
 }
 
 impl HolochainRuntime {
@@ -37,7 +37,7 @@ impl HolochainRuntime {
         config.default_request_timeout = std::time::Duration::new(60 * 5, 0);
 
         let admin_ws = AdminWebsocket::connect_with_config(
-            format!("localhost:{}", self.holochain_runtime.admin_port),
+            format!("localhost:{}", self.admin_port),
             Arc::new(config),
         )
         .await

@@ -1,14 +1,9 @@
 use std::collections::HashMap;
 
-use holochain::prelude::{
-    AppBundle,  AppBundleSource, 
-     MembraneProof, NetworkSeed,
-    RoleName, 
-};
 use holochain_client::{
     AdminWebsocket, AgentPubKey, AppInfo,  InstallAppPayload, 
 };
-use holochain_types::web_app::WebAppBundle;
+use holochain_types::{web_app::WebAppBundle, prelude::*};
 
 pub async fn install_web_app(
     admin_ws: &AdminWebsocket,

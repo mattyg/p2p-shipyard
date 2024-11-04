@@ -53,7 +53,7 @@ pub(crate) async fn launch_holochain_runtime(
     // Run local signal server
     let my_local_ip = local_ip_address::local_ip().expect("Could not get local ip address");
     let port = portpicker::pick_unused_port().expect("No ports free");
-    let signal_handle = run_local_signal_service(my_local_ip.to_string(), port).await?;
+    let sbd_server = run_local_signal_service(my_local_ip.to_string(), port).await?;
 
     let local_signal_url = url2!("ws://{my_local_ip}:{port}");
 
@@ -111,7 +111,7 @@ pub(crate) async fn launch_holochain_runtime(
         apps_websockets_auths: Arc::new(Mutex::new(Vec::new())),
         admin_port,
         conductor_handle,
-        _local_signal_handle: signal_handle,
+        _local_sbd_server: Some(sbd_server),
     })
 }
 

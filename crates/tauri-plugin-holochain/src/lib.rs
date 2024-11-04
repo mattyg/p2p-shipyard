@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::HashSet,
     path::PathBuf,
 };
 
@@ -12,7 +12,7 @@ use tauri::{
     AppHandle, Emitter, Manager, RunEvent, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
 
-use holochain_types::prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName};
+use holochain_types::prelude::*;
 use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId};
 use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
 
