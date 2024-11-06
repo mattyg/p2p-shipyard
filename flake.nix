@@ -2,7 +2,7 @@
   description = "Build cross-platform holochain apps and runtimes";
 
   inputs = {
-    nixpkgs.follows = "hc-infra/nixpkgs";
+    nixpkgs.follows = "tnesh-stack/nixpkgs";
     webkitgtknixpkgs.url =
       "github:nixos/nixpkgs/3f316d2a50699a78afe5e77ca486ad553169061e";
 
@@ -11,19 +11,17 @@
     android-nixpkgs.url =
       "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
 
-    hc-infra.url = "github:holochain-open-dev/infrastructure";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
     crane.follows = "holonix/crane";
   };
 
   nixConfig = {
     extra-substituters = [
       "https://holochain-ci.cachix.org"
-      "https://holochain-open-dev.cachix.org"
       "https://darksoil-studio.cachix.org"
     ];
     extra-trusted-public-keys = [
       "holochain-ci.cachix.org-1:5IUSkZc0aoRS53rfkvH9Kid40NpyjwCMCzwRTXy+QN8="
-      "holochain-open-dev.cachix.org-1:3Tr+9in6uo44Ga7qiuRIfOTFXog+2+YbyhwI/Z6Cp4U="
       "darksoil-studio.cachix.org-1:UEi+aujy44s41XL/pscLw37KEVpTEIn8N/kn7jO8rkc="
     ];
   };
@@ -138,8 +136,8 @@
         ./crates/hc-pilot/default.nix
         ./nix/modules/custom-go-compiler.nix
         ./nix/modules/tauri-cli.nix
-        # inputs.hc-infra.outputs.flakeModules.builders
-        inputs.hc-infra.outputs.flakeModules.dependencies
+        # inputs.tnesh-stack.outputs.flakeModules.builders
+        inputs.tnesh-stack.outputs.flakeModules.dependencies
       ];
 
       systems = builtins.attrNames inputs.holonix.devShells;
@@ -235,7 +233,7 @@
 
         dependencies.tauriHapp = {
           buildInputs = dependencies.tauriApp.buildInputs
-            ++ inputs.hc-infra.outputs.dependencies.${system}.holochain.buildInputs;
+            ++ inputs.tnesh-stack.outputs.dependencies.${system}.holochain.buildInputs;
           nativeBuildInputs = dependencies.tauriApp.nativeBuildInputs;
         };
 
@@ -451,7 +449,7 @@
 
         devShells.holochainTauriDev = pkgs.mkShell {
           inputsFrom =
-            [ devShells.tauriDev inputs'.hc-infra.devShells.holochainDev ];
+            [ devShells.tauriDev inputs'.tnesh-stack.devShells.holochainDev ];
           packages = [ packages.holochainTauriRust ];
 
           shellHook = ''
@@ -464,7 +462,7 @@
           packages =
             [ packages.androidTauriRust self'.packages.custom-go-wrapper ];
           buildInputs =
-            inputs.hc-infra.outputs.dependencies.${system}.holochain.buildInputs;
+            inputs.tnesh-stack.outputs.dependencies.${system}.holochain.buildInputs;
 
           shellHook = ''
             export PS1='\[\033[1;34m\][p2p-shipyard-android:\w]\$\[\033[0m\] '
@@ -473,7 +471,7 @@
 
         devShells.default = pkgs.mkShell {
           inputsFrom = [
-            inputs'.hc-infra.devShells.synchronized-pnpm
+            inputs'.tnesh-stack.devShells.synchronized-pnpm
             devShells.holochainTauriDev
           ];
         };

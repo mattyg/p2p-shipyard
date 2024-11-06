@@ -2267,7 +2267,7 @@ dependencies = [
 [[package]]
 name = "file_tree_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#15f89a9a2026b4c80b092a55b2faed605f435b91"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.3#b386a4a9c5623d6762c82e8f375bccb6fd6d7512"
 dependencies = [
  "build-fs-tree",
  "ignore",
@@ -3608,7 +3608,7 @@ dependencies = [
 [[package]]
 name = "holochain_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#15f89a9a2026b4c80b092a55b2faed605f435b91"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.3#b386a4a9c5623d6762c82e8f375bccb6fd6d7512"
 dependencies = [
  "dialoguer",
  "file_tree_utils",
@@ -5780,7 +5780,7 @@ dependencies = [
 [[package]]
 name = "nix_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#15f89a9a2026b4c80b092a55b2faed605f435b91"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.3#b386a4a9c5623d6762c82e8f375bccb6fd6d7512"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -5835,7 +5835,7 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 [[package]]
 name = "npm_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#15f89a9a2026b4c80b092a55b2faed605f435b91"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.3#b386a4a9c5623d6762c82e8f375bccb6fd6d7512"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -7754,7 +7754,7 @@ dependencies = [
 [[package]]
 name = "rust_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#15f89a9a2026b4c80b092a55b2faed605f435b91"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.3#b386a4a9c5623d6762c82e8f375bccb6fd6d7512"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -9318,7 +9318,7 @@ dependencies = [
 [[package]]
 name = "templates_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/holochain-open-dev/infrastructure?branch=main#15f89a9a2026b4c80b092a55b2faed605f435b91"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.3#b386a4a9c5623d6762c82e8f375bccb6fd6d7512"
 dependencies = [
  "anyhow",
  "build-fs-tree",
