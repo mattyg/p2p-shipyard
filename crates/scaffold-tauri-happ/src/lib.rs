@@ -405,7 +405,7 @@ mod tests {
     p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard/main-0.3";
     holonix.url = "github:holochain/holonix/main-0.3";
     nixpkgs.follows = "holonix/nixpkgs";
-    hc-infra.url = "github:holochain-open-dev/utils";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
   };
 
   outputs = inputs @ { ... }:
@@ -428,14 +428,14 @@ mod tests {
           devShells.default = pkgs.mkShell {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriDev 
-              inputs'.hc-infra.devShells.synchronized-pnpm
+              inputs'.tnesh-stack.devShells.synchronized-pnpm
               inputs'.holonix.devShells.default
             ];
           };
           devShells.androidDev = pkgs.mkShell {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev 
-              inputs'.hc-infra.devShells.synchronized-pnpm
+              inputs'.tnesh-stack.devShells.synchronized-pnpm
               inputs'.holonix.devShells.default
             ];
           };
@@ -579,7 +579,7 @@ roles:
   inputs = {
     holonix.url = "github:holochain/holonix/main-0.3";
     nixpkgs.follows = "holonix/nixpkgs";
-    hc-infra.url = "github:holochain-open-dev/utils";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
   };
 
   outputs = inputs @ { ... }:
@@ -601,7 +601,7 @@ roles:
         }: {
           devShells.default = pkgs.mkShell {
             inputsFrom = [ 
-              inputs'.hc-infra.devShells.synchronized-pnpm
+              inputs'.tnesh-stack.devShells.synchronized-pnpm
               inputs'.holonix.devShells.default
             ];
           };
