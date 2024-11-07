@@ -2248,7 +2248,7 @@ dependencies = [
 [[package]]
 name = "file_tree_utils"
 version = "0.1.0"
-source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#f07768f6ea26bdebef3639f18dfc3a8c27b5a7a9"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#56c1e6f0f06a59cc3ebcb398a53a2cf636964077"
 dependencies = [
  "build-fs-tree",
  "ignore",
@@ -3630,7 +3630,7 @@ dependencies = [
 [[package]]
 name = "holochain_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#f07768f6ea26bdebef3639f18dfc3a8c27b5a7a9"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#56c1e6f0f06a59cc3ebcb398a53a2cf636964077"
 dependencies = [
  "dialoguer",
  "file_tree_utils",
@@ -5756,7 +5756,7 @@ dependencies = [
 [[package]]
 name = "nix_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#f07768f6ea26bdebef3639f18dfc3a8c27b5a7a9"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#56c1e6f0f06a59cc3ebcb398a53a2cf636964077"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -5811,7 +5811,7 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 [[package]]
 name = "npm_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#f07768f6ea26bdebef3639f18dfc3a8c27b5a7a9"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#56c1e6f0f06a59cc3ebcb398a53a2cf636964077"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -7697,7 +7697,7 @@ dependencies = [
 [[package]]
 name = "rust_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#f07768f6ea26bdebef3639f18dfc3a8c27b5a7a9"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#56c1e6f0f06a59cc3ebcb398a53a2cf636964077"
 dependencies = [
  "anyhow",
  "build-fs-tree",
@@ -9265,7 +9265,7 @@ dependencies = [
 [[package]]
 name = "templates_scaffolding_utils"
 version = "0.1.0"
-source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#f07768f6ea26bdebef3639f18dfc3a8c27b5a7a9"
+source = "git+https://github.com/darksoil-studio/tnesh-stack?branch=main-0.4#56c1e6f0f06a59cc3ebcb398a53a2cf636964077"
 dependencies = [
  "anyhow",
  "build-fs-tree",
