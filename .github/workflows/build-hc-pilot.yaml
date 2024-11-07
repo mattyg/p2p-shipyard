@@ -28,10 +28,6 @@ jobs:
 
       - uses: cachix/cachix-action@v15
         with:
-          name: holochain-open-dev
-
-      - uses: cachix/cachix-action@v15
-        with:
           name: darksoil-studio
 
       - name: Build and cache hc-pilot
