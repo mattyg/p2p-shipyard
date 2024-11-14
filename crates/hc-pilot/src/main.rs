@@ -9,7 +9,7 @@ use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use tauri::{AppHandle, Context, Wry};
-use tauri_plugin_holochain::{HolochainExt, HolochainManagerConfig, WANNetworkConfig};
+use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConfig};
 use url2::url2;
 
 #[derive(Parser, Debug)]
@@ -25,6 +25,10 @@ struct Args {
     /// The bundle identifier for the Tauri app
     #[clap(long)]
     pub ui_port: String,
+
+    /// The admin port to bind the admin interface to
+    #[clap(long)]
+    pub admin_port: Option<u16>,
 
     /// The bundle identifier for the Tauri app
     #[clap(long)]
@@ -105,9 +109,12 @@ fn main() {
         )
         .plugin(tauri_plugin_holochain::init(
             vec_to_locked(password.as_bytes().to_vec()).expect("Can't build passphrase"),
-            HolochainManagerConfig {
+            HolochainPluginConfig {
                 wan_network_config,
                 holochain_dir: conductor_dir,
+                admin_port: args.admin_port,
+                gossip_arc_clamp: None,
+                fallback_to_lan_only: true
             },
         ))
         .setup(|app| {
@@ -157,7 +164,7 @@ async fn setup(
     membrane_proofs: HashMap<String, std::sync::Arc<holochain_types::prelude::SerializedBytes>>,
     network_seed: Option<String>,
 ) -> anyhow::Result<AppInfo> {
-    let admin_ws = handle.holochain()?.holochain_runtime.admin_websocket().await?;
+    let admin_ws = handle.holochain()?.admin_websocket().await?;
     let agent_key = match agent_key {
         Some(agent_key) => agent_key,
         None => {

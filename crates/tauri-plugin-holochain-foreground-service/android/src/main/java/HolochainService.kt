@@ -11,13 +11,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import android.content.Intent
 import android.content.Context
-import uniffi.holochain_manager_uniffi.HolochainRuntimeFfi
-import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiConfig
-import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiConfigException
-import uniffi.holochain_manager_uniffi.HolochainRuntimeFfiException
-import uniffi.holochain_manager_uniffi.AppInfoFfi
-import uniffi.holochain_manager_uniffi.CellIdFfi
-import uniffi.holochain_manager_uniffi.ZomeCallUnsignedTauriFfi
+import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfi
+import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiConfig
+import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiConfigException
+import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiException
+import uniffi.holochain_runtime_uniffi.AppInfoFfi
+import uniffi.holochain_runtime_uniffi.CellIdFfi
+import uniffi.holochain_runtime_uniffi.ZomeCallUnsignedFfi
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import android.os.SharedMemory
@@ -137,7 +137,7 @@ class HolochainService : Service() {
         override fun signZomeCall(request: SignZomeCallRequestAidl): ZomeCallSignedFfiAidl {
             Log.d("IHolochainService", "signZomeCall")
             return runBlocking {
-                val res = runtime?.signZomeCall(ZomeCallUnsignedTauriFfi(
+                val res = runtime?.signZomeCall(ZomeCallUnsignedFfi(
                     request.provenance,
                     CellIdFfi(
                         request.cellIdDnaHash,

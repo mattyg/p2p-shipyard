@@ -1,37 +1,37 @@
 use std::{
     collections::{HashMap, HashSet},
-    path::PathBuf, sync::Arc,
+    path::PathBuf,
 };
 
 use hc_seed_bundle::dependencies::sodoken::BufRead;
-use holochain_manager::{http_server::{pong_iframe, read_asset}, launch::launch_holochain_runtime, AppWebsocketAuth};
+use http_server::{pong_iframe, read_asset};
 use tauri::{
     http::response,
     ipc::CapabilityBuilder,
     plugin::{Builder, TauriPlugin},
-    AppHandle, Emitter, Manager, Runtime, WebviewUrl, WebviewWindowBuilder,
+    AppHandle, Emitter, Manager, RunEvent, Runtime, WebviewUrl, WebviewWindowBuilder,
 };
-use crate::commands::install_web_app::UpdateAppError;
 
-use holochain_manager::HolochainRuntime;
-use holochain_client::{AgentPubKey, AppInfo, InstalledAppId};
-use holochain_types::{app::AppBundle, prelude::{MembraneProof, NetworkSeed, RoleName}, web_app::WebAppBundle, websocket::AllowedOrigins};
+use holochain_types::prelude::{AppBundle, MembraneProof, NetworkSeed, RoleName};
+use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId};
+use holochain_types::{web_app::WebAppBundle, websocket::AllowedOrigins};
 
 mod commands;
 mod error;
-mod features;
+mod hc_live_file;
+mod http_server;
 
 pub use error::{Error, Result};
-pub use holochain_manager::{HolochainManagerConfig, WANNetworkConfig, error::Error as HolochainManagerError};
+use hc_live_file::*;
+pub use holochain_runtime::*;
 
 const ZOME_CALL_SIGNER_INITIALIZATION_SCRIPT: &'static str = include_str!("../zome-call-signer.js");
 
 /// Access to the holochain APIs.
 pub struct HolochainPlugin<R: Runtime> {
     pub app_handle: AppHandle<R>,
-    pub holochain_runtime: Arc<HolochainRuntime>,
+    pub holochain_runtime: HolochainRuntime,
 }
-
 
 fn happ_origin(app_id: &String) -> String {
     if cfg!(target_os = "windows") {
@@ -52,7 +52,9 @@ impl<R: Runtime> HolochainPlugin<R> {
         url_path: Option<String>,
     ) -> crate::Result<WebviewWindowBuilder<R, AppHandle<R>>> {
         let app_id: String = app_id.into();
-        let app_websocket_auth = self.get_app_websocket_auth(&app_id, false).await?;
+
+        let allowed_origins= self.get_allowed_origins(&app_id, false);
+        let app_websocket_auth = self.holochain_runtime.get_app_websocket_auth(&app_id, allowed_origins).await?;
 
         let token_vector: Vec<String> = app_websocket_auth
             .token
@@ -86,14 +88,7 @@ impl<R: Runtime> HolochainPlugin<R> {
         let mut capability_builder =
             CapabilityBuilder::new("sign-zome-call").permission("holochain:allow-sign-zome-call");
 
-        #[cfg(desktop)] // TODO: remove this check
-        {
-            capability_builder = capability_builder.window(app_id);
-        }
-        #[cfg(mobile)] // TODO: remove this check
-        {
-            capability_builder = capability_builder.windows(["*"]);
-        }
+        capability_builder = capability_builder.window(app_id);
 
         self.app_handle.add_capability(capability_builder)?;
 
@@ -138,7 +133,10 @@ impl<R: Runtime> HolochainPlugin<R> {
         }
 
         if let Some(enabled_app) = enabled_app {
-            let app_websocket_auth = self.get_app_websocket_auth(&enabled_app, true).await?;
+            let allowed_origins= self.get_allowed_origins(&enabled_app, false);
+            let app_websocket_auth = self
+                .holochain_runtime
+                .get_app_websocket_auth(&enabled_app, allowed_origins).await?;
 
             let token_vector: Vec<String> = app_websocket_auth
                 .token
@@ -164,14 +162,7 @@ impl<R: Runtime> HolochainPlugin<R> {
             let mut capability_builder = CapabilityBuilder::new("sign-zome-call")
                 .permission("holochain:allow-sign-zome-call");
 
-            #[cfg(desktop)] // TODO: remove this check
-            {
-                capability_builder = capability_builder.window(label);
-            }
-            #[cfg(mobile)] // TODO: remove this check
-            {
-                capability_builder = capability_builder.windows(["*"]);
-            }
+            capability_builder = capability_builder.window(label);
 
             self.app_handle.add_capability(capability_builder)?;
         }
@@ -179,17 +170,22 @@ impl<R: Runtime> HolochainPlugin<R> {
         Ok(window_builder)
     }
 
-    async fn get_app_websocket_auth(
-        &self,
+    /// Builds an `AdminWebsocket` ready to use
+    pub async fn admin_websocket(&self) -> crate::Result<AdminWebsocket> {
+        let admin_ws = self.holochain_runtime.admin_websocket().await?;
+        Ok(admin_ws)
+    }
+
+    fn get_allowed_origins(&self,
         app_id: &InstalledAppId,
-        main_window: bool,
-    ) -> crate::Result<AppWebsocketAuth> {
+        main_window: bool
+    ) -> AllowedOrigins {
         // Allow any when the app is build in debug mode to allow normal tauri development pointing to http://localhost:1420
         let allowed_origins = if tauri::is_dev() {
             AllowedOrigins::Any
         } else {
             let mut origins: HashSet<String> = HashSet::new();
-            origins.insert(happ_origin(app_id));
+            origins.insert(happ_origin(&app_id));
 
             if main_window {
                 origins.insert("http://tauri.localhost".into());
@@ -198,8 +194,16 @@ impl<R: Runtime> HolochainPlugin<R> {
 
             AllowedOrigins::Origins(origins)
         };
-
-        Ok(self.holochain_runtime.get_app_websocket_auth(app_id,main_window, allowed_origins).await?)
+        allowed_origins
+    }
+    
+    /// Builds an `AppWebsocket` for the given app ready to use
+    ///
+    /// * `app_id` - the app to build the `AppWebsocket` for
+    pub async fn app_websocket(&self, app_id: InstalledAppId) -> crate::Result<AppWebsocket> {
+        let allowed_origins= self.get_allowed_origins(&app_id, false);
+        let app_ws = self.holochain_runtime.app_websocket(app_id, allowed_origins).await?;
+        Ok(app_ws)
     }
 
     /// Install the given `WebAppBundle` in the holochain runtime
@@ -218,14 +222,9 @@ impl<R: Runtime> HolochainPlugin<R> {
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
-        let app_info = self.holochain_runtime
-            .install_web_app(
-                app_id.clone(),
-                web_app_bundle,
-                membrane_proofs,
-                agent,
-                network_seed,
-            ).await?;
+        let app_info= self
+            .holochain_runtime
+            .install_web_app(app_id.clone(), web_app_bundle, membrane_proofs, agent, network_seed).await?;
 
         self.app_handle.emit("holochain://app-installed", app_id)?;
 
@@ -253,7 +252,9 @@ impl<R: Runtime> HolochainPlugin<R> {
             membrane_proofs,
             agent,
             network_seed,
-        ).await?;
+        )
+        .await?;
+
         self.app_handle.emit("holochain://app-installed", app_id)?;
         Ok(app_info)
     }
@@ -267,9 +268,11 @@ impl<R: Runtime> HolochainPlugin<R> {
         app_id: InstalledAppId,
         web_app_bundle: WebAppBundle,
     ) -> crate::Result<()> {
-        self.holochain_runtime
-            .update_web_app(app_id.clone(), web_app_bundle)
-            .await?;
+        self.holochain_runtime.update_web_app(
+            app_id.clone(),
+            web_app_bundle
+        )
+        .await?;
 
         self.app_handle.emit("holochain://app-updated", app_id)?;
 
@@ -284,12 +287,47 @@ impl<R: Runtime> HolochainPlugin<R> {
         &self,
         app_id: InstalledAppId,
         app_bundle: AppBundle,
-    ) -> std::result::Result<(), UpdateAppError> {
-        let app_info = self.holochain_runtime.update_app(app_id.clone(), app_bundle).await?;
-        
+    ) -> crate::Result<()> {
+        self.holochain_runtime.update_app(app_id.clone(), app_bundle).await?;
+
         self.app_handle.emit("holochain://app-updated", app_id)?;
-        
-        Ok(app_info)
+        Ok(())
+    }
+
+    /// Checks whether it is necessary to update the hApp, and if so,
+    /// updates the coordinator zomes for the given app with an updated `AppBundle`
+    ///
+    /// To do the check it compares the hash of the `AppBundle` that was installed for the given `app_id`
+    /// with the hash of the `current_app_bundle`, and proceeds to update the coordinator zomes for the app if they are different
+    ///
+    /// * `app_id` - the app to update
+    /// * `current_app_bundle` - the new version of the hApp bundle
+    pub async fn update_app_if_necessary(
+        &self,
+        app_id: InstalledAppId,
+        current_app_bundle: AppBundle,
+    ) -> crate::Result<()> {
+        self.holochain_runtime.update_app_if_necessary(app_id, current_app_bundle).await?;
+
+        Ok(())
+    }
+
+    /// Checks whether it is necessary to update the web-hApp, and if so,
+    /// updates the coordinator zomes and the UI for the given app with an updated `WebAppBundle`
+    ///
+    /// To do the check it compares the hash of the `WebAppBundle` that was installed for the given `app_id`
+    /// with the hash of the `current_web_app_bundle`, and proceeds to update the coordinator zomes and the UI for the app if they are different
+    ///
+    /// * `app_id` - the app to update
+    /// * `current_web_app_bundle` - the new version of the hApp bundle
+    pub async fn update_web_app_if_necessary(
+        &self,
+        app_id: InstalledAppId,
+        current_web_app_bundle: WebAppBundle,
+    ) -> crate::Result<()> {
+        self.holochain_runtime.update_web_app_if_necessary(app_id, current_web_app_bundle).await?;
+
+        Ok(())
     }
 }
 
@@ -309,15 +347,16 @@ impl<R: Runtime, T: Manager<R>> crate::HolochainExt<R> for T {
     }
 }
 
+pub type HolochainPluginConfig = HolochainRuntimeConfig;
+
 fn plugin_builder<R: Runtime>() -> Builder<R> {
     Builder::new("holochain")
         .invoke_handler(tauri::generate_handler![
             commands::sign_zome_call::sign_zome_call,
             commands::open_app::open_app,
-            commands::list_apps::list_apps,
             commands::get_runtime_info::is_holochain_ready
         ])
-        .register_uri_scheme_protocol("happ", |app_handle, request| {
+        .register_uri_scheme_protocol("happ", |context, request| {
             log::info!("Received request {}", request.uri().to_string());
             if request.uri().to_string().starts_with("happ://ping") {
                 return response::Builder::new()
@@ -328,6 +367,9 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
             }
             // prepare our response
             tauri::async_runtime::block_on(async move {
+                // let mutex = app_handle.state::<Mutex<AdminWebsocket>>();
+                // let mut admin_ws = mutex.lock().await;
+
                 let uri_without_protocol = request
                     .uri()
                     .to_string()
@@ -356,7 +398,7 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
                     asset_file = asset_file.join(uri_components[i].clone());
                 }
 
-                let Ok(holochain_plugin) = app_handle.holochain() else {
+                let Ok(holochain_plugin) = context.app_handle().holochain() else {
                     return response::Builder::new()
                         .status(tauri::http::StatusCode::INTERNAL_SERVER_ERROR)
                         .body(
@@ -405,10 +447,22 @@ fn plugin_builder<R: Runtime>() -> Builder<R> {
                 r
             })
         })
+        .on_event(|app, event| match event {
+            RunEvent::Exit => {
+                if tauri::is_dev() {
+                    if let Ok(h) = app.holochain() {
+                        if let Err(err) = delete_hc_live_file(h.holochain_runtime.admin_port) {
+                            log::error!("Failed to delete hc live file: {err:?}");
+                        }
+                    }
+                }
+            }
+            _ => {}
+        })
 }
 
 /// Initializes the plugin, waiting for holochain to launch before finishing the app's setup.
-pub fn init<R: Runtime>(passphrase: BufRead, config: HolochainManagerConfig) -> TauriPlugin<R> {
+pub fn init<R: Runtime>(passphrase: BufRead, config: HolochainPluginConfig) -> TauriPlugin<R> {
     plugin_builder()
         .setup(|app, _api| {
             let handle = app.clone();
@@ -425,7 +479,7 @@ pub fn init<R: Runtime>(passphrase: BufRead, config: HolochainManagerConfig) -> 
 /// If you use this version of init, you should listen to the `holochain://setup-completed` event in your `setup()` hook
 pub fn async_init<R: Runtime>(
     passphrase: BufRead,
-    config: HolochainManagerConfig,
+    config: HolochainPluginConfig,
 ) -> TauriPlugin<R> {
     plugin_builder()
         .setup(|app, _api| {
@@ -449,17 +503,29 @@ pub fn async_init<R: Runtime>(
 async fn launch_and_setup_holochain<R: Runtime>(
     app_handle: AppHandle<R>,
     passphrase: BufRead,
-    config: HolochainManagerConfig,
+    config: HolochainPluginConfig,
 ) -> crate::Result<()> {
     // let http_server_port = portpicker::pick_unused_port().expect("No ports free");
     // http_server::start_http_server(app_handle.clone(), http_server_port).await?;
     // log::info!("Starting http server at port {http_server_port:?}");
 
-    let holochain_runtime = launch_holochain_runtime(passphrase, config).await?;
+    let holochain_runtime = HolochainRuntime::launch(passphrase, config).await?;
+
+    #[cfg(desktop)]
+    if tauri::is_dev() {
+        create_hc_live_file(holochain_runtime.admin_port)?;
+
+        ctrlc::set_handler(move || {
+            if let Err(err) = delete_hc_live_file(holochain_runtime.admin_port) {
+                log::error!("Failed to delete hc live file: {err:?}");
+            }
+            std::process::exit(0);
+        })?;
+    }
 
     let p = HolochainPlugin::<R> {
         app_handle: app_handle.clone(),
-        holochain_runtime: Arc::new(holochain_runtime),
+        holochain_runtime,
     };
 
     // manage state so it is accessible by the commands

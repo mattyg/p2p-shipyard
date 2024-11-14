@@ -14,7 +14,7 @@ Default permissions for the plugin
 - `allow-app-websocket-auth`
 - `allow-sign-zome-call`
 
-## Permission Table 
+## Permission Table
 
 <table>
 <tr>

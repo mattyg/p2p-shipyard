@@ -141,7 +141,7 @@ pub fn scaffold_tauri_happ(
     };
 
     // - In package.json
-    // - Add "start", "network", "local-services", "build:zomes"
+    // - Add "start", "network", "build:zomes"
     let root_package_json_path = PathBuf::from("package.json");
     map_file(
         &mut file_tree,
@@ -183,26 +183,19 @@ pub fn scaffold_tauri_happ(
             let package_json_content = add_npm_script_to_package(
                 &(root_package_json_path.clone(), package_json_content),
                 &String::from("network"),
-                &format!("{} && BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"{}\" \"UI_PORT=1420 {}\" \"{}\"", 
+                &format!("{} && concurrently -k \"UI_PORT=1420 {}\" \"{}\"", 
                     
                     package_manager.run_script_command(String::from("build:happ"), None),
-                    package_manager.run_script_command(String::from("local-services"), None ),
                     package_manager.run_script_command(String::from("start"), Some(ui_package.clone())),
                     package_manager.run_script_command(String::from("launch"), None)
                 ),
-            )?;
-            let package_json_content = add_npm_script_to_package(
-                &(root_package_json_path.clone(), package_json_content),
-                &String::from("local-services"),
-                &format!("hc run-local-services --bootstrap-interface $INTERNAL_IP --bootstrap-port $BOOTSTRAP_PORT --signal-interfaces $INTERNAL_IP --signal-port $SIGNAL_PORT"),
             )?;
 
             let package_json_content = add_npm_script_to_package(
                 &(root_package_json_path.clone(), package_json_content),
                 &String::from("network:android"),
-                &format!("{} && BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"{}\" \"UI_PORT=1420 {}\" \"{}\" \"{}\"",
+                &format!("{} && concurrently -k \"UI_PORT=1420 {}\" \"{}\" \"{}\"",
                     package_manager.run_script_command(String::from("build:happ"), None),
-                    package_manager.run_script_command(String::from("local-services"), None),
                     package_manager.run_script_command(String::from("start"), Some(ui_package.clone())),
                     package_manager.run_script_command(String::from("tauri dev"), None),
                     package_manager.run_script_command(String::from("tauri android dev"), None),
@@ -212,7 +205,7 @@ pub fn scaffold_tauri_happ(
             let package_json_content = add_npm_script_to_package(
                 &(root_package_json_path.clone(), package_json_content),
                 &String::from("build:zomes"),
-                &format!("CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude {app_name}"),
+                &format!("CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude {app_name}-tauri"),
             )?;
             let package_json_content = add_npm_script_to_package(
                 &(root_package_json_path.clone(), package_json_content),
@@ -247,12 +240,14 @@ pub fn scaffold_tauri_happ(
         &mut file_tree,
         PathBuf::from("flake.nix").as_path(),
         |flake_nix_content| {
+            let flake_nix_content = 
+                flake_nix_content.replace("            rust # For Rust development, with the WASM target included for zome builds","" );
 
             // - Add the `p2p-shipyard` as input to the flake
             let flake_nix_content = add_flake_input_to_flake_file(
                 flake_nix_content,
                 String::from("p2p-shipyard"),
-                String::from("github:darksoil-studio/p2p-shipyard"),
+                String::from("github:darksoil-studio/p2p-shipyard/main-0.3"),
             )?;
 
             let scope_opener = String::from("devShells.default = pkgs.mkShell {");
@@ -274,12 +269,14 @@ pub fn scaffold_tauri_happ(
             let android_dev_shell = flake_nix_content[open..close]
                 .to_string()
                 .clone()
+                .replace("holonix.devShells.default", "holonix.devShells.def2ault")
                 .replace("default", "androidDev")
                 .replace(
                     "inputsFrom = [",
                     r#"inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev"#,
-                );
+                )
+                .replace("holonix.devShells.def2ault", "holonix.devShells.default");
 
             // - Add the holochainTauriDev to the default devShell
             let default_dev_shell = flake_nix_content[open..close].to_string().replace(
@@ -352,6 +349,7 @@ pub fn get_scope_open_and_close_char_indexes(
 
 #[cfg(test)]
 mod tests {
+    use pretty_assertions::assert_eq;
     use super::*;
     use build_fs_tree::{dir, file};
     use file_tree_utils::file_content;
@@ -382,10 +380,9 @@ mod tests {
   "scripts": {
     "build:happ": "npm run build:zomes && hc app pack workdir2",
     "start": "AGENTS=2 npm run network",
-    "network": "npm run build:happ && BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"npm run local-services\" \"UI_PORT=1420 npm run -w package1 start\" \"npm run launch\"",
-    "local-services": "hc run-local-services --bootstrap-interface $INTERNAL_IP --bootstrap-port $BOOTSTRAP_PORT --signal-interfaces $INTERNAL_IP --signal-port $SIGNAL_PORT",
-    "network:android": "npm run build:happ && BOOTSTRAP_PORT=$(port) SIGNAL_PORT=$(port) INTERNAL_IP=$(internal-ip --ipv4) concurrently -k \"npm run local-services\" \"UI_PORT=1420 npm run -w package1 start\" \"npm run tauri dev\" \"npm run tauri android dev\"",
-    "build:zomes": "CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude myhapp",
+    "network": "npm run build:happ && concurrently -k \"UI_PORT=1420 npm run -w package1 start\" \"npm run launch\"",
+    "network:android": "npm run build:happ && concurrently -k \"UI_PORT=1420 npm run -w package1 start\" \"npm run tauri dev\" \"npm run tauri android dev\"",
+    "build:zomes": "CARGO_TARGET_DIR=target cargo build --release --target wasm32-unknown-unknown --workspace --exclude myhapp-tauri",
     "launch": "concurrently-repeat \"npm run tauri dev --no-watch\" $AGENTS",
     "tauri": "tauri"
   },
@@ -405,29 +402,20 @@ mod tests {
   description = "Template for Holochain app development";
   
   inputs = {
-    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard";
-    nixpkgs.follows = "holochain/nixpkgs";
-
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
-    hc-infra.url = "github:holochain-open-dev/utils";
+    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard/main-0.3";
+    holonix.url = "github:holochain/holonix/main-0.3";
+    nixpkgs.follows = "holonix/nixpkgs";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
-      specialArgs = {
-        rootPath = ./.;
-      };
     }
     {
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
         , config
@@ -440,15 +428,15 @@ mod tests {
           devShells.default = pkgs.mkShell {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriDev 
-              inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.tnesh-stack.devShells.synchronized-pnpm
+              inputs'.holonix.devShells.default
             ];
           };
           devShells.androidDev = pkgs.mkShell {
             inputsFrom = [
               inputs'.p2p-shipyard.devShells.holochainTauriAndroidDev 
-              inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.tnesh-stack.devShells.synchronized-pnpm
+              inputs'.holonix.devShells.default
             ];
           };
         };
@@ -589,28 +577,19 @@ roles:
   description = "Template for Holochain app development";
   
   inputs = {
-    nixpkgs.follows = "holochain/nixpkgs";
-
-    versions.url = "github:holochain/holochain?dir=versions/0_3";
-
-    holochain = {
-      url = "github:holochain/holochain";
-      inputs.versions.follows = "versions";
-    };
-    hc-infra.url = "github:holochain-open-dev/utils";
+    holonix.url = "github:holochain/holonix/main-0.3";
+    nixpkgs.follows = "holonix/nixpkgs";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holochain.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake
     {
       inherit inputs;
-      specialArgs = {
-        rootPath = ./.;
-      };
     }
     {
 
-      systems = builtins.attrNames inputs.holochain.devShells;
+      systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
         , config
@@ -622,8 +601,8 @@ roles:
         }: {
           devShells.default = pkgs.mkShell {
             inputsFrom = [ 
-              inputs'.hc-infra.devShells.synchronized-pnpm
-              inputs'.holochain.devShells.holonix 
+              inputs'.tnesh-stack.devShells.synchronized-pnpm
+              inputs'.holonix.devShells.default
             ];
           };
         };
