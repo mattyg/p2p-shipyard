@@ -17,8 +17,8 @@ path = "uniffi-bindgen.rs"
 [dependencies]
 uniffi = { version = "0.28.1", features = ["cli", "tokio" ] }
 holochain_runtime = { path = "../holochain_runtime", default-features = false }
-holochain_conductor_api = "0.3.2"
-holochain_types = "0.3.2"
+holochain_conductor_api = "0.4.0-rc"
+holochain_types = "0.4.0-rc"
 
 thiserror = "1.0.63"
 url2 = "0.0.6"

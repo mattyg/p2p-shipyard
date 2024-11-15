@@ -2,10 +2,10 @@ use std::{collections::HashMap, sync::Arc};
 
 use async_std::sync::Mutex;
 use holochain::{conductor::ConductorHandle, prelude::{MembraneProof, NetworkSeed, RoleName} };
-use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, ZomeCall};
-use holochain_types::{app::AppBundle, web_app::WebAppBundle, websocket::AllowedOrigins, prelude::ZomeCallUnsigned};
-use tx5_signal::deps::sodoken::BufRead;
-use tx5_signal_srv::SrvHnd;
+use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, WebsocketConfig, ZomeCall};
+use holochain_types::{app::{AppBundle, ExistingCellsMap}, web_app::WebAppBundle, websocket::AllowedOrigins, prelude::ZomeCallUnsigned};
+use lair_keystore::dependencies::sodoken::BufRead;
+use sbd_server::SbdServer;
 
 use crate::{filesystem::{AppBundleStore, BundleStore, FileSystem}, happs::{install::{install_app, install_web_app}, update::{update_app, UpdateHappError}}, lair_signer::LairAgentSignerWithProvenance, launch::launch_holochain_runtime, sign_zome_call_with_client, HolochainRuntimeConfig};
 
@@ -22,7 +22,7 @@ pub struct HolochainRuntime {
     pub apps_websockets_auths: Arc<Mutex<Vec<AppWebsocketAuth>>>,
     pub admin_port: u16,
     pub conductor_handle: ConductorHandle,
-    pub(crate) _signal_handle: Option<SrvHnd>,
+    pub(crate) _local_sbd_server: Option<SbdServer>,
 }
 
 impl HolochainRuntime {
@@ -32,10 +32,16 @@ impl HolochainRuntime {
     
     /// Builds an `AdminWebsocket` ready to use
     pub async fn admin_websocket(&self) -> crate::Result<AdminWebsocket> {
-        let admin_ws =
-            AdminWebsocket::connect(format!("localhost:{}", self.admin_port))
-                .await
-                .map_err(|err| crate::Error::WebsocketConnectionError(format!("{err:?}")))?;
+        let mut config = WebsocketConfig::CLIENT_DEFAULT;
+        config.default_request_timeout = std::time::Duration::new(60 * 5, 0);
+
+        let admin_ws = AdminWebsocket::connect_with_config(
+            format!("localhost:{}", self.admin_port),
+            Arc::new(config),
+        )
+        .await
+        .map_err(|err| crate::Error::WebsocketConnectionError(format!("{err:?}")))?;
+
         Ok(admin_ws)
     }
 
@@ -118,7 +124,8 @@ impl HolochainRuntime {
         &self,
         app_id: InstalledAppId,
         web_app_bundle: WebAppBundle,
-        membrane_proofs: HashMap<RoleName, MembraneProof>,
+        existing_cells: ExistingCellsMap,
+        membrane_proofs: Option<HashMap<RoleName, MembraneProof>>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -133,6 +140,7 @@ impl HolochainRuntime {
             &admin_ws,
             app_id.clone(),
             web_app_bundle,
+            existing_cells,
             membrane_proofs,
             agent,
             network_seed,
@@ -153,7 +161,8 @@ impl HolochainRuntime {
         &self,
         app_id: InstalledAppId,
         app_bundle: AppBundle,
-        membrane_proofs: HashMap<RoleName, MembraneProof>,
+        existing_cells: ExistingCellsMap,
+        membrane_proofs: Option<HashMap<RoleName, MembraneProof>>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -168,6 +177,7 @@ impl HolochainRuntime {
             &admin_ws,
             app_id.clone(),
             app_bundle,
+            existing_cells,
             membrane_proofs,
             agent,
             network_seed,
@@ -322,10 +332,11 @@ impl HolochainRuntime {
     /// * `app_id` - the app id of the app to uninstall
     pub async fn uninstall_app(
         &self,
-        app_id: InstalledAppId
+        app_id: InstalledAppId,
+        force: bool,
     ) -> crate::Result<()> {
         let admin_ws = self.admin_websocket().await?;
-        admin_ws.uninstall_app(app_id)
+        admin_ws.uninstall_app(app_id, force)
             .await
             .map_err(|e| crate::Error::ConductorApiError(e))?;
 

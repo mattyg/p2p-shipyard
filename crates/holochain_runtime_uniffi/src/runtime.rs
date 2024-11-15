@@ -4,6 +4,7 @@ use crate::{config::HolochainRuntimeFFIConfig, types::AppWebsocketAuthFFI};
 use crate::error::HolochainRuntimeFFIError;
 use crate::types::{AppInfoFFI, ZomeCallFFI, ZomeCallUnsignedFFI};
 use holochain_runtime::{HolochainRuntime, vec_to_locked};
+use holochain_types::app::ExistingCellsMap;
 use log::LevelFilter;
 use android_logger::Config;
 use holochain_types::{prelude::{AgentPubKey, AppBundle, MembraneProof, RoleName, SerializedBytes, UnsafeBytes}, websocket::AllowedOrigins};
@@ -74,7 +75,7 @@ impl HolochainRuntimeFFI {
         &self,
         app_id: String,
         app_bundle_bytes: Vec<u8>,
-        membrane_proofs: HashMap<String, Vec<u8>>,
+        membrane_proofs: Option<HashMap<String, Vec<u8>>>,
         agent: Option<Vec<u8>>,
         network_seed: Option<String>
     ) -> Result<(), HolochainRuntimeFFIError> {
@@ -82,15 +83,18 @@ impl HolochainRuntimeFFI {
                 Some(AgentPubKey::from_raw_39(a))
             ).transpose()
             .map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
-        let app_bundle = AppBundle::decode(app_bundle_bytes.as_slice()).map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
-        let mut membrane_proofs_typed: HashMap<RoleName, MembraneProof> = HashMap::new();
-        for (k, v) in membrane_proofs {
-            let proof = SerializedBytes::try_from(UnsafeBytes::from(v))
-                .map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
-            membrane_proofs_typed.insert(k, Arc::new(proof));
-        }
+        let app_bundle = AppBundle::decode(app_bundle_bytes.as_slice())
+            .map_err(|e| HolochainRuntimeFFIError::Infallible(e.to_string()))?;
+        let membrane_proofs_typed = membrane_proofs.map(|val| {
+            let mut typed: HashMap<RoleName, MembraneProof> = HashMap::new();
+            for (k, v) in val {
+                let proof = SerializedBytes::from(UnsafeBytes::from(v));
+                typed.insert(k, Arc::new(proof));
+            }
+            typed
+        }); 
         
-        self.runtime.install_app(app_id, app_bundle, membrane_proofs_typed, agent, network_seed)
+        self.runtime.install_app(app_id, app_bundle, ExistingCellsMap::new(), membrane_proofs_typed, agent, network_seed)
            .await
            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
         Ok(())
@@ -101,7 +105,7 @@ impl HolochainRuntimeFFI {
         &self,
         app_id: String,
     ) -> Result<(), HolochainRuntimeFFIError> {        
-        self.runtime.uninstall_app(app_id)
+        self.runtime.uninstall_app(app_id, false)
            .await
            .map_err(|e| HolochainRuntimeFFIError::HolochainError(e.to_string()))?;
         Ok(())

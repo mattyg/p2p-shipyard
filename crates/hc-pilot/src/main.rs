@@ -2,7 +2,7 @@ use anyhow::anyhow;
 use clap::Parser;
 use holochain_client::AppInfo;
 use holochain_types::{
-    app::InstallAppPayload,
+    app::{ExistingCellsMap, InstallAppPayload, MemproofMap},
     dna::{AgentPubKey, AgentPubKeyB64},
 };
 use lair_keystore::dependencies::sodoken::{BufRead, BufWrite};
@@ -91,6 +91,7 @@ fn main() {
         (Some(signal_url), Some(bootstrap_url)) => Some(WANNetworkConfig {
             signal_url: url2!("{}", signal_url),
             bootstrap_url: url2!("{}", bootstrap_url),
+            ice_servers_urls: vec![],
         }),
         (None, None) => None,
         (Some(_), None) => {
@@ -130,8 +131,9 @@ fn main() {
                 let app_info = setup(
                     handle.clone(),
                     args.happ_bundle_path,
-                    agent_key,
                     HashMap::new(),
+                    Some(HashMap::new()),
+                    agent_key,
                     args.network_seed,
                 )
                 .await?;
@@ -160,28 +162,22 @@ fn main() {
 async fn setup(
     handle: AppHandle,
     app_bundle_path: PathBuf,
+    existing_cells: ExistingCellsMap,
+    membrane_proofs: Option<MemproofMap>,
     agent_key: Option<AgentPubKey>,
-    membrane_proofs: HashMap<String, std::sync::Arc<holochain_types::prelude::SerializedBytes>>,
     network_seed: Option<String>,
 ) -> anyhow::Result<AppInfo> {
     let admin_ws = handle.holochain()?.admin_websocket().await?;
-    let agent_key = match agent_key {
-        Some(agent_key) => agent_key,
-        None => {
-            let agent_key = admin_ws
-                .generate_agent_pub_key()
-                .await
-                .map_err(|err| anyhow!("Error generating the agent: {:?}", err))?;
-            agent_key
-        }
-    };
     let app_info = admin_ws
         .install_app(InstallAppPayload {
             agent_key,
+            existing_cells,
             membrane_proofs,
             network_seed,
             source: holochain_types::app::AppBundleSource::Path(app_bundle_path),
             installed_app_id: None,
+            ignore_genesis_failure: false,
+            allow_throwaway_random_agent_key: false,
         })
         .await
         .map_err(|err| anyhow!("Error installing the app: {err:?}"))?;

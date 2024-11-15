@@ -247,7 +247,7 @@ pub fn scaffold_tauri_happ(
             let flake_nix_content = add_flake_input_to_flake_file(
                 flake_nix_content,
                 String::from("p2p-shipyard"),
-                String::from("github:darksoil-studio/p2p-shipyard/main-0.3"),
+                String::from("github:darksoil-studio/p2p-shipyard/main-0.4"),
             )?;
 
             let scope_opener = String::from("devShells.default = pkgs.mkShell {");
@@ -402,19 +402,16 @@ mod tests {
   description = "Template for Holochain app development";
   
   inputs = {
-    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard/main-0.3";
-    holonix.url = "github:holochain/holonix/main-0.3";
+    p2p-shipyard.url = "github:darksoil-studio/p2p-shipyard/main-0.4";
     nixpkgs.follows = "holonix/nixpkgs";
-    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
+
+    holonix.url = "github:holochain/holonix/main-0.4";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.4";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holonix.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake { inherit inputs; }
     {
-      inherit inputs;
-    }
-    {
-
       systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'
@@ -577,18 +574,15 @@ roles:
   description = "Template for Holochain app development";
   
   inputs = {
-    holonix.url = "github:holochain/holonix/main-0.3";
     nixpkgs.follows = "holonix/nixpkgs";
-    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.3";
+
+    holonix.url = "github:holochain/holonix/main-0.4";
+    tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.4";
   };
 
   outputs = inputs @ { ... }:
-    inputs.holonix.inputs.flake-parts.lib.mkFlake
+    inputs.holonix.inputs.flake-parts.lib.mkFlake { inherit inputs; }
     {
-      inherit inputs;
-    }
-    {
-
       systems = builtins.attrNames inputs.holonix.devShells;
       perSystem =
         { inputs'

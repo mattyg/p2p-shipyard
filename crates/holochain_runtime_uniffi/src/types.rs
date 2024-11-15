@@ -128,14 +128,18 @@ impl From<PausedAppReason> for PausedAppReasonFFI {
 #[derive(uniffi::Enum)]
 pub enum DisabledAppReasonFFI {
   NeverStarted,
+  NotStartedAfterProvidingMemproofs,
+  DeletingAgentKey,
   User,
-  Error(String),
+  Error(String),  
 }
 
 impl From<DisabledAppReason> for DisabledAppReasonFFI {
   fn from(value: DisabledAppReason) -> Self {
     match value {
       DisabledAppReason::NeverStarted => DisabledAppReasonFFI::NeverStarted,
+      DisabledAppReason::NotStartedAfterProvidingMemproofs => DisabledAppReasonFFI::NotStartedAfterProvidingMemproofs,
+      DisabledAppReason::DeletingAgentKey => DisabledAppReasonFFI::DeletingAgentKey,
       DisabledAppReason::User => DisabledAppReasonFFI::User,
       DisabledAppReason::Error(error) => DisabledAppReasonFFI::Error(error),
     }
@@ -147,6 +151,7 @@ pub enum AppInfoStatusFFI {
   Paused { reason: PausedAppReasonFFI },
   Disabled { reason: DisabledAppReasonFFI },
   Running,
+  AwaitingMemproofs,
 }
 
 impl From<AppInfoStatus> for AppInfoStatusFFI {
@@ -155,6 +160,7 @@ impl From<AppInfoStatus> for AppInfoStatusFFI {
       AppInfoStatus::Paused {reason: paused } => AppInfoStatusFFI::Paused { reason: paused.into() },
       AppInfoStatus::Disabled { reason: disabled } => AppInfoStatusFFI::Disabled { reason: disabled.into() },
       AppInfoStatus::Running => AppInfoStatusFFI::Running,
+      AppInfoStatus::AwaitingMemproofs => AppInfoStatusFFI::AwaitingMemproofs,
     }
   }
 }

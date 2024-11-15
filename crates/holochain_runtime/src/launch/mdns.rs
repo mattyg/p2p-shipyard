@@ -6,10 +6,13 @@ use std::{
 
 use async_std::stream::StreamExt;
 use base64::Engine;
-use holochain::prelude::{agent_store::AgentInfoSigned, KitsuneAgent, KitsuneSpace};
 use holochain_client::AdminWebsocket;
 use kitsune_p2p_mdns::{mdns_create_broadcast_thread, mdns_kill_thread, mdns_listen};
-use kitsune_p2p_types::codec::{rmp_decode, rmp_encode};
+use kitsune_p2p_types::{
+    agent_info::AgentInfoSigned,
+    bin_types::{KitsuneAgent, KitsuneSpace},
+    codec::{rmp_decode, rmp_encode},
+};
 
 pub async fn spawn_mdns_bootstrap(admin_port: u16) -> crate::Result<()> {
     let admin_ws = AdminWebsocket::connect(format!("localhost:{}", admin_port))
@@ -30,7 +33,6 @@ pub async fn spawn_mdns_bootstrap(admin_port: u16) -> crate::Result<()> {
                 continue;
             };
 
-            // let cell_info: Vec<CellInfo> =
             let spaces: HashSet<KitsuneSpace> = agent_infos
                 .iter()
                 .map(|agent_info| agent_info.space.as_ref().clone())
@@ -59,8 +61,7 @@ pub async fn spawn_mdns_bootstrap(admin_port: u16) -> crate::Result<()> {
                     base64::prelude::BASE64_URL_SAFE_NO_PAD.encode(&agent_info.space[..]);
                 let agent_b64 =
                     base64::prelude::BASE64_URL_SAFE_NO_PAD.encode(&agent_info.agent[..]);
-                //println!("(MDNS) - Broadcasting of Agent {:?} ({}) in space {:?} ({} ; {})",
-                // agent, agent.get_bytes().len(), space, space.get_bytes().len(), space_b64.len());
+
                 // Broadcast rmp encoded agent_info_signed
                 let mut buffer = Vec::new();
                 if let Err(err) = rmp_encode(&mut buffer, &agent_info) {
