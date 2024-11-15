@@ -18,6 +18,7 @@ import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiException
 import uniffi.holochain_runtime_uniffi.AppInfoFfi
 import uniffi.holochain_runtime_uniffi.CellIdFfi
 import uniffi.holochain_runtime_uniffi.ZomeCallUnsignedFfi
+import uniffi.holochain_runtime_uniffi.GossipArcClampFfi
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import android.os.SharedMemory
@@ -189,10 +190,13 @@ class HolochainService : Service() {
             // Start holochain conductor
             val password = byteArrayOf(0x48, 101, 108, 108, 111)
             val config = HolochainRuntimeFfiConfig(
-                "https://bootstrap.holo.host",
-                "wss://signal.holo.host",
+                "https://bootstrap-0.infra.holochain.org",
+                "wss://sbd.holo.host",
                 getFilesDir().toString(),
-            )
+                listOf<String>("stun:stun-0.main.infra.holo.host:443", "stun:stun-1.main.infra.holo.host:443"),
+                GossipArcClampFfi.FULL,
+                true
+            );
             this.runtime = runBlocking {
                 var r: HolochainRuntimeFfi = HolochainRuntimeFfi.launch(password, config)
                 r

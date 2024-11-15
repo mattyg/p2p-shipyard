@@ -1,6 +1,6 @@
-# holochain-manager-uniffi
+# holochain_runtime_uniffi
 
-This crate is a wrapper around holochain-manager, with minimal functionality necessary to expose basic holochain management functions, for generating FFI bindings for those functions.
+This crate is a wrapper around holochain_runtime, with minimal functionality necessary to expose basic holochain management functions, for generating FFI bindings for those functions.
 
 It generates FFI bindings for swift and kotline.
 
