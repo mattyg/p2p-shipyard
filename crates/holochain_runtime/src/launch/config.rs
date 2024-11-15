@@ -4,6 +4,7 @@ use holochain::conductor::{
     config::{AdminInterfaceConfig, ConductorConfig, KeystoreConfig},
     interface::InterfaceDriver,
 };
+use holochain_conductor_api::conductor::DpkiConfig;
 use holochain_keystore::paths::KeystorePath;
 use holochain_types::websocket::AllowedOrigins;
 use kitsune_p2p_types::config::{
@@ -27,7 +28,8 @@ pub fn conductor_config(
         lair_root: Some(lair_root),
     };
     config.device_seed_lair_tag = Some(DEVICE_SEED_LAIR_KEYSTORE_TAG.into());
-
+    config.dpki = DpkiConfig::disabled();
+    
     let mut network_config = KitsuneP2pConfig::default();
 
     let mut tuning_params = KitsuneP2pTuningParams::default();
