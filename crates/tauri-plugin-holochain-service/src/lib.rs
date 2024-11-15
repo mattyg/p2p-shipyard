@@ -12,21 +12,21 @@ mod types;
 pub use error::{Error, Result};
 pub use types::*;
 
-use mobile::HolochainForegroundService;
+use mobile::HolochainService;
 
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`] and [`tauri::Window`] to access the holochain-service APIs.
-pub trait HolochainForegroundServiceExt<R: Runtime> {
-  fn holochain_foreground_service(&self) -> &HolochainForegroundService<R>;
+pub trait HolochainServiceExt<R: Runtime> {
+  fn holochain_service(&self) -> &HolochainService<R>;
 }
 
-impl<R: Runtime, T: Manager<R>> crate::HolochainForegroundServiceExt<R> for T {
-  fn holochain_foreground_service(&self) -> &HolochainForegroundService<R> {
-    self.state::<HolochainForegroundService<R>>().inner()
+impl<R: Runtime, T: Manager<R>> crate::HolochainServiceExt<R> for T {
+  fn holochain_service(&self) -> &HolochainService<R> {
+    self.state::<HolochainService<R>>().inner()
   }
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-  Builder::new("holochain-service")
+  Builder::new("holochain_service")
     .setup(|app, api| {
       let dialog = mobile::init(app, api)?;
       app.manage(dialog);

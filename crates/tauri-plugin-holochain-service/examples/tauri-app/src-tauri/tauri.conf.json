@@ -1,7 +1,7 @@
 {
-  "productName": "tauri-app",
+  "productName": "tauri-plugin-holochain-service-example-app",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.tauri.tauri-plugin-holochain-service-example-app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",

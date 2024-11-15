@@ -12,16 +12,16 @@ mod types;
 pub use error::{Error, Result};
 pub use types::*;
 
-use mobile::HolochainForegroundServiceConsumer;
+use mobile::HolochainServiceConsumer;
 
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`] and [`tauri::Window`] to access the holochain-service APIs.
-pub trait HolochainForegroundServiceConsumerExt<R: Runtime> {
-  fn holochain_foreground_service_consumer(&self) -> &HolochainForegroundServiceConsumer<R>;
+pub trait HolochainServiceConsumerExt<R: Runtime> {
+  fn holochain_service_consumer(&self) -> &HolochainServiceConsumer<R>;
 }
 
-impl<R: Runtime, T: Manager<R>> crate::HolochainForegroundServiceConsumerExt<R> for T {
-  fn holochain_foreground_service_consumer(&self) -> &HolochainForegroundServiceConsumer<R> {
-    self.state::<HolochainForegroundServiceConsumer<R>>().inner()
+impl<R: Runtime, T: Manager<R>> crate::HolochainServiceConsumerExt<R> for T {
+  fn holochain_service_consumer(&self) -> &HolochainServiceConsumer<R> {
+    self.state::<HolochainServiceConsumer<R>>().inner()
   }
 }
 

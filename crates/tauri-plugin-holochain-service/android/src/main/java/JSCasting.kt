@@ -1,4 +1,4 @@
-package com.plugin.holochainforegroundservice
+package com.plugin.holochain_service
 
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.JSArray

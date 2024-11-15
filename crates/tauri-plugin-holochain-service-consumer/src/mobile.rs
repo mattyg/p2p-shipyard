@@ -6,7 +6,7 @@ use tauri::{
 use crate::types::*;
 
 #[cfg(target_os = "android")]
-const PLUGIN_IDENTIFIER: &str = "com.plugin.holochainforegroundserviceconsumer";
+const PLUGIN_IDENTIFIER: &str = "com.plugin.holochain_service_consumer";
 
 #[cfg(target_os = "ios")]
 tauri::ios_plugin_binding!(init_plugin_holochain-service-consumer);
@@ -15,18 +15,18 @@ tauri::ios_plugin_binding!(init_plugin_holochain-service-consumer);
 pub fn init<R: Runtime, C: DeserializeOwned>(
   _app: &AppHandle<R>,
   api: PluginApi<R, C>,
-) -> crate::Result<HolochainForegroundServiceConsumer<R>> {
+) -> crate::Result<HolochainServiceConsumer<R>> {
   #[cfg(target_os = "android")]
   let handle = api.register_android_plugin(PLUGIN_IDENTIFIER, "HolochainConsumerPlugin")?;
   #[cfg(target_os = "ios")]
   let handle = api.register_ios_plugin(init_plugin_holochain-service-consumer)?;
-  Ok(HolochainForegroundServiceConsumer(handle))
+  Ok(HolochainServiceConsumer(handle))
 }
 
 /// Access to the holochain-service-consumer APIs.
-pub struct HolochainForegroundServiceConsumer<R: Runtime>(pub PluginHandle<R>);
+pub struct HolochainServiceConsumer<R: Runtime>(pub PluginHandle<R>);
 
-impl<R: Runtime> HolochainForegroundServiceConsumer<R> {
+impl<R: Runtime> HolochainServiceConsumer<R> {
   pub fn is_app_installed(&self, app_id: &str)-> crate::Result<bool> {
     let res: IsAppInstalledResponse = self.0
       .run_mobile_plugin("isAppInstalled", AppIdRequestArgs { app_id: app_id.to_string() })?;

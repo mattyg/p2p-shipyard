@@ -1,4 +1,4 @@
-package com.plugin.holochainforegroundservice
+package com.plugin.holochain_service
 
 import android.app.Activity
 import android.content.Intent
@@ -19,7 +19,7 @@ import android.util.Log
 import android.webkit.WebView
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.delay
-import com.plugin.holochainforegroundservice.toJSArray
+import com.plugin.holochain_service.toJSArray
 import java.io.File
 import android.net.Uri
 import android.os.SharedMemory

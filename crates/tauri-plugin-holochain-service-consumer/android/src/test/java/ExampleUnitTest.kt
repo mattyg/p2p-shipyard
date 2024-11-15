@@ -1,4 +1,4 @@
-package com.plugin.holochainforegroundservice
+package com.plugin.holochain_service
 
 import org.junit.Test
 

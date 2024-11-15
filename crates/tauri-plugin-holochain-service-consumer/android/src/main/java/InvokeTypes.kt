@@ -1,4 +1,4 @@
-package com.plugin.holochainforegroundserviceconsumer
+package com.plugin.holochain_service_consumer
 
 import app.tauri.annotation.InvokeArg
 
