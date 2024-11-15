@@ -160,7 +160,7 @@ class HolochainConsumerPlugin(private val activity: Activity): Plugin(activity) 
         if(this.mService != null) return;
 
         val intent = Intent()
-        intent.setComponent(ComponentName("com.holochainapps.mobile_conductor_admin", "com.plugin.holochainforegroundservice.HolochainService"))
+        intent.setComponent(ComponentName("com.holochain-apps.mobile_conductor_admin", "com.plugin.holochainforegroundservice.HolochainService"))
         activity.bindService(intent, this.mConnection, Context.BIND_ABOVE_CLIENT)
     }
 }
