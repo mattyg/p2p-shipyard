@@ -1,7 +1,7 @@
 packages:
   - 'packages/*'
   - 'docs'
-  - 'crates/tauri-plugin-holochain-foreground-service'
-  - 'crates/tauri-plugin-holochain-foreground-service/examples/tauri-app'
-  - 'crates/tauri-plugin-holochain-foreground-service-consumer'
-  - 'crates/tauri-plugin-holochain-foreground-service-consumer/examples/tauri-app'
+  - 'crates/tauri-plugin-holochain-service'
+  - 'crates/tauri-plugin-holochain-service/examples/tauri-app'
+  - 'crates/tauri-plugin-holochain-service-consumer'
+  - 'crates/tauri-plugin-holochain-service-consumer/examples/tauri-app'

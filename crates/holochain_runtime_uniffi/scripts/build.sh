@@ -2,7 +2,7 @@
 
 cargo build --release
 
-cargo ndk -o ../tauri-plugin-holochain-foreground-service/android/src/main/jniLibs \
+cargo ndk -o ../tauri-plugin-holochain-service/android/src/main/jniLibs \
   --manifest-path ./Cargo.toml \
   -t arm64-v8a \
   -t armeabi-v7a \
@@ -14,4 +14,4 @@ cargo ndk -o ../tauri-plugin-holochain-foreground-service/android/src/main/jniLi
 cargo run --bin uniffi-bindgen generate \
   --library ../../target/release/libholochain_runtime_uniffi.so \
   --language kotlin \
-  --out-dir ../tauri-plugin-holochain-foreground-service/android/src/main/java/
+  --out-dir ../tauri-plugin-holochain-service/android/src/main/java/

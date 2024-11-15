@@ -9275,7 +9275,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-holochain-foreground-service"
+name = "tauri-plugin-holochain-service"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -9286,7 +9286,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-holochain-foreground-service-consumer"
+name = "tauri-plugin-holochain-service-consumer"
 version = "0.1.0"
 dependencies = [
  "serde",

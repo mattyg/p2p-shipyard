@@ -15,7 +15,7 @@ importers:
         specifier: ^2.7.0
         version: 2.8.1
 
-  crates/tauri-plugin-holochain-foreground-service:
+  crates/tauri-plugin-holochain-service:
     dependencies:
       '@holochain/client':
         specifier: 0.17.1
@@ -40,7 +40,7 @@ importers:
         specifier: ^5.3.3
         version: 5.4.5
 
-  crates/tauri-plugin-holochain-foreground-service-consumer:
+  crates/tauri-plugin-holochain-service-consumer:
     dependencies:
       '@holochain/client':
         specifier: 0.17.1
@@ -65,7 +65,7 @@ importers:
         specifier: ^5.3.3
         version: 5.4.5
 
-  crates/tauri-plugin-holochain-foreground-service-consumer/examples/tauri-app:
+  crates/tauri-plugin-holochain-service-consumer/examples/tauri-app:
     dependencies:
       '@holochain/client':
         specifier: 0.17.1
@@ -76,7 +76,7 @@ importers:
       '@tauri-apps/api':
         specifier: ^2.0.0-alpha.11
         version: 2.0.1
-      tauri-plugin-holochain-foreground-service-consumer-api:
+      tauri-plugin-holochain-service-consumer-api:
         specifier: link:../../
         version: link:../..
       uuid:
@@ -96,7 +96,7 @@ importers:
         specifier: ^3.0.2
         version: 3.2.11(terser@5.31.1)
 
-  crates/tauri-plugin-holochain-foreground-service/examples/tauri-app:
+  crates/tauri-plugin-holochain-service/examples/tauri-app:
     dependencies:
       '@holochain/client':
         specifier: 0.17.1
@@ -107,7 +107,7 @@ importers:
       '@tauri-apps/api':
         specifier: ^2.0.0-alpha.11
         version: 2.0.1
-      tauri-plugin-holochain-foreground-service-api:
+      tauri-plugin-holochain-service-api:
         specifier: link:../../
         version: link:../..
     devDependencies:
