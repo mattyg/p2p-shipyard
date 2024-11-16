@@ -26,11 +26,11 @@ import android.os.SharedMemory
 import java.nio.ByteBuffer
 
 @TauriPlugin
-class HolochainPlugin(private val activity: Activity): Plugin(activity) {
+class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     private var mService: IHolochainService? = null
     private lateinit var webView: WebView
     private lateinit var injectHolochainClientEnvJavascript: String
-    private val LOG_TAG = "HolochainPlugin"
+    private val LOG_TAG = "HolochainServicePlugin"
 
     // IPC Connection to HolochainService using AIDL
     private val mConnection = object : ServiceConnection {

@@ -9,7 +9,7 @@ use crate::types::*;
 const PLUGIN_IDENTIFIER: &str = "com.plugin.holochain_service_consumer";
 
 #[cfg(target_os = "ios")]
-tauri::ios_plugin_binding!(init_plugin_holochain-service-consumer);
+tauri::ios_plugin_binding!(init_plugin_holochain_service_consumer);
 
 // initializes the Kotlin or Swift plugin classes
 pub fn init<R: Runtime, C: DeserializeOwned>(
@@ -17,9 +17,9 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
   api: PluginApi<R, C>,
 ) -> crate::Result<HolochainServiceConsumer<R>> {
   #[cfg(target_os = "android")]
-  let handle = api.register_android_plugin(PLUGIN_IDENTIFIER, "HolochainConsumerPlugin")?;
+  let handle = api.register_android_plugin(PLUGIN_IDENTIFIER, "HolochainServiceConsumerPlugin")?;
   #[cfg(target_os = "ios")]
-  let handle = api.register_ios_plugin(init_plugin_holochain-service-consumer)?;
+  let handle = api.register_ios_plugin(init_plugin_holochain_service-consumer)?;
   Ok(HolochainServiceConsumer(handle))
 }
 

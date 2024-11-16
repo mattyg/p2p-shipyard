@@ -9,13 +9,13 @@ export async function installApp(request: {
   agent?: Uint8Array,
   networkSeed: String,
 }): Promise<null> {
-  return await invoke<null>('plugin:holochain-service-consumer|install_app', request);
+  return await invoke<null>('plugin:holochain_service_consumer|install_app', request);
 }
 
 export async function isAppInstalled(appId: string): Promise<boolean> {
-  return await invoke<{installed: boolean}>('plugin:holochain-service-consumer|is_app_installed', { appId }).then((r) => (r.installed));
+  return await invoke<{installed: boolean}>('plugin:holochain_service_consumer|is_app_installed', { appId }).then((r) => (r.installed));
 }
 
 export async function appWebsocketAuth(appId: string): Promise<{appId: string, port: number, token: Uint8Array} | null> {
-  return await invoke<{appId: string, port: number, token: Uint8Array}>('plugin:holochain-service-consumer|app_websocket_auth', { appId });
+  return await invoke<{appId: string, port: number, token: Uint8Array}>('plugin:holochain_service_consumer|app_websocket_auth', { appId });
 }

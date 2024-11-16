@@ -26,7 +26,7 @@ impl<R: Runtime, T: Manager<R>> crate::HolochainServiceExt<R> for T {
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-  Builder::new("holochain_service")
+  Builder::new("holochain-service")
     .setup(|app, api| {
       let dialog = mobile::init(app, api)?;
       app.manage(dialog);
