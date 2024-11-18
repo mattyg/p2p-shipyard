@@ -335,7 +335,7 @@ impl HolochainRuntime {
         app_id: InstalledAppId
     ) -> crate::Result<()> {
         let admin_ws = self.admin_websocket().await?;
-        admin_ws.uninstall_app(app_id)
+        admin_ws.uninstall_app(app_id, false)
             .await
             .map_err(|e| crate::Error::ConductorApiError(e))?;
 
