@@ -29,7 +29,6 @@ impl HolochainRuntime {
     pub async fn launch(passphrase: BufRead, config: HolochainRuntimeConfig) -> crate::Result<Self> {
         launch_holochain_runtime(passphrase, config).await
     }
-
     
     /// Builds an `AdminWebsocket` ready to use
     pub async fn admin_websocket(&self) -> crate::Result<AdminWebsocket> {
@@ -297,6 +296,9 @@ impl HolochainRuntime {
         Ok(())
     }
 
+    /// Sign a zome call
+    ///
+    /// * `zome_call_unsigned` - the unsigned zome call
     pub async fn sign_zome_call(&self, zome_call_unsigned: ZomeCallUnsigned) -> crate::Result<ZomeCall> {
         let signed_zome_call = sign_zome_call_with_client(
             zome_call_unsigned,
@@ -308,5 +310,77 @@ impl HolochainRuntime {
         )
         .await?;
         Ok(signed_zome_call)
-    } 
+    }
+
+    /// Check if an app with a given app_id installed on the holochain conductor
+    /// 
+    /// * `app_id` - the app id to check
+    pub async fn is_app_installed(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<bool> {
+        let admin_ws = self.admin_websocket().await?;
+        let apps = admin_ws.list_apps(None).await
+            .map_err(|e| crate::Error::ConductorApiError(e))?;
+        let matching_app = apps.into_iter().find(|app_info| app_info.installed_app_id == app_id);
+
+        Ok(matching_app.is_some())
+    }
+
+    /// Uninstall the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to uninstall
+    pub async fn uninstall_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.uninstall_app(app_id)
+            .await
+            .map_err(|e| crate::Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Enable the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to enable
+    pub async fn enable_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.enable_app(app_id)
+            .await
+            .map_err(|e| crate::Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Disable the app with the given `app_id` from the holochain conductor
+    ///
+    /// * `app_id` - the app id of the app to disable
+    pub async fn disable_app(
+        &self,
+        app_id: InstalledAppId
+    ) -> crate::Result<()> {
+        let admin_ws = self.admin_websocket().await?;
+        admin_ws.disable_app(app_id)
+            .await
+            .map_err(|e| crate::Error::ConductorApiError(e))?;
+
+        Ok(())
+    }
+
+    /// Shutdown the running conductor
+    /// Note that this is *NOT* fully implemented by Holochain,
+    /// so kitsune tasks will continue to run.
+    pub async fn shutdown(&self) -> crate::Result<()> {
+        self.conductor_handle
+            .shutdown()
+            .await
+            .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?
+            .map_err(|e| crate::Error::HolochainShutdownError(e.to_string()))?;
+        Ok(())
+    }
 }
