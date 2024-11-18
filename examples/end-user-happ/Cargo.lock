@@ -3487,9 +3487,11 @@ name = "holochain_runtime"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "arbitrary",
  "async-std",
  "async-trait",
  "base64 0.22.1",
+ "derive_arbitrary",
  "hc_seed_bundle",
  "holochain",
  "holochain_client",
@@ -8764,7 +8766,6 @@ dependencies = [
  "mime_guess",
  "nanoid",
  "serde",
- "sqlformat",
  "symlink",
  "tauri",
  "tauri-plugin",
