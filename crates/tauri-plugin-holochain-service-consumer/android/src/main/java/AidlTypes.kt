@@ -1,4 +1,4 @@
-package com.plugin.holochain_service_consumer
+package com.plugin.holochain_service
 
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue

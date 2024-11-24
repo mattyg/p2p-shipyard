@@ -21,9 +21,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.delay
 import java.io.File
 import android.net.Uri;
-import com.plugin.holochain_service_consumer.IHolochainService
-import com.plugin.holochain_service_consumer.InstallAppRequestAidl
-import com.plugin.holochain_service_consumer.SignZomeCallRequestAidl
+import com.plugin.holochain_service.IHolochainService
+import com.plugin.holochain_service.InstallAppRequestAidl
+import com.plugin.holochain_service.SignZomeCallRequestAidl
 import android.os.SharedMemory
 import java.nio.ByteBuffer
 
@@ -160,7 +160,7 @@ class HolochainServiceConsumerPlugin(private val activity: Activity): Plugin(act
         if(this.mService != null) return;
 
         val intent = Intent()
-        intent.setComponent(ComponentName("com.holochain-apps.mobile_conductor_admin", "com.plugin.holochain_service.HolochainService"))
+        intent.setComponent(ComponentName("com.holochain_apps.mobile_conductor_admin", "com.plugin.holochain_service.HolochainService"))
         activity.bindService(intent, this.mConnection, Context.BIND_ABOVE_CLIENT)
     }
 }
