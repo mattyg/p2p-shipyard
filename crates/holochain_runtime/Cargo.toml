@@ -12,7 +12,7 @@ holochain_keystore = "0.4.0-rc"
 holochain_conductor_api = "0.4.0-rc"
 
 kitsune_p2p_mdns = "0.4.0-rc"
-kitsune_p2p_types = "0.4.0-rc"
+kitsune_p2p_types = "0.4.0-rc.2"
 
 sbd-server = "0.0.8-alpha"
 tx5-signal = "0.1.5-beta"
