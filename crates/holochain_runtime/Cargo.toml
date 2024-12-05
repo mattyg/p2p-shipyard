@@ -19,11 +19,11 @@ tx5-signal = "0.1.5-beta"
 
 # Lair dependencies
 hc_seed_bundle = "0.2"
-lair_keystore_api = "0.5"
-lair_keystore = { version = "0.5" }
+lair_keystore_api = "0.5.3"
+lair_keystore = { version = "0.5.3" }
 
 # Holochain client
-holochain_client = "0.6.0-rc.0"
+holochain_client = "0.6.0-rc"
 
 # Other dependencies
 arbitrary = "=1.3.2"
