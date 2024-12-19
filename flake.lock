@@ -405,22 +405,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_4": {
-      "locked": {
-        "lastModified": 1734323986,
-        "narHash": "sha256-m/lh6hYMIWDYHCAsn81CDAiXoT3gmxXI9J987W5tZrE=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "394571358ce82dff7411395829aa6a3aad45b907",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-24.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "android-nixpkgs": "android-nixpkgs",
@@ -521,7 +505,11 @@
           "crane"
         ],
         "holonix": "holonix_2",
-        "nixpkgs": "nixpkgs_4",
+        "nixpkgs": [
+          "tnesh-stack",
+          "holonix",
+          "nixpkgs"
+        ],
         "rust-overlay": [
           "tnesh-stack",
           "holonix",
@@ -529,11 +517,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1734608337,
-        "narHash": "sha256-jmq8RGKCMTFsfGR50U6JtBRjt+Vrxt/gwqMfOb946Do=",
+        "lastModified": 1734632988,
+        "narHash": "sha256-qC2d8LG00agi1DZairBJiG7srlxvsDBoDbp+K80TrH8=",
         "owner": "darksoil-studio",
         "repo": "tnesh-stack",
-        "rev": "69aa72dc40bf5c23d95736294d33d5caed102776",
+        "rev": "aced2f09f5314b9f80fee33cd531d7720f04d406",
         "type": "github"
       },
       "original": {
