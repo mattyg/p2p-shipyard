@@ -4,8 +4,8 @@ use tauri_plugin_holochain::{HolochainExt, HolochainPluginConfig, WANNetworkConf
 use tauri::{AppHandle, Listener};
 
 const APP_ID: &'static str = "example";
-const SIGNAL_URL: &'static str = "wss://sbdi.holo.host";
-const BOOTSTRAP_URL: &'static str = "https://ibootstrap.holochain.org";
+const SIGNAL_URL: &'static str = "wss://sbd.holo.host";
+const BOOTSTRAP_URL: &'static str = "https://bootstrap.holo.host";
 
 pub fn example_happ() -> AppBundle {
     let bytes = include_bytes!("../../workdir/forum.happ");
@@ -13,7 +13,7 @@ pub fn example_happ() -> AppBundle {
 }
 
 fn wan_network_config() -> Option<WANNetworkConfig> {
-    if !tauri::is_dev() {
+    if tauri::is_dev() {
         None
     } else {
         Some(WANNetworkConfig {

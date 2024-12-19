@@ -34,7 +34,7 @@ pub struct HolochainPlugin<R: Runtime> {
 }
 
 fn happ_origin(app_id: &String) -> String {
-    if cfg!(target_os = "windows") {
+    if cfg!(any(target_os = "windows", target_os = "android")) {
         format!("http://happ.{app_id}")
     } else {
         format!("happ://{app_id}")
