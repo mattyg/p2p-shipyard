@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.follows = "tnesh-stack/nixpkgs";
-    gonixpkgs.url = "github:nixos/nixpkgs/24.05";
 
     holonix.url = "github:holochain/holonix/main-0.4";
     rust-overlay.follows = "holonix/rust-overlay";
