@@ -38,6 +38,22 @@
     },
     "crane_2": {
       "locked": {
+        "lastModified": 1732906089,
+        "narHash": "sha256-NvYSSiKsC0rqn9yY0a9zglLXrFp92EwKhTFZC38voCQ=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "9ed3180f45c2d1499e5af98c4ab7ffee8e886f5f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "9ed3180f45c2d1499e5af98c4ab7ffee8e886f5f",
+        "type": "github"
+      }
+    },
+    "crane_3": {
+      "locked": {
         "lastModified": 1734324364,
         "narHash": "sha256-omYTR59TdH0AumP1cfh49fBnWZ52HjfdNfaLzCMZBx0=",
         "owner": "ipetkov",
@@ -275,7 +291,7 @@
     },
     "holonix_2": {
       "inputs": {
-        "crane": "crane_2",
+        "crane": "crane_3",
         "flake-parts": "flake-parts_2",
         "hc-launch": "hc-launch_2",
         "hc-scaffold": "hc-scaffold_2",
@@ -425,7 +441,7 @@
       "inputs": {
         "android-nixpkgs": "android-nixpkgs",
         "crane": [
-          "holonix",
+          "tnesh-stack",
           "crane"
         ],
         "holonix": "holonix",
@@ -515,11 +531,7 @@
     },
     "tnesh-stack": {
       "inputs": {
-        "crane": [
-          "tnesh-stack",
-          "holonix",
-          "crane"
-        ],
+        "crane": "crane_2",
         "holonix": "holonix_2",
         "nixpkgs": [
           "tnesh-stack",
@@ -534,11 +546,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1734633649,
-        "narHash": "sha256-M9pg7h8KMo6NRvRrYkCWmnFG8OPcu8fxEZOIBSAssi4=",
+        "lastModified": 1734634137,
+        "narHash": "sha256-dJ3ZV/Dcl8n3xUdo0sT9/JDrXAjhIN2sEJgVH/sw+NM=",
         "owner": "darksoil-studio",
         "repo": "tnesh-stack",
-        "rev": "bd8275cc4f952335a44b35351e381e6395aff53f",
+        "rev": "7784aebe033285bc89288346f4cf7d8d0b8d4fb1",
         "type": "github"
       },
       "original": {
