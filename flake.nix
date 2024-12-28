@@ -2,15 +2,15 @@
   description = "Build cross-platform holochain apps and runtimes";
 
   inputs = {
-    nixpkgs.follows = "tnesh-stack/nixpkgs";
-
     holonix.url = "github:holochain/holonix/main-0.4";
+    nixpkgs.follows = "holonix/nixpkgs";
     rust-overlay.follows = "holonix/rust-overlay";
-    android-nixpkgs.url =
-      "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
+    crane.follows = "holonix/crane";
 
     tnesh-stack.url = "github:darksoil-studio/tnesh-stack/main-0.4";
-    crane.follows = "tnesh-stack/crane";
+
+    android-nixpkgs.url =
+      "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
   };
 
   nixConfig = {
