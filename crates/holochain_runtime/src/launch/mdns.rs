@@ -105,7 +105,6 @@ pub async fn spawn_listen_to_space_task(space: KitsuneSpace, admin_port: u16) ->
                         continue;
                     }
                     if let Ok(remote_agent_info_signed) = maybe_agent_info_signed {
-                        // Add to local storage
                         let Ok(agent_infos) = admin_ws.agent_info(None).await else {
                             continue;
                         };
