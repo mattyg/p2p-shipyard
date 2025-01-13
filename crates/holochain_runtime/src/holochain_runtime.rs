@@ -1,9 +1,9 @@
 use std::{collections::HashMap, sync::Arc};
 
 use async_std::sync::Mutex;
-use holochain::{conductor::ConductorHandle, prelude::{MembraneProof, NetworkSeed, RoleName} };
+use holochain::{conductor::ConductorHandle, prelude::{ NetworkSeed, ZomeCallUnsigned} };
 use holochain_client::{AdminWebsocket, AgentPubKey, AppInfo, AppWebsocket, InstalledAppId, WebsocketConfig, ZomeCall};
-use holochain_types::{app::{AppBundle, ExistingCellsMap}, web_app::WebAppBundle, websocket::AllowedOrigins, prelude::ZomeCallUnsigned};
+use holochain_types::{app::{AppBundle, RoleSettings}, web_app::WebAppBundle, websocket::AllowedOrigins};
 use lair_keystore::dependencies::sodoken::BufRead;
 use sbd_server::SbdServer;
 
@@ -124,8 +124,7 @@ impl HolochainRuntime {
         &self,
         app_id: InstalledAppId,
         web_app_bundle: WebAppBundle,
-        existing_cells: ExistingCellsMap,
-        membrane_proofs: Option<HashMap<RoleName, MembraneProof>>,
+        roles_settings: Option<HashMap<String, RoleSettings>>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -140,8 +139,7 @@ impl HolochainRuntime {
             &admin_ws,
             app_id.clone(),
             web_app_bundle,
-            existing_cells,
-            membrane_proofs,
+            roles_settings,
             agent,
             network_seed,
         )
@@ -161,8 +159,7 @@ impl HolochainRuntime {
         &self,
         app_id: InstalledAppId,
         app_bundle: AppBundle,
-        existing_cells: ExistingCellsMap,
-        membrane_proofs: Option<HashMap<RoleName, MembraneProof>>,
+        roles_settings: Option<HashMap<String, RoleSettings>>,
         agent: Option<AgentPubKey>,
         network_seed: Option<NetworkSeed>,
     ) -> crate::Result<AppInfo> {
@@ -177,8 +174,7 @@ impl HolochainRuntime {
             &admin_ws,
             app_id.clone(),
             app_bundle,
-            existing_cells,
-            membrane_proofs,
+            roles_settings,
             agent,
             network_seed,
         )
@@ -332,11 +328,10 @@ impl HolochainRuntime {
     /// * `app_id` - the app id of the app to uninstall
     pub async fn uninstall_app(
         &self,
-        app_id: InstalledAppId,
-        force: bool,
+        app_id: InstalledAppId
     ) -> crate::Result<()> {
         let admin_ws = self.admin_websocket().await?;
-        admin_ws.uninstall_app(app_id, force)
+        admin_ws.uninstall_app(app_id, false)
             .await
             .map_err(|e| crate::Error::ConductorApiError(e))?;
 
@@ -374,6 +369,8 @@ impl HolochainRuntime {
     }
 
     /// Shutdown the running conductor
+    /// Note that this is *NOT* fully implemented by Holochain,
+    /// so kitsune tasks will continue to run.
     pub async fn shutdown(&self) -> crate::Result<()> {
         self.conductor_handle
             .shutdown()
