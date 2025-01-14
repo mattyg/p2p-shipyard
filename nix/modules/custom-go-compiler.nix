@@ -3,8 +3,7 @@
 {
   perSystem = { inputs', lib, self', system, pkgs, ... }: {
     packages.custom-go-wrapper = let
-      go_1_21 = inputs'.gonixpkgs.legacyPackages.go_1_21;
-      go = lib.overrideDerivation go_1_21 (attrs: rec {
+      go = lib.overrideDerivation pkgs.go (attrs: rec {
         version = "1.21";
         name = "custom-go-${version}-dev";
         src = let

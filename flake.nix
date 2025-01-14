@@ -11,7 +11,6 @@
 
     android-nixpkgs.url =
       "github:tadfisher/android-nixpkgs/4aeeeec599210e54aee0ac31d4fcb512f87351a0";
-    gonixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
   };
 
   nixConfig = {
