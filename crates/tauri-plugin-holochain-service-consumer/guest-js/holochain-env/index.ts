@@ -47,3 +47,24 @@ function injectHolochainClientEnv(appId: string, appWebsocketPort: number, appTo
 }
 
 (window as any).injectHolochainClientEnv = injectHolochainClientEnv;
+
+// Define function to install app, get app websocket, and inject magic config variables
+async function setupApp(appId: string, appBundleBytes: number[], networkSeed: string) {
+  if (window.location.origin !== 'http://tauri.localhost') return;
+
+  // Check if happ is installed
+  const { installed } = await (window as any).__TAURI_INTERNALS__.invoke('plugin:holochain-service-consumer|is_app_installed', { appId });
+  
+  // Install happ if not already
+  if(!installed) {
+    await (window as any).__TAURI_INTERNALS__.invoke('plugin:holochain-service-consumer|install_app', { appId, appBundleBytes, membraneProofs: {}, networkSeed });
+  }
+  
+  // Setup app websocket
+  const { port, token } = await (window as any).__TAURI_INTERNALS__.invoke('plugin:holochain-service-consumer|app_websocket_auth', { appId });
+
+  // Inject magic configuration variables used by @holochain/client 
+  injectHolochainClientEnv(appId, port, token);
+}
+
+(window as any).setupApp = setupApp;
