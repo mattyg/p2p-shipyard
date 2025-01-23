@@ -338,13 +338,12 @@ impl HolochainRuntime {
     pub async fn enable_app(
         &self,
         app_id: InstalledAppId
-    ) -> crate::Result<()> {
+    ) -> crate::Result<AppInfo> {
         let admin_ws = self.admin_websocket().await?;
-        admin_ws.enable_app(app_id)
-            .await
-            .map_err(|e| crate::Error::ConductorApiError(e))?;
+        let app_info = enable_app(&admin_ws, app_id)
+            .await?;
 
-        Ok(())
+        Ok(app_info)
     }
 
     /// Disable the app with the given `app_id` from the holochain conductor
