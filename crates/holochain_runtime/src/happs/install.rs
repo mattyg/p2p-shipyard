@@ -61,12 +61,12 @@ pub async fn enable_app(
 ) -> crate::Result<AppInfo> {
     log::info!("Enabling app {}", app_id);
 
-    let response = admin_ws
+    let res = admin_ws
         .enable_app(app_id.clone())
         .await
         .map_err(|err| crate::Error::ConductorApiError(err))?;
 
     log::info!("Enabled app {app_id:?}");
 
-    Ok(response.app)
+    Ok(res.app)
 }

@@ -7,7 +7,7 @@ use holochain_types::{app::{AppBundle, RoleSettings}, web_app::WebAppBundle, web
 use lair_keystore::dependencies::sodoken::BufRead;
 use sbd_server::SbdServer;
 
-use crate::{filesystem::{AppBundleStore, BundleStore, FileSystem}, happs::{install::{install_app, install_web_app}, update::{update_app, UpdateHappError}}, lair_signer::LairAgentSignerWithProvenance, launch::launch_holochain_runtime, sign_zome_call_with_client, HolochainRuntimeConfig};
+use crate::{filesystem::{AppBundleStore, BundleStore, FileSystem}, happs::{install::{install_app, enable_app, install_web_app}, update::{update_app, UpdateHappError}}, lair_signer::LairAgentSignerWithProvenance, launch::launch_holochain_runtime, sign_zome_call_with_client, HolochainRuntimeConfig};
 
 #[derive(Clone)]
 pub struct AppWebsocketAuth {
