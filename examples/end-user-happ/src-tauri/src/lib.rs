@@ -121,6 +121,10 @@ async fn setup(handle: AppHandle) -> anyhow::Result<()> {
                 None,
             )
             .await?;
+        handle
+            .holochain()?
+            .enable_app(String::from(APP_ID))
+            .await?;
 
         Ok(())
     } else {

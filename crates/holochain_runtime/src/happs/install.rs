@@ -50,7 +50,17 @@ pub async fn install_app(
         })
         .await
         .map_err(|err| crate::Error::ConductorApiError(err))?;
+
     log::info!("Installed app {app_info:?}");
+
+    Ok(app_info)
+}
+
+pub async fn enable_app(
+    admin_ws: &AdminWebsocket,
+    app_id: String,
+) -> crate::Result<AppInfo> {
+    log::info!("Enabling app {app_id:?}");
 
     let response = admin_ws
         .enable_app(app_id.clone())
