@@ -52,7 +52,7 @@ pub async fn install_app(
         .map_err(|err| crate::Error::ConductorApiError(err))?;
     log::info!("Installed app {app_info:?}");
 
-    Ok(response.app)
+    Ok(app_info)
 }
 
 pub async fn enable_app(
@@ -61,12 +61,12 @@ pub async fn enable_app(
 ) -> crate::Result<AppInfo> {
     log::info!("Enabling app {}", app_id);
 
-    let res = admin_ws
+    let response = admin_ws
         .enable_app(app_id.clone())
         .await
         .map_err(|err| crate::Error::ConductorApiError(err))?;
 
     log::info!("Enabled app {app_id:?}");
 
-    Ok(res.app)
+    Ok(response.app)
 }
