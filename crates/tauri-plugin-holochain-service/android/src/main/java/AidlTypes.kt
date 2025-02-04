@@ -30,7 +30,7 @@ data class AppInfoFfiAidl(
 ): Parcelable
 
 @Parcelize
-data class AppWebsocketAuthFfiAidl(
+data class AppWebsocketAuthFfiAidl @OptIn(ExperimentalUnsignedTypes::class) constructor(
   val appId: String,
   val port: Int,
   val token: UByteArray,

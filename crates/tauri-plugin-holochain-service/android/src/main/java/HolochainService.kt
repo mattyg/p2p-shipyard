@@ -1,30 +1,24 @@
 package com.plugin.holochain_service
 
 import android.util.Log
-import android.app.Notification
 import android.app.Service
-import android.content.pm.ServiceInfo
 import android.app.ForegroundServiceStartNotAllowedException
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
 import android.content.Intent
-import android.content.Context
 import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfi
 import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiConfig
-import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiConfigException
-import uniffi.holochain_runtime_uniffi.HolochainRuntimeFfiException
-import uniffi.holochain_runtime_uniffi.AppInfoFfi
 import uniffi.holochain_runtime_uniffi.CellIdFfi
 import uniffi.holochain_runtime_uniffi.ZomeCallUnsignedFfi
 import uniffi.holochain_runtime_uniffi.GossipArcClampFfi
 import kotlinx.coroutines.runBlocking
-import java.io.IOException
-import android.os.SharedMemory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
-
-val NOTIFICATION_CHANNEl_ID: Int = 9823498
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 
 class HolochainService : Service() {
     /// The uniffi-generated holochain runtime bindings
@@ -32,15 +26,18 @@ class HolochainService : Service() {
 
     /// Holochain conductor admin websocket port
     public var runtimeAdminWebsocketPort: UShort? = null
+    private val supervisorJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(supervisorJob)
+    private val TAG = "HolochainService"
 
-    private val LOG_TAG = "HolochainService"
-    
     /// The IPC receiver that other activities can call into
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalUnsignedTypes::class)
     private val binder = object : IHolochainService.Stub() {
-        
+        private val TAG = "IHolochainService"
+
         /// Get Current Admin Port
         override fun getAdminPort(): Int {
-            Log.d("IHolochainService", "getAdminPort")
+            Log.d(TAG, "getAdminPort")
             if(runtimeAdminWebsocketPort is UShort) {
                 return runtimeAdminWebsocketPort!!.toInt()
             } else {
@@ -50,22 +47,23 @@ class HolochainService : Service() {
 
         /// Stop the service
         override fun shutdown() {
-            Log.d("IHolochainService", "shutdown")
-            var x = stopForeground()
+            Log.d(TAG, "shutdown")
+            stopForeground()
         }
         
         /// Install an app
         override fun installApp(
             request: InstallAppRequestAidl
         ) {
-            Log.d("IHolochainService", "installApp")
+            Log.d(TAG, "installApp")
+
             // Read appBundle bytes from shared memory
             val appBundleBuffer: ByteBuffer = request.appBundleSharedMemory.mapReadOnly()
             val appBundleBytes: ByteArray = appBundleBuffer.toByteArray()
             
             // Call install app
-            runBlocking {
-                runtime?.installApp(request.appId, appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
+            serviceScope.launch(Dispatchers.Default) {
+                runtime!!.installApp(request.appId, appBundleBytes, request.membraneProofs, request.agent, request.networkSeed)
             }
         }
 
@@ -73,9 +71,9 @@ class HolochainService : Service() {
         override fun uninstallApp(
             appId: String
         ) {
-            Log.d("IHolochainService", "uninstallApp")
-            runBlocking {
-                runtime?.uninstallApp(appId)
+            Log.d(TAG, "uninstallApp")
+            serviceScope.launch(Dispatchers.Default) {
+                runtime!!.uninstallApp(appId)
             }
         }
 
@@ -83,9 +81,9 @@ class HolochainService : Service() {
         override fun enableApp(
             appId: String
         ) {
-            Log.d("IHolochainService", "enableApp")
-            runBlocking {
-                runtime?.enableApp(appId)
+            Log.d(TAG, "enableApp")
+            serviceScope.launch(Dispatchers.Default) {
+                runtime!!.enableApp(appId)
             }
         }
 
@@ -93,35 +91,32 @@ class HolochainService : Service() {
         override fun disableApp(
             appId: String
         ) {
-            Log.d("IHolochainService", "disableApp")
-            runBlocking {
-                runtime?.disableApp(appId)
+            Log.d(TAG, "disableApp")
+            serviceScope.launch(Dispatchers.Default) {
+                runtime!!.disableApp(appId)
             }
         }
 
         /// List installed apps
         override fun listInstalledApps(): List<AppInfoFfiAidl> {
-            Log.d("IHolochainService", "listInstalledApps")
+            Log.d(TAG, "listInstalledApps")
             return runBlocking {
-                runtime?.listInstalledApps()?.map { 
+                runtime!!.listInstalledApps().map {
                     AppInfoFfiAidl(
-                        it.installedAppId, 
+                        it.installedAppId,
                         it.cellInfo,
                         AppInfoStatusFfiAidl(it.status::class.simpleName!!),
                         it.agentPubKey
-                    ) 
+                    )
                 } ?: emptyList<AppInfoFfiAidl>()
             }
         }
 
         /// Is app installed
         override fun isAppInstalled(appId: String): Boolean {
-            Log.d("IHolochainService", "isAppInstalled")
+            Log.d(TAG, "isAppInstalled")
             return runBlocking {
-                Log.d(LOG_TAG, "isAppInstalled 2")
-                val res = runtime?.isAppInstalled(appId)!!
-                Log.d(LOG_TAG, "isAppInstalled 3 " + res)
-                res
+                runtime!!.isAppInstalled(appId)
             }
         }
 
@@ -175,9 +170,10 @@ class HolochainService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        supervisorJob.cancel()
     }
 
-    override fun onBind(intent: Intent?): IBinder? = binder
+    override fun onBind(intent: Intent?): IBinder = binder
 
     private fun startForeground() {
         try {
@@ -185,7 +181,7 @@ class HolochainService : Service() {
             val notification = NotificationCompat.Builder(this, "HolochainServiceChannel")
                 .setContentTitle("Holochain Conductor is Running")
                 .build()
-            startForeground(NOTIFICATION_CHANNEl_ID, notification)
+            startForeground(1, notification)
 
             // Start holochain conductor
             val password = byteArrayOf(0x48, 101, 108, 108, 111)
@@ -201,14 +197,14 @@ class HolochainService : Service() {
                 var r: HolochainRuntimeFfi = HolochainRuntimeFfi.launch(password, config)
                 r
             }
-            Log.d(LOG_TAG, "Holochain started successfully")
+            Log.d(TAG, "Holochain started successfully")
 
             // Get admin port
             this.runtimeAdminWebsocketPort = runBlocking {
                 var port: UShort? = runtime?.getAdminPort()
                 port     
             }
-            Log.d(LOG_TAG, "Holochain admin port " + this.runtimeAdminWebsocketPort)
+            Log.d(TAG, "Holochain admin port " + this.runtimeAdminWebsocketPort)
         } catch (e: Exception) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                     && e is ForegroundServiceStartNotAllowedException) {
@@ -217,20 +213,24 @@ class HolochainService : Service() {
             }
             // ...
         }
-        Log.d(LOG_TAG, "Admin Port: " + this.runtimeAdminWebsocketPort)
+        Log.d(TAG, "Admin Port: " + this.runtimeAdminWebsocketPort)
     }
 
     fun stopForeground() {
         // Shutdown conductor
-        runBlocking {
+        val job = serviceScope.launch(Dispatchers.Default) {
             runtime?.shutdown()
         }
-        
-        this.runtime = null
-        this.runtimeAdminWebsocketPort = null
-        
-        // Stop service
-        super.stopForeground(true)
-        stopSelf()
+
+        runBlocking {
+            job.join()
+
+            runtime = null
+            runtimeAdminWebsocketPort = null
+
+            // Stop service
+            super.stopForeground(true)
+            stopSelf()
+        }
     }
 }
