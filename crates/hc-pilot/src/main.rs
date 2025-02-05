@@ -146,6 +146,7 @@ fn main() {
                         None,
                     )
                     .await?
+                    .on_download(|_webview, _event| true)
                     .build()?;
 
                 Ok(())
