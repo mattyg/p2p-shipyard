@@ -2,13 +2,10 @@ use holochain_types::prelude::AppBundle;
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainPluginConfig, HolochainExt, WANNetworkConfig, vec_to_locked};
 use tauri::{AppHandle, Manager};
-#[cfg(desktop)]
+#[cfg(not(mobile))]
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
-#[cfg(desktop)]
-use tauri::{
-    menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
-    Manager, 
-};
+#[cfg(not(mobile))]
+use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 
 const APP_ID: &'static str = "{{app_name}}";
 const SIGNAL_URL: &'static str = "wss://sbd.holo.host";
@@ -42,7 +39,7 @@ pub fn run() {
                     .main_window_builder(String::from("main"), false, Some(String::from("{{app_name}}")), None)
                     .await?;
 
-                #[cfg(desktop)]
+                #[cfg(not(mobile))]
                 {
                     window_builder = window_builder
                         .title(String::from("{{title_case app_name}}"))
