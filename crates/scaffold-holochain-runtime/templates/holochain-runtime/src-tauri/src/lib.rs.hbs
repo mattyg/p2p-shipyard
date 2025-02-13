@@ -1,9 +1,11 @@
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainPluginConfig, HolochainExt, WANNetworkConfig, vec_to_locked};
+use tauri::{AppHandle, Manager};
+#[cfg(desktop)]
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
+#[cfg(desktop)]
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
-    Manager, 
 };
 
 const SIGNAL_URL: &'static str = "wss://sbd.holo.host";
