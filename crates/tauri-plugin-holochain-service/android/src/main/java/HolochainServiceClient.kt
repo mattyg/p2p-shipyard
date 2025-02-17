@@ -9,9 +9,9 @@ import android.util.Log
 import android.os.SharedMemory
 import java.nio.ByteBuffer
 
-class HolochainServiceConsumer(private val activity: Activity) {
+class HolochainServiceClient(private val activity: Activity) {
     private var mService: IHolochainService? = null
-    private val logTag = "HolochainServiceConsumr"
+    private val logTag = "HolochainServiceClient"
 
     // IPC Connection to HolochainService using AIDL
     private val mConnection = object : ServiceConnection {
@@ -31,7 +31,10 @@ class HolochainServiceConsumer(private val activity: Activity) {
     /// - Launches a conductor
     /// - Creates an admin websocket
     fun launch() {
-        launchInternal()
+        // Start service
+        val intent = Intent(activity, HolochainService::class.java)
+        activity.startForegroundService(intent)
+        activity.bindService(intent, this.mConnection, 0)
     }
     
     /// Stop the service
@@ -97,13 +100,5 @@ class HolochainServiceConsumer(private val activity: Activity) {
 
     fun signZomeCall(args: SignZomeCallRequestAidl): ZomeCallSignedFfiAidl {
         return this.mService!!.signZomeCall(args);
-    }
-
-    /// Start service, which then starts the holochain conductor on initialization
-    private fun launchInternal() {
-        // Start service
-        val intent = Intent(activity, HolochainService::class.java)
-        activity.startForegroundService(intent)
-        activity.bindService(intent, this.mConnection, 0)
     }
 }

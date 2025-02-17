@@ -1,6 +1,9 @@
 package com.plugin.holochain_service
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.webkit.WebView
 import app.tauri.annotation.Command
 import app.tauri.annotation.TauriPlugin
@@ -12,7 +15,7 @@ import app.tauri.plugin.Invoke
 class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     private lateinit var webView: WebView
     private lateinit var injectHolochainClientEnvJavascript: String
-    private lateinit var holochainServiceConsumer: HolochainServiceConsumer
+    private lateinit var holochainServiceClient: HolochainServiceClient
 
     /**
      * Load the plugin, start the service
@@ -25,9 +28,17 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
         val resourceInputStream = this.activity.resources.openRawResource(R.raw.injectholochainclientenv)
         this.injectHolochainClientEnvJavascript = resourceInputStream.bufferedReader().use { it.readText() }
 
+        // Create notification channel
+        val notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(NotificationChannel(
+            "HolochainServiceChannel",
+            "Holochain Service Running",
+            NotificationManager.IMPORTANCE_HIGH
+        ))
+
         // Start the service
-        this.holochainServiceConsumer = HolochainServiceConsumer(this.activity)
-        this.holochainServiceConsumer.launch()
+        this.holochainServiceClient = HolochainServiceClient(this.activity)
+        this.holochainServiceClient.launch()
     }
 
     /**
@@ -39,7 +50,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun launch(invoke: Invoke) {
         val args = invoke.parseArgs(HolochainArgs::class.java)
-        this.holochainServiceConsumer.launch()
+        this.holochainServiceClient.launch()
         invoke.resolve()
     }
     
@@ -48,7 +59,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
      */
     @Command
     fun shutdown(invoke: Invoke) {
-        this.holochainServiceConsumer.shutdown()
+        this.holochainServiceClient.shutdown()
         invoke.resolve()
     }
 
@@ -57,7 +68,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
      */
     @Command
     fun getAdminPort(invoke: Invoke) {
-        val res = this.holochainServiceConsumer.getAdminPort()
+        val res = this.holochainServiceClient.getAdminPort()
         val obj = JSObject()
         obj.put("port", res)
         invoke.resolve(obj)
@@ -69,7 +80,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun installApp(invoke: Invoke) {
         val args = invoke.parseArgs(InstallAppRequestArgs::class.java)
-        this.holochainServiceConsumer.installApp(args)
+        this.holochainServiceClient.installApp(args)
         invoke.resolve()
     }
 
@@ -79,7 +90,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun isAppInstalled(invoke: Invoke) {
         val args = invoke.parseArgs(AppIdRequestArgs::class.java)
-        val res = this.holochainServiceConsumer.isAppInstalled(args.appId)
+        val res = this.holochainServiceClient.isAppInstalled(args.appId)
 
         val obj = JSObject()
         obj.put("installed", res)
@@ -92,7 +103,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun uninstallApp(invoke: Invoke) {
         val args = invoke.parseArgs(AppIdRequestArgs::class.java)
-        this.holochainServiceConsumer.uninstallApp(args.appId)
+        this.holochainServiceClient.uninstallApp(args.appId)
         invoke.resolve()
     }
 
@@ -102,7 +113,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun enableApp(invoke: Invoke) {
         val args = invoke.parseArgs(AppIdRequestArgs::class.java)
-        this.holochainServiceConsumer.enableApp(args.appId)
+        this.holochainServiceClient.enableApp(args.appId)
         invoke.resolve()
     }
 
@@ -112,7 +123,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun disableApp(invoke: Invoke) {
         val args = invoke.parseArgs(AppIdRequestArgs::class.java)
-        this.holochainServiceConsumer.disableApp(args.appId)
+        this.holochainServiceClient.disableApp(args.appId)
         invoke.resolve()
     }
 
@@ -121,7 +132,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
      */
     @Command
     fun listInstalledApps(invoke: Invoke) {
-        val res = this.holochainServiceConsumer.listInstalledApps()
+        val res = this.holochainServiceClient.listInstalledApps()
         val obj = JSObject() 
         obj.put("installedApps", res.toJSArray())
         invoke.resolve(obj)
@@ -134,7 +145,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun appWebsocketAuth(invoke: Invoke) {
         val args = invoke.parseArgs(AppIdRequestArgs::class.java)
-        val res = this.holochainServiceConsumer.appWebsocketAuth(args.appId)
+        val res = this.holochainServiceClient.appWebsocketAuth(args.appId)
 
         // Inject launcher env into web view
         this.injectHolochainClientEnv(args.appId, res.port, res.token)
@@ -150,7 +161,7 @@ class HolochainServicePlugin(private val activity: Activity): Plugin(activity) {
     @Command
     fun signZomeCall(invoke: Invoke) {
         val args = invoke.parseArgs(SignZomeCallRequestArgs::class.java)
-        val res = this.holochainServiceConsumer.signZomeCall(
+        val res = this.holochainServiceClient.signZomeCall(
             SignZomeCallRequestAidl(
                 args.provenance,
                 args.cellIdDnaHash,

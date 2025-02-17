@@ -19,7 +19,7 @@ android {
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
         applicationId = "com.tauri.tauri_plugin_holochain_service_example_app"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 34
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")

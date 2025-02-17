@@ -108,7 +108,7 @@ class HolochainService : Service() {
                         AppInfoStatusFfiAidl(it.status::class.simpleName!!),
                         it.agentPubKey
                     )
-                } ?: emptyList<AppInfoFfiAidl>()
+                }
             }
         }
 
@@ -204,16 +204,11 @@ class HolochainService : Service() {
                 var port: UShort? = runtime?.getAdminPort()
                 port     
             }
-            Log.d(TAG, "Holochain admin port " + this.runtimeAdminWebsocketPort)
+            Log.d(TAG, "Holochain admin port ${this.runtimeAdminWebsocketPort}")
         } catch (e: Exception) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                    && e is ForegroundServiceStartNotAllowedException) {
-                // App not in a valid state to start foreground service
-                // (e.g. started from bg)
-            }
-            // ...
+           Log.e(TAG, "Holochain failed to start $e")
         }
-        Log.d(TAG, "Admin Port: " + this.runtimeAdminWebsocketPort)
+        Log.d(TAG, "Admin Port: ${this.runtimeAdminWebsocketPort}")
     }
 
     fun stopForeground() {
