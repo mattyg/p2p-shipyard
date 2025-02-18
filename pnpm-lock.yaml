@@ -24,8 +24,8 @@ importers:
   packages/frame:
     dependencies:
       '@holochain/client':
-        specifier: ^0.18.0-rc
-        version: 0.18.0-rc.1
+        specifier: ^0.18.0
+        version: 0.18.0
       '@msgpack/msgpack':
         specifier: ^3.0.0-beta2
         version: 3.0.0-beta2
@@ -55,8 +55,8 @@ importers:
   packages/signer:
     dependencies:
       '@holochain/client':
-        specifier: ^0.18.0-rc
-        version: 0.18.0-rc.1
+        specifier: ^0.18.0
+        version: 0.18.0
       '@msgpack/msgpack':
         specifier: ^3.0.0-beta2
         version: 3.0.0-beta2
@@ -476,8 +476,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@holochain/client@0.18.0-rc.1':
-    resolution: {integrity: sha512-01Xh5cpN0lHdtV41V2RtCUfTFEA9K9GWK5vvMPtdqj52WcSNO6gcrfVERKgSG/su8xJ3VmULPYNQyrEMmBReww==}
+  '@holochain/client@0.18.0':
+    resolution: {integrity: sha512-I+YIJ2ZeDS8HeUdRvV1Ti9O8m3YPHti8mpUoqg9GZ0A77y+3NIihsB1X8vQBRBFKwNUyZ14U/ZgWQ8/2Y0/T5w==}
     engines: {node: '>=18.0.0 || >=20.0.0'}
 
   '@holochain/serialization@0.1.0-beta-rc.3':
@@ -1607,7 +1607,7 @@ snapshots:
   '@esbuild/win32-x64@0.20.2':
     optional: true
 
-  '@holochain/client@0.18.0-rc.1':
+  '@holochain/client@0.18.0':
     dependencies:
       '@bitgo/blake2b': 3.2.4
       '@holochain/serialization': 0.1.0-beta-rc.3
