@@ -432,10 +432,8 @@
         };
 
         devShells.default = pkgs.mkShell {
-          inputsFrom = [
-            inputs'.tnesh-stack.devShells.synchronized-pnpm
-            devShells.holochainTauriDev
-          ];
+          inputsFrom = [ devShells.holochainTauriDev ];
+          packages = [ inputs'.tnesh-stack.packages.synchronized-pnpm ];
         };
       };
     };
