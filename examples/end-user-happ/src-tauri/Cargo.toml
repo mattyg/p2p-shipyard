@@ -19,7 +19,7 @@ tauri-build = { version = "2.0.3", default-features = false, features = [
 ] }
 
 [dependencies]
-tauri = { version = "2.1.1", features = [] }
+tauri = { version = "2.1.1", features = ["devtools"] }
 tauri-plugin-holochain = { path = "../../../crates/tauri-plugin-holochain" }
 holochain_types = { version = "0.4.0" }
 lair_keystore = { version = "0.5.3" }
