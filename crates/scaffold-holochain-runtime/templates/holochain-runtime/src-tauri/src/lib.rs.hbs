@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use tauri_plugin_holochain::{HolochainPluginConfig, HolochainExt, WANNetworkConfig, vec_to_locked};
+use tauri_plugin_opener::OpenerExt;
 use tauri::{AppHandle, Manager};
 #[cfg(not(mobile))]
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
@@ -18,6 +19,7 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_holochain::init(
             vec_to_locked(vec![]).expect("Can't build passphrase"),
             HolochainPluginConfig::new(holochain_dir(), wan_network_config())
@@ -66,7 +68,7 @@ pub fn run() {
                                     .path()
                                     .app_log_dir()
                                     .expect("Could not get app log dir");
-                                if let Err(err) = opener::reveal(log_folder.clone()) {
+                                if let Err(err) = tauri_plugin_opener::reveal_item_in_dir(log_folder.clone()) {
                                     log::error!("Failed to open log dir at {log_folder:?}: {err:?}");
                                 }
                             }
