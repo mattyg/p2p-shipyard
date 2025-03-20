@@ -73,18 +73,18 @@
                 ".toml"
                 # Keep icons
                 ".png"
+                # Keep tauri.conf.json and capabilities
+                ".json"
               ];
 
               # Cargo.toml already captured above
               isCargoFile = base == "Cargo.lock";
-
-              isTauriConfigFile = base == "tauri.conf.json";
               isSignerFile = base == "zome-call-signer.js";
 
               # .cargo/config.toml already captured above
               isCargoConfig = parentDir == ".cargo" && base == "config";
             in type == "directory" || matchesSuffix || isCargoFile
-            || isCargoConfig || isTauriConfigFile || isSignerFile;
+            || isCargoConfig || isSignerFile;
           cleanTauriSource = { lib }:
             src:
             lib.cleanSourceWith {
@@ -432,10 +432,8 @@
         };
 
         devShells.default = pkgs.mkShell {
-          inputsFrom = [
-            inputs'.tnesh-stack.devShells.synchronized-pnpm
-            devShells.holochainTauriDev
-          ];
+          inputsFrom = [ devShells.holochainTauriDev ];
+          packages = [ inputs'.tnesh-stack.packages.synchronized-pnpm ];
         };
       };
     };

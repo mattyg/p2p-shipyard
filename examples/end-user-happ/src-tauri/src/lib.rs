@@ -78,7 +78,7 @@ pub fn run() {
                 tauri::async_runtime::spawn(async move {
                     setup(handle.clone()).await.expect("Failed to setup");
 
-                    handle
+                    let mut builder =  handle
                         .holochain()
                         .expect("Failed to get holochain")
                         .main_window_builder(String::from("main"), false, Some(APP_ID.into()), None).await
